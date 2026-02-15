@@ -65,7 +65,7 @@ while true; do
       DESC="update $MAIN_FILE"
     fi
     
-    COMMIT_MSG="$PREFIX: $DESC [skip ci]"
+    COMMIT_MSG="$PREFIX: $DESC "
     
     echo -e "[$HORA] ${YELLOW}${BOLD} MUDANÇAS DETECTADAS!${NC}"
     echo -e "[$HORA] ${CYAN} Arquivos:${NC} ${FILE_COUNT} alterado(s)"
