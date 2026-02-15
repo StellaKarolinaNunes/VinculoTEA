@@ -137,86 +137,238 @@ body {
    ACESSIBILIDADE E INCLUSÃO (CORE FUNCTIONS)
    ========================================================================== */
 
-/* 1. MODO AUTISMO (TEA) - Baixa estimulação visual */
+/* 1. MODO AUTISMO (TEA) - Redução de Sobrecarga */
 .acc-autismo {
-  --primary: #5c7cfa; /* Azul mais suave */
-  --bg-primary: #f0f4f8;
-  --bg-secondary: #ffffff;
-}
-.acc-autismo * {
-  transition-duration: 0.8s !important; /* Animações muito lentas e suaves */
-  letter-spacing: 0.02em !important;
-}
-.acc-autismo img, .acc-autismo svg {
-  filter: saturate(0.7); /* Cores menos vibrantes */
-}
-.acc-autismo .animate-pulse, .acc-autismo .animate-bounce {
-  animation: none !important; /* Remove movimentos repetitivos bruscos */
+  --primary: #4A69BD;
+  /* Azul marinho calmo */
+  --bg-primary: #F1F2F6;
+  --bg-secondary: #FFFFFF;
 }
 
-/* 2. MODO CEGO / BAIXA VISÃO - Legibilidade e Destaque */
-.acc-cego {
-  font-size: 110%; /* Aumenta tamanho base */
+.acc-autismo * {
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: none !important;
+  /* Remove sombras complexas que podem confundir */
+  text-shadow: none !important;
 }
+
+.acc-autismo [class*="shadow-"],
+.acc-autismo [class*="blur-"] {
+  filter: none !important;
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.05) !important;
+  /* Sombras extremamente sutis */
+}
+
+.acc-autismo img {
+  filter: saturate(0.6) !important;
+}
+
+.acc-autismo .animate-pulse,
+.acc-autismo .animate-bounce,
+.acc-autismo .animate-spin {
+  animation: none !important;
+}
+
+/* 2. MODO CEGO / DEFICIÊNCIA VISUAL - Extrema Legibilidade */
+.acc-cego {
+  font-size: 115% !important;
+}
+
 .acc-cego *:focus {
-  outline: 4px solid #ef4444 !important; /* Vermelho vibrante no foco */
+  outline: 5px solid #E11D48 !important;
+  /* Destaque Rosa/Vermelho forte */
   outline-offset: 4px !important;
 }
-.acc-cego img {
-  filter: contrast(1.2);
+
+.acc-cego [role="button"],
+.acc-cego button {
+  min-height: 48px;
+  /* Tamanho mínimo de toque/alvo conforme WCAG */
+  min-width: 48px;
 }
 
-/* 3. MODO SURDO / AUDITIVO - Reforço Visual */
-.acc-surdo .notification-ring, .acc-auditivo .notification-ring {
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5) !important;
-  animation: pulse-border 2s infinite !important;
-}
-@keyframes pulse-border {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1.5); opacity: 0; }
+.acc-cego .text-slate-500,
+.acc-cego .text-slate-400 {
+  color: #1e293b !important;
+  /* Força contraste máximo em subtextos */
 }
 
-/* 4. MODO TDAH - Foco e Ordem */
+/* 3. MODO SURDO / AUDITIVOS - Feedback Visual de Som */
+.acc-surdo .notification-dot,
+.acc-auditivo .notification-dot {
+  animation: pulse-visual-alert 1.5s infinite !important;
+}
+
+@keyframes pulse-visual-alert {
+  0% {
+    box-shadow: 0 0 0 0px rgba(59, 130, 246, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0px rgba(59, 130, 246, 0);
+  }
+}
+
+/* 4. MODO TDAH (FOCO TOTAL) - Higiene Visual */
 .acc-tdah * {
   animation: none !important;
-  transition: none !important; /* UI Estática para evitar distração */
-}
-.acc-tdah .bg-slate-50, .acc-tdah .bg-white {
-  border: 1px solid #cbd5e1 !important; /* Bordas bem definidas */
-}
-.acc-tdah main {
-  filter: grayscale(0.1);
-}
-/* Esconder elementos puramente decorativos se houver classe .decorative */
-.acc-tdah .decorative {
-  display: none !important;
+  transition: none !important;
 }
 
-/* 5. ALTO CONTRASTE */
+.acc-tdah .bg-primary\/10,
+.acc-tdah .bg-orange-100,
+.acc-tdah .bg-indigo-100 {
+  background-color: #f1f5f9 !important;
+  /* Cores neutras para não desviar o olho */
+}
+
+.acc-tdah [class*="badge"],
+.acc-tdah [class*="Premium"] {
+  display: none !important;
+  /* Esconde selos de "Premium" ou badges coloridos desnecessários */
+}
+
+.acc-tdah .decorative-element {
+  opacity: 0 !important;
+}
+
+.acc-tdah input:focus,
+.acc-tdah button:focus {
+  border-width: 3px !important;
+  border-color: var(--primary) !important;
+}
+
+/* 5. ALTO CONTRASTE (WCAG AAA - PREMIUM REDESIGN) */
 .acc-contraste {
   background-color: #000000 !important;
-  color: #ffffff !important;
+  color: #FFFFFF !important;
 }
-.acc-contraste :not(input):not(button):not(a) {
-  background-color: transparent !important;
-  border-color: #ffffff !important;
-}
-.acc-contraste .bg-white, .acc-contraste .bg-slate-800, .acc-contraste .bg-slate-50 {
+
+/* Base elements */
+.acc-contraste body,
+.acc-contraste #root,
+.acc-contraste main {
   background-color: #000000 !important;
-  border: 2px solid #ffff00 !important; /* Bordas amarelas */
 }
-.acc-contraste p, .acc-contraste h1, .acc-contraste h2, .acc-contraste h3, .acc-contraste span {
-  color: #ffff00 !important; /* Texto amarelo no preto */
-}
-.acc-contraste .text-primary, .acc-contraste .text-slate-500, .acc-contraste .text-slate-900 {
-  color: #ffffff !important;
-}
-.acc-contraste button:not(.bg-primary) {
+
+/* Cards, Containers and Sections */
+.acc-contraste .bg-white,
+.acc-contraste .bg-slate-50,
+.acc-contraste .bg-slate-800,
+.acc-contraste .bg-slate-900,
+.acc-contraste header,
+.acc-contraste nav,
+.acc-contraste aside {
   background-color: #000000 !important;
-  color: #ffffff !important;
-  border: 2px solid #ffffff !important;
+  border: 3px solid #FFFFFF !important;
+  /* Bordas mais grossas e brancas */
+  box-shadow: none !important;
 }
-.acc-contraste .bg-primary {
-  background-color: #ffff00 !important;
+
+/* Typography - Yellow for information, White for static text */
+.acc-contraste p,
+.acc-contraste span:not(.text-primary),
+.acc-contraste label,
+.acc-contraste td,
+.acc-contraste th {
+  color: #FFFFFF !important;
+}
+
+.acc-contraste h1,
+.acc-contraste h2,
+.acc-contraste h3,
+.acc-contraste h4,
+.acc-contraste strong {
+  color: #FFFF00 !important;
+  /* Amarelo vibrante para destaques */
+  font-weight: 900 !important;
+}
+
+/* Global Icons */
+.acc-contraste svg {
+  stroke: #FFFF00 !important;
+  fill: none !important;
+}
+
+/* Interactive Elements - Primary Actions */
+.acc-contraste .bg-primary,
+.acc-contraste .btn-primary,
+.acc-contraste button[class*="bg-primary"] {
+  background-color: #FFFF00 !important;
   color: #000000 !important;
+  border: 4px solid #000000 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+}
+
+/* Secondary Buttons and Inputs */
+.acc-contraste button,
+.acc-contraste input,
+.acc-contraste select,
+.acc-contraste textarea {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border: 3px solid #FFFFFF !important;
+  border-radius: 4px !important;
+  /* Formas mais quadradas e nítidas */
+}
+
+.acc-contraste input::placeholder {
+  color: #aaaaaa !important;
+}
+
+/* Hover States */
+.acc-contraste button:hover,
+.acc-contraste a:hover {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.acc-contraste button:hover svg {
+  stroke: #000000 !important;
+}
+
+/* Focus States */
+.acc-contraste *:focus {
+  outline: 6px solid #00FFFF !important;
+  /* Ciano Elétrico para foco no alto contraste */
+  outline-offset: 4px !important;
+}
+
+/* Tables and Lists */
+.acc-contraste table {
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important;
+}
+
+.acc-contraste tr {
+  border: 2px solid #FFFFFF !important;
+}
+
+.acc-contraste .text-primary {
+  color: #FFFF00 !important;
+}
+
+/* Links */
+.acc-contraste a {
+  color: #00FFFF !important;
+  /* Links em Ciano para destaque */
+  text-decoration: underline !important;
+  font-weight: bold !important;
+}
+
+/* Sidebar Specifics */
+.acc-contraste aside [class*="active"] {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+.acc-contraste aside [class*="active"] svg {
+  stroke: #000000 !important;
 }

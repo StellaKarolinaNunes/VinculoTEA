@@ -3,7 +3,13 @@ import { Moon, Sun, Bell, Accessibility, EyeOff, EarOff, Brain, Ear, Zap } from 
 
 export const SystemTab = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [notifications, setNotifications] = useState(true);
+    const [notifications, setNotifications] = useState(() => {
+        return localStorage.getItem('sound_notifications') !== 'false';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('sound_notifications', notifications.toString());
+    }, [notifications]);
 
     const [accessConfig, setAccessConfig] = useState(() => {
         const saved = localStorage.getItem('accessibility_config');

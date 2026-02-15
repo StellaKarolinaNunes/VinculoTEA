@@ -206,6 +206,76 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
+  // Real-time Notifications & Sound
+  const playNotificationSound = () => {
+    if (localStorage.getItem('sound_notifications') === 'false') return;
+
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.5);
+    } catch (e) {
+      console.warn('Audio context not supported or blocked:', e);
+    }
+  };
+
+  useEffect(() => {
+    if (!authUser?.plataforma_id) return;
+
+    // Listen for new PEIs
+    const peiChannel = supabase
+      .channel('realtime-peis')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'PEIs'
+      }, (payload) => {
+        setNotifications(prev => [{
+          id: Date.now(),
+          title: 'Novo PEI Detectado',
+          description: `Um novo plano individual foi iniciado.`,
+          time: 'Agora'
+        }, ...prev]);
+        playNotificationSound();
+      })
+      .subscribe();
+
+    // Listen for new Notes
+    const notesChannel = supabase
+      .channel('realtime-notes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'Anotacoes'
+      }, (payload) => {
+        setNotifications(prev => [{
+          id: Date.now(),
+          title: 'Nova Anotação',
+          description: `Uma nova observação foi registrada no prontuário.`,
+          time: 'Agora'
+        }, ...prev]);
+        playNotificationSound();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(peiChannel);
+      supabase.removeChannel(notesChannel);
+    };
+  }, [authUser]);
+
   const handleSelectSearchResult = (result: any) => {
     setIsSearchModalOpen(false);
 
