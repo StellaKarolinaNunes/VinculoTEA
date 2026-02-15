@@ -29,7 +29,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
             const data = await executionService.getAllByStudent(studentId);
             setExecutions(data);
 
-            // Extract unique options for filters
+
             const materias = Array.from(new Set(data.map((ex: any) => ex.Disciplinas?.Nome).filter(Boolean))) as string[];
             const suportes = Array.from(new Set(data.map((ex: any) => ex.Nivel_suporte).filter(Boolean))) as string[];
             const barreiras = Array.from(new Set(data.map((ex: any) => ex.Tipo_barreira).filter(Boolean))) as string[];

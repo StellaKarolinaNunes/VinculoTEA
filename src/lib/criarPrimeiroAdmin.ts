@@ -20,7 +20,7 @@ async function criarPrimeiroAdmin() {
     console.log("🚀 Criando primeiro administrador...");
 
     try {
-        // 1. Criar na tabela Usuarios PRIMEIRO
+
         console.log("📝 Criando registro na tabela Usuarios...");
         const { data: usuario, error: usuarioError } = await supabase
             .from('Usuarios')
@@ -41,7 +41,7 @@ async function criarPrimeiroAdmin() {
 
         console.log("✅ Usuário criado na tabela. ID:", usuario.Usuario_ID);
 
-        // 2. Criar conta de autenticação
+
         console.log("🔐 Criando conta de autenticação...");
         const { data: authData, error: authError } = await supabase.auth.signUp({
             email: email.toLowerCase().trim(),
@@ -56,14 +56,14 @@ async function criarPrimeiroAdmin() {
 
         if (authError) {
             console.error("❌ Erro ao criar conta Auth:", authError);
-            // Rollback
+
             await supabase.from('Usuarios').delete().eq('Usuario_ID', usuario.Usuario_ID);
             return;
         }
 
         console.log("✅ Conta de autenticação criada!");
 
-        // 3. Atualizar com auth_uid
+
         if (authData.user) {
             console.log("🔗 Vinculando auth_uid...");
             await supabase
@@ -87,7 +87,7 @@ async function criarPrimeiroAdmin() {
     }
 }
 
-// Disponibilizar no console
+
 declare global {
     interface Window {
         criarPrimeiroAdmin: typeof criarPrimeiroAdmin;

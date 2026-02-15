@@ -22,13 +22,13 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
     const [classes, setClasses] = useState<any[]>([]);
 
     const [formData, setFormData] = useState({
-        // Step 1: Dados Pessoais
+
         nomeCompleto: initialData?.nome || '',
         dataNascimento: initialData?.dataNascimento || '',
         cpf: initialData?.detalhes?.cpf || '',
         genero: initialData?.genero === 'Masculino' ? 'M' : initialData?.genero === 'Feminino' ? 'F' : initialData?.genero === 'O' ? 'O' : '',
         cid: initialData?.cid || '',
-        // Step 2: Responsável
+
         responsavelNome: initialData?.responsavel || '',
         responsavelEmail: initialData?.detalhes?.email_responsavel || '',
         responsavelTelefone: initialData?.detalhes?.telefone_responsavel || '',
@@ -39,22 +39,22 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
         bairro: initialData?.detalhes?.endereco?.bairro || '',
         cidade: initialData?.detalhes?.endereco?.cidade || '',
         estado: initialData?.detalhes?.endereco?.estado || '',
-        // Step 3: Vínculo
+
         escolaId: initialData?.escola_id?.toString() || '',
-        turmaId: '', // To be matched with classes
-        // Step 4: História
+        turmaId: '', 
+
         gravidez: initialData?.detalhes?.historia?.gravidez || '',
         tipoParto: initialData?.detalhes?.historia?.tipoParto || '',
         pesoNascer: initialData?.detalhes?.historia?.pesoNascer || '',
         apgar: initialData?.detalhes?.historia?.apgar || '',
         internacaoNeonatal: initialData?.detalhes?.historia?.internacaoNeonatal || '',
-        // Step 5: Desenvolvimento
+
         marcosDesenvolvimento: initialData?.detalhes?.desenvolvimento?.marcosDesenvolvimento || '',
         producaoVerbal: initialData?.detalhes?.desenvolvimento?.producaoVerbal || '',
         entendeInstrucoes: initialData?.detalhes?.desenvolvimento?.entendeInstrucoes || '',
         contatoOcular: initialData?.detalhes?.desenvolvimento?.contatoOcular || '',
         brincadeiraPreferida: initialData?.detalhes?.desenvolvimento?.brincadeiraPreferida || '',
-        // Step 6: Saúde e Rotinas
+
         doencas: initialData?.detalhes?.saude?.doencas || '',
         medicacao: initialData?.detalhes?.saude?.medicacao || '',
         alergias: initialData?.detalhes?.saude?.alergias || '',
@@ -186,7 +186,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                 uploadedPhotoUrl = await studentService.uploadPhoto(photo);
             }
 
-            // 1. Get or Create Family
+
             const familyId = await studentService.getOrCreateFamily(
                 formData.responsavelNome,
                 formData.responsavelTelefone,
@@ -194,7 +194,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                 authUser?.plataforma_id
             );
 
-            // 2. Prepare Student Data
+
             const studentDataToSave = {
                 nome: formData.nomeCompleto,
                 data_nascimento: formData.dataNascimento || null,

@@ -10,12 +10,12 @@ interface WizardProps {
 export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onComplete }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
-        // Step 1: Dados Pessoais
+
         nomeCompleto: '',
         dataNascimento: '',
         cpf: '',
         genero: '',
-        // Step 2: Responsável
+
         responsavelNome: '',
         responsavelEmail: '',
         responsavelTelefone: '',
@@ -26,22 +26,22 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
         bairro: '',
         cidade: '',
         estado: '',
-        // Step 3: Vínculo
+
         escola: '',
         turma: '',
-        // Step 4: História
+
         gravidez: '',
         tipoParto: '',
         pesoNascer: '',
         apgar: '',
         internacaoNeonatal: '',
-        // Step 5: Desenvolvimento
+
         marcosDesenvolvimento: '',
         producaoVerbal: '',
         entendeInstrucoes: '',
         contatoOcular: '',
         brincadeiraPreferida: '',
-        // Step 6: Saúde e Rotinas
+
         doencas: '',
         medicacao: '',
         alergias: '',
@@ -65,7 +65,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
     ];
 
     const handleNext = () => {
-        // TODO: Add validation
+
         if (currentStep < 6) setCurrentStep(prev => prev + 1);
     };
 

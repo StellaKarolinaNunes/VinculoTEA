@@ -101,17 +101,17 @@ CID: ${d.cid}
         const doc = new jsPDF();
         const d = pei.dados;
 
-        // Colors from branding
-        const primaryColor = [37, 99, 235]; // #2563EB
-        const secondaryColor = [30, 41, 59]; // #1E293B
-        const lightBg = [248, 250, 252]; // #F8FAFC
 
-        // Header Structure
-        // Background color for header
+        const primaryColor = [37, 99, 235]; 
+        const secondaryColor = [30, 41, 59]; 
+        const lightBg = [248, 250, 252]; 
+
+
+
         doc.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
         doc.rect(0, 0, 210, 45, 'F');
 
-        // Logo (Attempt to load logo)
+
         try {
             const img = new Image();
             img.src = logoUrl;
@@ -165,7 +165,7 @@ CID: ${d.cid}
         let currentY = 55;
 
         sections.forEach((section, index) => {
-            // Section Header
+
             doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
             doc.rect(14, currentY, 182, 8, "F");
             doc.setFontSize(10);
@@ -200,7 +200,7 @@ CID: ${d.cid}
             }
         });
 
-        // Footer
+
         const pageCount = (doc as any).internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
@@ -209,7 +209,7 @@ CID: ${d.cid}
             doc.text("Este documento é confidencial e destinado exclusivamente ao acompanhamento pedagógico do aluno.", 105, 285, { align: "center" });
             doc.text(`Página ${i} de ${pageCount}`, 105, 290, { align: "center" });
 
-            // Decorative line
+
             doc.setDrawColor(226, 232, 240);
             doc.line(14, 280, 196, 280);
         }

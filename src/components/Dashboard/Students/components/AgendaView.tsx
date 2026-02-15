@@ -32,7 +32,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
     const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
 
-    // Form state
+
     const [formData, setFormData] = useState({
         titulo: '',
         data: format(new Date(), 'yyyy-MM-dd'),
@@ -100,12 +100,12 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
     }, [studentId]);
 
     useEffect(() => {
-        // Request notification permission
+
         if (Notification.permission === 'default') {
             Notification.requestPermission();
         }
 
-        // Check for upcoming important events every minute
+
         const interval = setInterval(() => {
             const now = new Date();
             const todayStr = format(now, 'yyyy-MM-dd');
@@ -137,7 +137,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
         const end = endOfWeek(currentMonth, { locale: ptBR });
         const weekDays = eachDayOfInterval({ start, end });
 
-        // Design Parity Header
+
         doc.setFillColor(20, 57, 109);
         doc.rect(0, 0, 297, 30, 'F');
         doc.setTextColor(255, 255, 255);
@@ -255,7 +255,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
     };
 
 
-    // Calendar logic
+
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
     const startDate = startOfWeek(monthStart, { locale: ptBR });

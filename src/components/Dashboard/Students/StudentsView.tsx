@@ -37,7 +37,7 @@ export const StudentsView = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<'Todos' | 'Ativo' | 'Inativo'>('Todos');
 
-    // Advanced Filters State
+
     const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
     const [schools, setSchools] = useState<any[]>([]);
     const [filterSchool, setFilterSchool] = useState('');
@@ -105,10 +105,10 @@ export const StudentsView = () => {
         const matchesSerie = !filterSerie || s.serie === filterSerie;
         const matchesGender = !filterGender || s.genero === filterGender;
 
-        // Advanced filters from details
+
         const matchesModulo = !filterModulo || s.detalhes?.modulo === filterModulo;
         const matchesPeriodo = !filterPeriodo || s.detalhes?.periodo === filterPeriodo;
-        const matchesTurma = !filterTurma || s.serie === filterTurma; // serie is often used as turma name
+        const matchesTurma = !filterTurma || s.serie === filterTurma; 
 
         return matchesSearch && matchesStatus && matchesSchool && matchesSerie && matchesGender && matchesModulo && matchesPeriodo && matchesTurma;
     });
@@ -117,11 +117,11 @@ export const StudentsView = () => {
         const doc = new jsPDF({ orientation: 'landscape' });
         const now = new Date().toLocaleString('pt-BR');
 
-        // Header Decoration
+
         doc.setFillColor(20, 57, 109);
         doc.rect(0, 0, 297, 40, 'F');
 
-        // Title
+
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(24);
         doc.setFont('helvetica', 'bold');
@@ -132,7 +132,7 @@ export const StudentsView = () => {
         doc.text(`Plataforma Vinculo PEI - Gestão Educacional Especializada`, 14, 32);
         doc.text(`Gerado em: ${now}`, 240, 32);
 
-        // Summary Cards
+
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
@@ -176,7 +176,7 @@ export const StudentsView = () => {
             },
             margin: { top: 70 },
             didDrawPage: (data) => {
-                // Footer
+
                 doc.setFontSize(8);
                 doc.setTextColor(150, 150, 150);
                 const str = `Página ${doc.getNumberOfPages()}`;

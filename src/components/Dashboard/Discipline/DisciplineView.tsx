@@ -107,14 +107,14 @@ export const DisciplineView = () => {
     };
 
     const getTeachersForDiscipline = (disc: Discipline) => {
-        // First priority: manually linked teachers via ID
+
         const linkedByRecord = teachers.filter(t =>
             disc.professores?.includes(t.Professor_ID?.toString() || t.id)
         );
 
         if (linkedByRecord.length > 0) return linkedByRecord;
 
-        // Fallback: automatic specialty link if no manual records exist
+
         return teachers.filter(t =>
             t.Especialidade?.toLowerCase().includes(disc.nome.toLowerCase()) ||
             t.Especialidades?.toLowerCase().includes(disc.nome.toLowerCase())

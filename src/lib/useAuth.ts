@@ -26,7 +26,7 @@ export interface Permissions {
     canManageUsers: boolean;
     canViewDisciplines: boolean;
     canEditDisciplines: boolean;
-    canViewAllSchools: boolean; // Apenas Admin
+    canViewAllSchools: boolean; 
 }
 
 const ROLE_PERMISSIONS: Record<string, Permissions> = {
@@ -161,7 +161,7 @@ export const useAuth = () => {
                     return;
                 }
 
-                // Buscar perfil completo do usuário
+
                 const { data: profileData } = await supabase
                     .from('Usuarios')
                     .select('*, Professores(Escola_ID, Escolas(Nome))')
@@ -192,7 +192,7 @@ export const useAuth = () => {
 
         fetchUserProfile();
 
-        // Listener para mudanças de autenticação
+
         const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
             fetchUserProfile();
         });

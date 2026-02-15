@@ -27,7 +27,7 @@ export const schoolsService = {
             throw error;
         }
 
-        // Map capitalized columns to camelCase for the frontend
+
         return data.map((item: any) => ({
             id: item.Escola_ID,
             nome: item.Nome,
@@ -42,7 +42,7 @@ export const schoolsService = {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('Usuário não autenticado. Faça login novamente.');
 
-        // Map camelCase to capitalized columns
+
         const { data, error } = await supabase
             .from('Escolas')
             .insert([{
@@ -84,7 +84,7 @@ export const schoolsService = {
     },
 
     async delete(id: string) {
-        // First, nullify references in related tables to avoid FK constraint errors
+
         await Promise.all([
             supabase.from('Professores').update({ Escola_ID: null }).eq('Escola_ID', id),
             supabase.from('Turmas').update({ Escola_ID: null }).eq('Escola_ID', id),

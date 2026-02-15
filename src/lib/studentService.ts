@@ -35,7 +35,7 @@ export interface ProfessionalData {
 }
 
 export const studentService = {
-    // --- ALUNOS ---
+
     async getAll(plataforma_id?: number) {
         let query = supabase
             .from('Alunos')
@@ -68,7 +68,7 @@ export const studentService = {
                 Genero: updates.genero,
                 Detalhes: updates.detalhes,
                 Familia_ID: updates.familia_id,
-                Escola_ID: updates.escola_id || null, // Ensure null if undefined or 0
+                Escola_ID: updates.escola_id || null, 
                 Plataforma_ID: updates.plataforma_id
             })
             .eq('Aluno_ID', id)
@@ -91,7 +91,7 @@ export const studentService = {
                 CID: student.cid,
                 Detalhes: student.detalhes,
                 Familia_ID: student.familia_id,
-                Escola_ID: student.escola_id || null, // Ensure null if undefined or 0
+                Escola_ID: student.escola_id || null, 
                 Plataforma_ID: student.plataforma_id
             }])
             .select();
@@ -101,9 +101,9 @@ export const studentService = {
     },
 
     async delete(id: string) {
-        // 1. Delete dependent records first to avoid FK constraint errors
-        // 1. Delete dependent records first to avoid FK constraint errors
-        // We do this individually to be more resilient if one table fails
+
+
+
         const tablesToCleanup = [
             { table: 'PEIs', column: 'Aluno_ID' },
             { table: 'Anotacoes', column: 'Aluno_ID' },
@@ -120,7 +120,7 @@ export const studentService = {
             }
         }
 
-        // 2. Delete the student
+
         const { error } = await supabase
             .from('Alunos')
             .delete()
@@ -152,7 +152,7 @@ export const studentService = {
     },
 
     async getOrCreateFamily(nomeResponsavel: string, telefone: string, email: string, plataforma_id?: number) {
-        // Primeiro tenta buscar por email
+
         const { data: existing } = await supabase
             .from('Familias')
             .select('Familia_ID')
@@ -161,7 +161,7 @@ export const studentService = {
 
         if (existing) return existing.Familia_ID;
 
-        // Se não existir, cria
+
         const { data, error } = await supabase
             .from('Familias')
             .insert([{
@@ -200,7 +200,7 @@ export const studentService = {
         return data.Escola_ID;
     },
 
-    // --- ESCOLAS ---
+
     async getAllSchools(plataforma_id?: number) {
         let query = supabase
             .from('Escolas')
@@ -229,7 +229,7 @@ export const studentService = {
         return data[0];
     },
 
-    // --- PROFISSIONAIS ---
+
     async getAllProfessionals(plataforma_id?: number) {
         let query = supabase
             .from('Professores')
@@ -266,7 +266,7 @@ export const studentService = {
                 Especialidade: professional.especialidade,
                 Registro_Profissional: professional.registro,
                 Telefone: professional.telefone,
-                Escola_ID: professional.escola_id || null, // Ensure null if 0 or undefined
+                Escola_ID: professional.escola_id || null, 
                 CID: professional.cid,
                 Plataforma_ID: professional.plataforma_id,
                 Categoria: professional.categoria || 'Professor'
@@ -286,7 +286,7 @@ export const studentService = {
                 Especialidade: updates.especialidade,
                 Registro_Profissional: updates.registro,
                 Telefone: updates.telefone,
-                Escola_ID: updates.escola_id || null, // Ensure null if 0 or undefined
+                Escola_ID: updates.escola_id || null, 
                 CID: updates.cid,
                 Plataforma_ID: updates.plataforma_id,
                 Categoria: updates.categoria
@@ -299,7 +299,7 @@ export const studentService = {
     },
 
     async deleteProfessional(id: string) {
-        // First delete availability if any
+
         try {
             await supabase.from('Disponibilidade').delete().eq('Professor_ID', id);
         } catch (e) {

@@ -5,12 +5,12 @@ import {
   ChevronRight, TrendingUp, Menu, X, Filter,
   ArrowUpRight, Clock, MessageSquare, Briefcase,
   ChevronLeft, ClipboardList, Lightbulb, Target,
-  Sun, Moon
+  Sun, Moon, Mic, MicOff, School, AlertCircle
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/useAuth';
 import { cleanOrphanAuthUsers, checkEmailConflict } from '@/lib/cleanOrphanUsers';
-import '@/lib/criarPrimeiroAdmin'; // Carrega ferramentas de diagnóstico
+import '@/lib/criarPrimeiroAdmin';
 import logotipoHorizontal from '@/assets/images/logotipo_Horizontal.svg';
 import darkLogo from '@/assets/images/dark.svg';
 import { StudentsView } from './Students/StudentsView';
@@ -20,19 +20,44 @@ import { SettingsView } from './Settings/SettingsView';
 import { ReportsView } from './Reports/ReportsView';
 import { SearchModal } from './SearchModal';
 import { HelpCenter } from './HelpCenter';
+import { syncOfflineActions } from '@/lib/offlineService';
+import { exportProntuarioPDF } from '@/lib/exportService';
 
 import styles from './Dashboard.module.css';
 import { div, section } from 'framer-motion/client';
 
 interface DashboardProps {
-  user: any;
+  user: {
+    id: string;
+    email?: string;
+    user_metadata?: any;
+    plataforma_id?: string;
+  };
   onLogout: () => void;
+}
+
+interface RealStats {
+  alunosAtivos: number;
+  totalAlunos: number;
+  peisConcluidos: number;
+  totalPeis: number;
+  atendimentosHoje: number;
+  mediaAlunosTurma: number;
+  taxaAtivos: number;
+  pendencia: number;
+}
+
+interface Notification {
+  id: number;
+  title: string;
+  description: string;
+  time: string;
 }
 
 type ViewState = 'dashboard' | 'students' | 'management' | 'discipline' | 'reports' | 'settings' | 'help';
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
-  // Permissions and Auth
+
   const { user: authUser, permissions, loading: authLoading } = useAuth();
 
   const [activeView, setActiveView] = useState<ViewState>('dashboard');
@@ -44,6 +69,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
   });
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
 
   const [notifications, setNotifications] = useState<any[]>([
     { id: 1, title: 'Novo PEI criado', description: 'Arthur Silva agora tem um PEI.', time: '10 min atrás' },
@@ -103,24 +129,40 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
           .from('Relatorios_PEI')
           .select('*', { count: 'exact', head: true });
 
-        // Fetch Pending Activities
-        const { data: pendingData } = await supabase
-          .from('Relatorios_PEI')
-          .select('*, Alunos(Nome)')
-          .limit(3)
-          .order('Relatorio_ID', { ascending: false });
 
-        if (pendingData) {
-          setPendingActivities(pendingData.map((item: any) => ({
-            name: item.Alunos?.Nome || 'N/A',
-            type: item.Tipo || 'Relatório de Progresso',
-            time: new Date(item.Created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-            status: item.Status || 'Pendente',
-            priority: 'medium'
+        const { data: agendaHoje } = await supabase
+          .from('Agenda')
+          .select('*, Alunos(Nome)')
+          .eq('Data', today)
+          .order('Horario', { ascending: true });
+
+        if (agendaHoje) {
+          setPendingActivities(agendaHoje.map((item: any) => ({
+            name: item.Alunos?.Nome || item.Titulo || 'Atendimento',
+            type: item.Tipo_Evento || 'Sessão Terapêutica',
+            time: item.Horario?.substring(0, 5) || '--:--',
+            status: item.Status || 'Agendado',
+            priority: item.Status === 'Pendente' ? 'high' : 'medium'
           })));
+        } else {
+          const { data: pendingData } = await supabase
+            .from('Relatorios_PEI')
+            .select('*, Alunos(Nome)')
+            .limit(3)
+            .order('Relatorio_ID', { ascending: false });
+
+          if (pendingData) {
+            setPendingActivities(pendingData.map((item: any) => ({
+              name: item.Alunos?.Nome || 'N/A',
+              type: item.Tipo || 'Relatório de Progresso',
+              time: new Date(item.Created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+              status: item.Status || 'Pendente',
+              priority: 'medium'
+            })));
+          }
         }
 
-        // Fetch Engagement Data (last 5 days of classes)
+
         const last5Days = [...Array(5)].map((_, i) => {
           const d = new Date();
           d.setDate(d.getDate() - (4 - i));
@@ -159,16 +201,72 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
     fetchStats();
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      setIsSearchModalOpen(true);
+    }
+
+    if (e.altKey && e.key === 's') {
+      e.preventDefault();
+      setIsSearchModalOpen(true);
+    }
+    if (e.altKey && e.key === 'n') {
+      e.preventDefault();
+      setActiveView('students');
+      playNotificationSound();
+    }
+    if (e.altKey && e.key === 'v') {
+      e.preventDefault();
+      toggleVoiceControl();
+    }
+  };
+
+  const toggleVoiceControl = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Seu navegador não suporta controle de voz.");
+      return;
+    }
+
+    if (isVoiceActive) {
+      setIsVoiceActive(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = false;
+
+    recognition.onstart = () => setIsVoiceActive(true);
+    recognition.onend = () => setIsVoiceActive(false);
+
+    recognition.onresult = (event: any) => {
+      const command = event.results[0][0].transcript.toLowerCase();
+      console.log('Comando de voz:', command);
+
+      if (command.includes('buscar') || command.includes('pesquisar')) {
         setIsSearchModalOpen(true);
+      } else if (command.includes('aluno')) {
+        setActiveView('students');
+      } else if (command.includes('gestão') || command.includes('gerenciamento')) {
+        setActiveView('management');
+      } else if (command.includes('disciplina')) {
+        setActiveView('discipline');
+      } else if (command.includes('relatório')) {
+        setActiveView('reports');
+      } else if (command.includes('ajuste') || command.includes('configuração')) {
+        setActiveView('settings');
       }
     };
+
+    recognition.start();
+  };
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isVoiceActive]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -179,6 +277,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
+
+
+
+  useEffect(() => {
+    const handleSync = () => syncOfflineActions(supabase);
+    window.addEventListener('request-sync' as any, handleSync);
+
+
+    const interval = setInterval(() => {
+      if (navigator.onLine) handleSync();
+    }, 5 * 60 * 1000);
+
+    return () => {
+      window.removeEventListener('request-sync' as any, handleSync);
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -206,7 +321,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
-  // Real-time Notifications & Sound
+
   const playNotificationSound = () => {
     if (localStorage.getItem('sound_notifications') === 'false') return;
 
@@ -219,7 +334,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       gainNode.connect(audioCtx.destination);
 
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
       gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
@@ -234,7 +349,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   useEffect(() => {
     if (!authUser?.plataforma_id) return;
 
-    // Listen for new PEIs
+
     const peiChannel = supabase
       .channel('realtime-peis')
       .on('postgres_changes', {
@@ -252,7 +367,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       })
       .subscribe();
 
-    // Listen for new Notes
+
     const notesChannel = supabase
       .channel('realtime-notes')
       .on('postgres_changes', {
@@ -279,7 +394,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const handleSelectSearchResult = (result: any) => {
     setIsSearchModalOpen(false);
 
-    // Logic to navigate based on result type
+
     switch (result.type) {
       case 'Alunos':
       case 'PEIs':
@@ -351,8 +466,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                   </div>
                 </div>
 
-                <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 hidden lg:block"></div>
-
                 <button
                   onClick={() => setIsDarkMode(!isDarkMode)}
                   className="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-primary transition-all shadow-sm"
@@ -422,6 +535,39 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               </div>
             </header>
 
+            {/* Filtros Avançados & Inteligência */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                  <School size={16} className="text-slate-400" />
+                  <select className="bg-transparent border-none outline-none text-xs font-black text-slate-700 dark:text-slate-300">
+                    <option>Todas as Unidades</option>
+                    <option>Escola Principal</option>
+                    <option>Anexo Infantil</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                  <Users size={16} className="text-slate-400" />
+                  <select className="bg-transparent border-none outline-none text-xs font-black text-slate-700 dark:text-slate-300">
+                    <option>Todas as Turmas</option>
+                    <option>Manhã - Sala 01</option>
+                    <option>Tarde - Sala 04</option>
+                  </select>
+                </div>
+                <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2 hidden md:block" />
+                <button className="flex items-center gap-2 px-4 py-2 text-xs font-black text-primary bg-primary/5 rounded-xl hover:bg-primary/10 transition-all uppercase tracking-widest">
+                  <Filter size={14} /> Aplicar Filtros
+                </button>
+              </div>
+
+              {realStats.pendencia > 5 && (
+                <div className="flex items-center gap-3 px-4 py-2 bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 rounded-xl animate-bounce">
+                  <AlertCircle size={16} className="text-rose-500" />
+                  <span className="text-[10px] font-black text-rose-600 uppercase tracking-widest">Alerta de Regressão Detectado em {realStats.pendencia} Alunos</span>
+                </div>
+              )}
+            </div>
+
             {/* Grid de Estatísticas Refinado - Agora com 6 itens */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-12">
               {stats.map((stat, i) => (
@@ -451,7 +597,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                 <div className="flex justify-between items-center mb-8">
                   <div>
                     <h2 className="text-xl font-black text-slate-900 dark:text-white">Atividades Pendentes</h2>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Você tem 3 tarefas importantes hoje</p>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">Você tem {pendingActivities.length} {pendingActivities.length === 1 ? 'tarefa importante' : 'tarefas importantes'} hoje</p>
                   </div>
                   <button className="text-xs font-black text-primary hover:text-secondary uppercase tracking-widest transition-colors flex items-center gap-2">
                     Ver histórico completo <ArrowUpRight size={14} />

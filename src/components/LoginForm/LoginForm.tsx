@@ -22,16 +22,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
     setError(null);
 
     try {
-      // ETAPA 1: Tentar fazer login com credenciais
+
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      // CENÁRIO 1: Credenciais inválidas (e-mail ou senha incorretos)
+
       if (authError) {
         if (authError.message === 'Invalid login credentials') {
-          // Verificar se o e-mail existe na tabela Usuarios (case-insensitive)
+
           const cleanEmail = email.toLowerCase().trim();
           console.log('🔍 Verificando e-mail na tabela:', cleanEmail);
 
@@ -45,11 +45,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
           console.log('⚠️ Erro (se houver):', checkError);
 
           if (emailExists) {
-            // E-mail cadastrado, mas senha incorreta
+
             console.log('✅ E-mail encontrado na tabela. Senha incorreta.');
             setError('E-mail ou senha incorretos.');
           } else {
-            // E-mail NÃO cadastrado no sistema
+
             console.log('❌ E-mail NÃO encontrado na tabela Usuarios');
             setError('Esta conta não existe em nosso sistema. Entre em contato para solicitar uma demonstração: instagram.com/vinculotea');
           }
@@ -59,7 +59,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
         return;
       }
 
-      // ETAPA 2: OBRIGATÓRIO - Verificar se está cadastrado na lista de usuários do sistema
+
       if (authData.user) {
         console.log('🔍 Verificando se usuário está cadastrado no sistema...');
 
@@ -69,19 +69,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
           .eq('auth_uid', authData.user.id)
           .maybeSingle();
 
-        // CENÁRIO 2: Usuário órfão - existe no Auth mas não na tabela Usuarios
+
         if (profileError || !userProfile) {
           console.log('❌ ACESSO NEGADO: Usuário não encontrado na tabela Usuarios');
           console.log('💡 Este é um usuário órfão - existe no Auth mas não foi cadastrado corretamente');
 
-          // Fazer logout imediatamente para segurança
+
           await supabase.auth.signOut();
 
           setError('⚠️ Conta não configurada corretamente. Entre em contato com o suporte para solicitar acesso: instagram.com/vinculotea');
           return;
         }
 
-        // CENÁRIO 3: Usuário está cadastrado mas inativo
+
         if (userProfile.Status !== 'Ativo') {
           console.log('❌ ACESSO NEGADO: Conta inativa');
 
@@ -90,7 +90,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
           return;
         }
 
-        // ✅ CENÁRIO 4: ACESSO AUTORIZADO
+
         console.log('✅ ACESSO LIBERADO');
         console.log(`👤 Usuário: ${userProfile.Nome}`);
         console.log(`📧 E-mail: ${userProfile.Email}`);

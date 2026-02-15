@@ -16,7 +16,7 @@ interface Props {
 export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Props) => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        // 1. Identificação
+
         nomeCompleto: studentName || 'Aline Cely Araujo da Silva',
         dataNascimento: studentData?.dataNascimento || '',
         sexo: '',
@@ -27,33 +27,33 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
         cid: studentData?.cid || 'F84.0',
         profissionaisAcompanham: '',
 
-        // 2. Histórico e Desenvolvimento
+
         historicoDesenvolvimento: '',
         pontosFortes: '',
         areasDesenvolvimento: '',
         interessesPreferencias: '',
         estiloAprendizagem: '',
 
-        // 3. Habilidades
+
         habilidadesAcademicas: '',
         habilidadesComunicacao: '',
         habilidadesSociais: '',
         habilidadesMotoras: '',
         habilidadesAutonomia: '',
 
-        // 4. Sensibilidades e Barreiras
+
         sensibilidadesSensoriais: '',
         preferenciasReforcadores: '',
         barreirasAprendizagem: '',
         apoiosNecessarios: '',
         estrategiasFavoraveis: '',
 
-        // 5. Metas
+
         metasCurtoPrazo: '',
         metasMedioPrazo: '',
         metasLongoPrazo: '',
 
-        // 6. Planejamento
+
         metodologiasPraticas: '',
         adaptacoesCurriculares: '',
         recursosMateriais: '',
@@ -61,12 +61,12 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
         atividadesColetivas: '',
         envolvimentoFamilia: '',
 
-        // 7. Avaliação
+
         instrumentosAvaliacao: '',
         criteriosSucesso: '',
         periodicidadeReavaliacoes: '',
         frequenciaRevisao: 'Trimestral',
-        dataInicio: '2026-01-30', // ISO format for date input
+        dataInicio: '2026-01-30', 
         dataFimPrevista: '',
         observacoesAdicionais: '',
     });

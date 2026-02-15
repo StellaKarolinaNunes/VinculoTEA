@@ -30,7 +30,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack, onSucces
       } else {
         setSuccess(true);
 
-        // Aguarda UX e já navega para tela de redefinição
+
         setTimeout(() => {
           onSuccess();
         }, 1500);

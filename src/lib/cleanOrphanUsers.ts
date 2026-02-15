@@ -12,7 +12,7 @@ export async function cleanOrphanAuthUsers() {
     console.log('🧹 Iniciando limpeza de usuários órfãos...');
 
     try {
-        // 1. Buscar todos os usuários da tabela Usuarios
+
         const { data: usuarios, error: usuariosError } = await supabase
             .from('Usuarios')
             .select('Email, auth_uid');
@@ -52,7 +52,7 @@ export async function checkEmailConflict(email: string) {
 
     console.log(`🔍 Verificando conflito para: ${cleanEmail}`);
 
-    // Verificar na tabela Usuarios
+
     const { data: usuarioData } = await supabase
         .from('Usuarios')
         .select('Usuario_ID, Nome, Email, Status')
@@ -79,7 +79,7 @@ export async function checkEmailConflict(email: string) {
     return { existeNaTabela: !!usuarioData, dados: usuarioData };
 }
 
-// Exportar funções para uso no console do navegador
+
 if (typeof window !== 'undefined') {
     (window as any).cleanOrphanAuthUsers = cleanOrphanAuthUsers;
     (window as any).checkEmailConflict = checkEmailConflict;

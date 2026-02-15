@@ -56,7 +56,7 @@ export const UsersTab = () => {
         setFormData({
             nome: user.Nome,
             email: user.Email,
-            senha: '', // Não mostramos senha ao editar
+            senha: '', 
             role: user.Tipo_Acesso || 'Profissional',
             escola_id: user.Escola_ID?.toString() || '',
             avatar: user.Foto || ''

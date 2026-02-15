@@ -1,0 +1,17 @@
+{
+    "name": "VinculoTEA",
+    "short_name": "VinculoTEA",
+    "description": "Sistema de Gestão Multidisciplinar e Educação Inclusiva",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#14396D",
+    "icons": [
+        {
+            "src": "/Favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

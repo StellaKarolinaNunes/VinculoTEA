@@ -4,7 +4,7 @@ export interface PEI {
     id: string;
     student_id: string;
     status: 'Rascunho' | 'Ativo' | 'Arquivado';
-    dados: any; // Store the full wizard state here
+    dados: any; 
     data_criacao?: string;
 }
 

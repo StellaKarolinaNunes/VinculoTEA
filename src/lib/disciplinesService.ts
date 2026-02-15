@@ -5,7 +5,7 @@ export interface Discipline {
     nome: string;
     descricao?: string;
     status: string;
-    professores?: string[]; // IDs of linked teachers
+    professores?: string[]; 
 }
 
 export const disciplinesService = {
@@ -47,7 +47,7 @@ export const disciplinesService = {
         if (error) throw error;
         const newDiscipline = data[0];
 
-        // Save teacher relationships if provided
+
         if (discipline.professores && discipline.professores.length > 0) {
             const relationships = discipline.professores.map(pId => ({
                 Professor_ID: parseInt(pId),
@@ -76,15 +76,15 @@ export const disciplinesService = {
 
         if (error) throw error;
 
-        // Update teacher relationships
+
         if (discipline.professores) {
-            // First remove existing
+
             await supabase
                 .from('Professores_Disciplinas')
                 .delete()
                 .eq('Disciplina_ID', id);
 
-            // Then insert new ones
+
             if (discipline.professores.length > 0) {
                 const relationships = discipline.professores.map(pId => ({
                     Professor_ID: parseInt(pId),
@@ -101,17 +101,17 @@ export const disciplinesService = {
     },
 
     async delete(id: string) {
-        // 1. Clean up dependencies
-        // Clean Professores_Disciplinas (though ON DELETE CASCADE should handle it, we'll be explicit)
+
+
         await supabase.from('Professores_Disciplinas').delete().eq('Disciplina_ID', id);
 
-        // Clean Acompanhamentos
+
         await supabase.from('Acompanhamentos').delete().eq('Disciplina_ID', id);
 
-        // Clean Aulas
+
         await supabase.from('Aulas').delete().eq('Disciplina_ID', id);
 
-        // 2. Delete the discipline
+
         const { error } = await supabase
             .from('Disciplinas')
             .delete()

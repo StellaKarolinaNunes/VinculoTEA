@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
-// Cliente temporário para criar usuários sem deslogar o admin atual
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 
@@ -47,7 +47,7 @@ export const usersService = {
     async create(user: UserData & { senha?: string }) {
         if (!user.senha) throw new Error('A senha é obrigatória para criar um novo acesso.');
 
-        // 1. Criar o usuário no Supabase Auth
+
         const { data: authData, error: authError } = await authClient.auth.signUp({
             email: user.email,
             password: user.senha,
@@ -65,11 +65,11 @@ export const usersService = {
             throw new Error(`Erro ao criar credenciais de login: ${authError.message}`);
         }
 
-        // 2. Criar o registro na tabela Usuarios (pública)
+
         const { data, error } = await supabase
             .from('Usuarios')
             .insert([{
-                auth_uid: authData.user?.id, // Vincula com o ID real do Auth (UUID)
+                auth_uid: authData.user?.id, 
                 Nome: user.nome,
                 Email: user.email,
                 Tipo: user.tipo,
@@ -80,8 +80,8 @@ export const usersService = {
 
         if (error) {
             console.error('Erro ao salvar perfil:', error);
-            // Se o auth funcionou mas o perfil não, o usuário existe mas não tem perfil.
-            // O ideal seria deletar o auth user ou avisar.
+
+
             throw new Error(`Login criado, mas houve erro no perfil: ${error.message}`);
         }
 
@@ -108,8 +108,8 @@ export const usersService = {
     },
 
     async delete(id: string) {
-        // Nota: Apenas deleta da tabela Usuarios. 
-        // Deletar do Auth exigiria service_role ou o próprio usuário logado.
+
+
         const { error } = await supabase
             .from('Usuarios')
             .delete()

@@ -29,7 +29,7 @@ export const ManagementView = () => {
 
             setSchoolCount(schools.length);
 
-            // Separar por Categoria
+
             const teachers = allProfessionals.filter((p: any) => p.Categoria === 'Professor');
             const specialists = allProfessionals.filter((p: any) => p.Categoria === 'Profissional de Saúde');
 

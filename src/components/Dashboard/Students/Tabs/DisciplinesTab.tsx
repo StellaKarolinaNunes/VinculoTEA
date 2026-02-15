@@ -16,7 +16,7 @@ interface Discipline {
     nome: string;
     descricao?: string;
     ativa: boolean;
-    professores: string[]; // IDs
+    professores: string[]; 
 }
 
 export const DisciplinesTab = ({ studentId, studentName, studentData }: { studentId: string, studentName: string, studentData: any }) => {

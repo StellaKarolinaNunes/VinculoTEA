@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/useAuth';
 interface Props {
     studentName: string;
     studentData: any;
-    initialData?: PEI; // If provided, we are in edit mode
+    initialData?: PEI; 
     onCancel: () => void;
     onComplete: () => void;
 }
@@ -23,9 +23,9 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
     const [isLoading, setIsLoading] = useState(false);
     const [schools, setSchools] = useState<any[]>([]);
 
-    // Initial state matching the structure collected in the wizard
+
     const [formData, setFormData] = useState({
-        // 1. Identificação
+
         nomeCompleto: studentName || '',
         dataNascimento: studentData?.dataNascimento || '',
         sexo: '',
@@ -36,33 +36,33 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
         cid: studentData?.cid || '',
         profissionaisAcompanham: '',
 
-        // 2. Histórico e Desenvolvimento
+
         historicoDesenvolvimento: '',
         pontosFortes: '',
         areasDesenvolvimento: '',
         interessesPreferencias: '',
         estiloAprendizagem: '',
 
-        // 3. Habilidades
+
         habilidadesAcademicas: '',
         habilidadesComunicacao: '',
         habilidadesSociais: '',
         habilidadesMotoras: '',
         habilidadesAutonomia: '',
 
-        // 4. Sensibilidades e Barreiras
+
         sensibilidadesSensoriais: '',
         preferenciasReforcadores: '',
         barreirasAprendizagem: '',
         apoiosNecessarios: '',
         estrategiasFavoraveis: '',
 
-        // 5. Metas
+
         metasCurtoPrazo: '',
         metasMedioPrazo: '',
         metasLongoPrazo: '',
 
-        // 6. Planejamento
+
         metodologiasPraticas: '',
         adaptacoesCurriculares: '',
         recursosMateriais: '',
@@ -70,7 +70,7 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
         atividadesColetivas: '',
         envolvimentoFamilia: '',
 
-        // 7. Avaliação
+
         instrumentosAvaliacao: '',
         criteriosSucesso: '',
         periodicidadeReavaliacoes: '',
@@ -80,7 +80,7 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
         observacoesAdicionais: '',
     });
 
-    // Fill form if editing and fetch schools
+
     useEffect(() => {
         if (initialData?.dados) {
             setFormData(prev => ({ ...prev, ...initialData.dados }));
@@ -118,11 +118,11 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
         setIsLoading(true);
         try {
             if (initialData) {
-                // Edit mode
+
                 await peisService.update(initialData.id, { dados: formData });
                 alert('PEI atualizado com sucesso!');
             } else {
-                // Create mode
+
                 await peisService.create(studentData.id, formData);
                 alert('PEI criado e ativado com sucesso!');
             }

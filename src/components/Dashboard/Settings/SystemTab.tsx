@@ -25,7 +25,7 @@ export const SystemTab = () => {
 
     useEffect(() => {
         localStorage.setItem('accessibility_config', JSON.stringify(accessConfig));
-        // Apply global classes for accessibility
+
         Object.entries(accessConfig).forEach(([key, value]) => {
             if (value) document.documentElement.classList.add(`acc-${key}`);
             else document.documentElement.classList.remove(`acc-${key}`);

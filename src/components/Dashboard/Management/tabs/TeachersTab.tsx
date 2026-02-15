@@ -63,7 +63,7 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
         setFormData({
             nome: teacher.Nome,
             email: teacher.Email,
-            senha: '', // Don't show password
+            senha: '', 
             escola_id: teacher.Escola_ID?.toString() || '',
             avatar: teacher.Usuarios?.Foto || '',
             isAEE: teacher.Especialidade === 'AEE',

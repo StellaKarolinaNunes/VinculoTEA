@@ -52,7 +52,7 @@ export const ReportsView = () => {
     const [loading, setLoading] = useState(false);
     const [reportData, setReportData] = useState<ReportData | null>(null);
 
-    // Individual Report States
+
     const [students, setStudents] = useState<any[]>([]);
     const [selectedStudentId, setSelectedStudentId] = useState<string>('');
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
@@ -68,7 +68,7 @@ export const ReportsView = () => {
         try {
             const plataformaId = authUser?.plataforma_id;
 
-            // 1. Fetch real students from the platform
+
             let alunosQuery = supabase
                 .from('Alunos')
                 .select('Aluno_ID, Nome, Escola_ID, Escolas (Nome)');
@@ -76,7 +76,7 @@ export const ReportsView = () => {
             const { data: alunos, error: alunosError } = await alunosQuery;
             if (alunosError) throw alunosError;
 
-            // 2. Fetch real professionals from the platform
+
             let profsQuery = supabase
                 .from('Professores')
                 .select('Professor_ID, Nome, Categoria, Especialidade');
@@ -84,7 +84,7 @@ export const ReportsView = () => {
             const { data: professores, error: profsError } = await profsQuery;
             if (profsError) throw profsError;
 
-            // 3. Fetch agenda events (appointments) within the date range
+
             let agendaQuery = supabase
                 .from('Agenda')
                 .select('Evento_ID, Titulo, Data, Horario, Professor_ID, Aluno_ID, Status, Tipo_Evento')
@@ -94,7 +94,7 @@ export const ReportsView = () => {
             const { data: agendaEvents, error: agendaError } = await agendaQuery;
             if (agendaError) throw agendaError;
 
-            // 4. Fetch acompanhamentos (follow-ups) within the date range
+
             let acompQuery = supabase
                 .from('Acompanhamentos')
                 .select('Acompanhamento_ID, Aluno_ID, Data, Atividade, Status');
@@ -102,7 +102,7 @@ export const ReportsView = () => {
             const { data: acompanhamentos, error: acompError } = await acompQuery;
             if (acompError) throw acompError;
 
-            // 5. Fetch Aulas (lessons) within the date range
+
             const { data: aulas, error: aulasError } = await supabase
                 .from('Aulas')
                 .select(`
@@ -120,13 +120,13 @@ export const ReportsView = () => {
                 .lte('Data_hora_inicio', `${endDate}T23:59:59`);
             if (aulasError) throw aulasError;
 
-            // Build professional stats map
+
             const profsMap: Record<string, { name: string; services: number; hours: number }> = {};
             const studentsMap: Record<string, { name: string; services: number; hours: number }> = {};
             let totalHours = 0;
             let totalServices = 0;
 
-            // Initialize all professionals in the map
+
             (professores || []).forEach(prof => {
                 const profId = prof.Professor_ID.toString();
                 if (!profsMap[profId]) {
@@ -134,7 +134,7 @@ export const ReportsView = () => {
                 }
             });
 
-            // Initialize all students in the map
+
             (alunos || []).forEach(aluno => {
                 const studentId = aluno.Aluno_ID.toString();
                 if (!studentsMap[studentId]) {
@@ -142,13 +142,13 @@ export const ReportsView = () => {
                 }
             });
 
-            // Count agenda events as services
+
             (agendaEvents || []).forEach(event => {
                 totalServices++;
                 const profId = event.Professor_ID?.toString();
                 if (profId && profsMap[profId]) {
                     profsMap[profId].services++;
-                    profsMap[profId].hours += 1; // Default 1h per appointment
+                    profsMap[profId].hours += 1; 
                     totalHours += 1;
                 }
                 const studentId = event.Aluno_ID?.toString();
@@ -158,7 +158,7 @@ export const ReportsView = () => {
                 }
             });
 
-            // Count acompanhamentos as services
+
             (acompanhamentos || []).forEach(acomp => {
                 totalServices++;
                 const studentId = acomp.Aluno_ID?.toString();
@@ -167,7 +167,7 @@ export const ReportsView = () => {
                 }
             });
 
-            // Count Aulas (lessons) with actual duration
+
             (aulas || []).forEach(aula => {
                 const start = new Date(aula.Data_hora_inicio);
                 const end = new Date(aula.Data_hora_fim);
@@ -219,7 +219,7 @@ export const ReportsView = () => {
             const student = students.find(s => s.Aluno_ID.toString() === selectedStudentId);
             setSelectedStudent(student);
 
-            // Fetch Attendance
+
             const { data: aulas, error } = await supabase
                 .from('Aulas_Alunos')
                 .select(`
@@ -245,7 +245,7 @@ export const ReportsView = () => {
                 rate: parseFloat(rate.toFixed(1))
             });
 
-            // Fetch Evolution Data from PEIs
+
             const { data: peisData, error: peisError } = await supabase
                 .from('PEIs')
                 .select('*')
@@ -263,11 +263,11 @@ export const ReportsView = () => {
 
             const d = selectedPei?.Dados || {};
 
-            // Mock/Calc evolution from PEI goals
-            const metas = d.metasCurtoPrazo || "Nenhuma observação registrada";
-            const objetivosPti = d.pontosFortes || "Nenhuma observação registrada"; // Using points as a proxy for initial objectives if not explicit
 
-            // For Evolution by Area, we try to split or use a default
+            const metas = d.metasCurtoPrazo || "Nenhuma observação registrada";
+            const objetivosPti = d.pontosFortes || "Nenhuma observação registrada"; 
+
+
             const metasPorArea = d.metasCurtoPrazo ? [{ area: 'Geral', meta: d.metasCurtoPrazo, status: 'Em progresso' }] : [];
 
             setEvolutionData({
@@ -285,7 +285,7 @@ export const ReportsView = () => {
                 ]
             });
 
-            // Fetch Home Activities / Family Notes
+
             const { data: notes, error: notesError } = await supabase
                 .from('Anotacoes')
                 .select('*')
@@ -298,7 +298,7 @@ export const ReportsView = () => {
             if (notesError) throw notesError;
             setHomeActivities(notes || []);
 
-            // Fetch School Notes / Guidance
+
             const { data: sNotes, error: sNotesError } = await supabase
                 .from('Anotacoes')
                 .select('*')
@@ -345,7 +345,7 @@ export const ReportsView = () => {
 
         renderPDFHeader(doc, "RELATÓRIO GERAL DE ATIVIDADES", startDate, endDate);
 
-        // Summary Cards Section - 3 Individual Cards
+
         const cardWidth = 58;
         const cardHeight = 30;
         const startX = 15;
@@ -360,28 +360,28 @@ export const ReportsView = () => {
         cards.forEach((card, i) => {
             const x = startX + (i * (cardWidth + spacing));
 
-            // Card Background
+
             doc.setFillColor(248, 250, 252);
             doc.roundedRect(x, 45, cardWidth, cardHeight, 4, 4, 'F');
 
-            // Accent Line
+
             doc.setFillColor(card.color[0], card.color[1], card.color[2]);
             doc.setDrawColor(card.color[0], card.color[1], card.color[2]);
             doc.rect(x, 45, 1.5, cardHeight, 'F');
 
-            // Label
+
             doc.setFontSize(7);
             doc.setTextColor(100, 116, 139);
             doc.setFont("helvetica", "bold");
             doc.text(card.label, x + 5, 53);
 
-            // Value
+
             doc.setFontSize(14);
             doc.setTextColor(30, 41, 59);
             doc.setFont("helvetica", "bold");
             doc.text(card.value, x + 5, 65);
 
-            // Small icon/mark
+
             doc.setDrawColor(card.color[0], card.color[1], card.color[2]);
             doc.circle(x + cardWidth - 8, 55, 1.5, 'S');
         });
@@ -420,7 +420,7 @@ export const ReportsView = () => {
             body: reportData.studentStats.map(s => [s.name, s.services, `${s.hours.toFixed(1)}h`]),
             theme: 'striped',
             headStyles: {
-                fillColor: [16, 185, 129], // Emerald
+                fillColor: [16, 185, 129], 
                 fontSize: 9,
                 fontStyle: 'bold'
             },
@@ -447,7 +447,7 @@ export const ReportsView = () => {
         if (individualTab === 'attendance') {
             renderPDFHeader(doc, "RELATÓRIO DE ACOMPANHAMENTO", startDate, endDate);
 
-            // Student Info Header Section
+
             doc.setFillColor(studentInfoColor[0], studentInfoColor[1], studentInfoColor[2]);
             doc.roundedRect(15, 45, 180, 25, 4, 4, 'F');
             doc.setDrawColor(37, 99, 235);
@@ -494,7 +494,7 @@ export const ReportsView = () => {
         } else if (individualTab === 'evolution') {
             renderPDFHeader(doc, "RELATÓRIO SEMESTRAL DE EVOLUÇÃO", startDate, endDate);
 
-            // Identification Section
+
             doc.setFillColor(248, 250, 252);
             doc.roundedRect(15, 45, 180, 20, 2, 2, 'F');
             doc.setFontSize(9);
@@ -571,7 +571,7 @@ export const ReportsView = () => {
                     head: [['Data', 'Atividade / Orientação Enviada']],
                     body: homeActivities.map(n => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
                     theme: 'striped',
-                    headStyles: { fillColor: [79, 70, 229] }, // Indigo
+                    headStyles: { fillColor: [79, 70, 229] }, 
                     styles: { fontSize: 8, cellPadding: 5 },
                     columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 } },
                     margin: { left: 15, right: 15 }
@@ -586,10 +586,10 @@ export const ReportsView = () => {
         } else if (individualTab === 'school_guidance') {
             renderPDFHeader(doc, "RELATÓRIO DE INCLUSÃO ESCOLAR", startDate, endDate);
 
-            // School Summary Card
+
             doc.setFillColor(248, 250, 252);
             doc.roundedRect(15, 45, 180, 25, 4, 4, 'F');
-            doc.setDrawColor(16, 185, 129); // Emerald
+            doc.setDrawColor(16, 185, 129); 
             doc.rect(15, 45, 1.5, 25, 'F');
 
             doc.setFontSize(10);
@@ -606,7 +606,7 @@ export const ReportsView = () => {
                     head: [['Data', 'Orientação / Feedback Pedagógico']],
                     body: schoolNotes.map(n => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
                     theme: 'striped',
-                    headStyles: { fillColor: [16, 185, 129] }, // Emerald
+                    headStyles: { fillColor: [16, 185, 129] }, 
                     styles: { fontSize: 8, cellPadding: 5 },
                     columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 } },
                     margin: { left: 15, right: 15 }
@@ -622,18 +622,18 @@ export const ReportsView = () => {
     };
 
     const renderPDFHeader = (doc: jsPDF, title: string, start: string, end: string) => {
-        // Master Header Background
-        doc.setFillColor(30, 41, 59); // Slate 800
+
+        doc.setFillColor(30, 41, 59); 
         doc.rect(0, 0, 210, 38, 'F');
 
-        // Accent bar
-        doc.setFillColor(37, 99, 235); // Primary
+
+        doc.setFillColor(37, 99, 235); 
         doc.rect(0, 38, 210, 1.5, 'F');
 
         try {
             const img = new Image();
             img.src = logoUrl;
-            // Draw a white circle behind the logo for contrast if needed, or just the logo
+
             doc.addImage(img, 'SVG', 15, 8, 48, 20);
         } catch (e) {
             doc.setFontSize(22);
@@ -642,30 +642,30 @@ export const ReportsView = () => {
             doc.text("VINCULO TEA", 15, 22);
         }
 
-        // Title and Date Range Block
+
         doc.setFontSize(12);
         doc.setTextColor(255, 255, 255);
         doc.setFont("helvetica", "bold");
         doc.text(title, 195, 18, { align: "right" });
 
         doc.setFontSize(7);
-        doc.setTextColor(148, 163, 184); // Slate 400
+        doc.setTextColor(148, 163, 184); 
         doc.setFont("helvetica", "normal");
         doc.text(`PERÍODO: ${new Date(start).toLocaleDateString('pt-BR')} — ${new Date(end).toLocaleDateString('pt-BR')}`, 195, 25, { align: "right" });
         doc.text(`EMISSÃO: ${new Date().toLocaleString('pt-BR')}`, 195, 29, { align: "right" });
     };
 
     const renderPDFSection = (doc: jsPDF, title: string, y: number) => {
-        // Modern Section Divider
-        doc.setFillColor(37, 99, 235); // Primary
+
+        doc.setFillColor(37, 99, 235); 
         doc.rect(15, y, 2.5, 6, 'F');
 
         doc.setFontSize(8);
-        doc.setTextColor(100, 116, 139); // Slate 500
+        doc.setTextColor(100, 116, 139); 
         doc.setFont("helvetica", "bold");
         doc.text(title, 21, y + 4.5);
 
-        doc.setDrawColor(241, 245, 249); // Slate 100
+        doc.setDrawColor(241, 245, 249); 
         doc.setLineWidth(0.5);
         doc.line(15, y + 8, 195, y + 8);
     };
@@ -678,7 +678,7 @@ export const ReportsView = () => {
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
 
-            // Subtle footer line
+
             doc.setDrawColor(241, 245, 249);
             doc.line(15, pageHeight - 15, pageWidth - 15, pageHeight - 15);
 
@@ -688,7 +688,7 @@ export const ReportsView = () => {
             doc.text(`Vinculo TEA — Sistema de Gestão Inteligente`, 15, pageHeight - 10);
             doc.text(`Página ${i} de ${pageCount}`, pageWidth - 15, pageHeight - 10, { align: "right" });
 
-            // Confientiality mark
+
             doc.setFontSize(6);
             doc.text("ESTE DOCUMENTO É CONFIDENCIAL E DE USO RESTRITO CLÍNICO.", pageWidth / 2, pageHeight - 7, { align: "center" });
         }

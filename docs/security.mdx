@@ -34,19 +34,35 @@ Toda comunicação entre o navegador do usuário e nossos servidores é feita vi
 
 ---
 
-## Conformidade com a LGPD
+## Auditoria e Logs de Acessos
 
-Estamos alinhados com a Lei Geral de Proteção de Dados (Brasil):
+Para conformidade com a LGPD e rastreabilidade total, o VinculoTEA utiliza um sistema de auditoria de dados:
 
-- Consentimento: O cadastro de alunos é realizado mediante termo de responsabilidade da unidade escolar.
-- Direito de Acesso: Pais e responsáveis podem solicitar, via escola, a exportação de seus dados (PEI em PDF).
-- Exclusão de Dados: Implementamos o "direito ao esquecimento" para exclusão definitiva de registros conforme solicitado por instâncias legais.
-- Finalidade Específica: Os dados são usados exclusivamente para fins pedagógicos e terapêuticos.
+### Estrutura da Tabela de Auditoria
+```sql
+CREATE TABLE public.logs_auditoria (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    usuario_id UUID REFERENCES auth.users(id),
+    plataforma_id UUID,
+    acao TEXT NOT NULL, -- Ex: 'UPDATE_PEI', 'VIEW_PRONTUARIO'
+    tabela TEXT,
+    registro_id TEXT,
+    dados_anteriores JSONB,
+    dados_novos JSONB,
+    ip_address TEXT,
+    user_agent TEXT
+);
+```
 
-## Gestão de Documentos (Storage)
-- Documentos e fotos são armazenados em Buckets Privados.
-- Links de acesso a imagens são gerados com tempo de expiração curto (Signed URLs), impedindo que links vazados sejam acessados após alguns minutos.
+### Auditoria de RLS
+Todas as tabelas críticas possuem filtros rigorosos por `plataforma_id` e `auth.uid()`. Para auditar as permissões:
+1. Verifique se a política `SELECT` exige que `plataforma_id` do registro coincida com o do usuário autenticado.
+2. Utilize o comando `EXPLAIN` para garantir que o PostgreSQL está aplicando o filtro de isolamento antes da execução da query.
+
+## Rollback de Usuários Órfãos
+Em processos de criação de novas contas, utilizamos transações atômicas ou funções PostgreSQL (RPC) que garantem que, se o perfil do usuário não for criado com sucesso, o registro em `auth.users` seja removido automaticamente, evitando inconsistências no banco de dados.
 
 <Info>
-  Em caso de incidente de segurança, o VínculoTEA possui logs de auditoria interna para rastreabilidade de acessos.
+  A auditoria interna é revisada mensalmente para garantir que nenhum acesso indevido ocorra e que a privacidade dos alunos seja mantida em conformidade com as normas vigentes.
 </Info>

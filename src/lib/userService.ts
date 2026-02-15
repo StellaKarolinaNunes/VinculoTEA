@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 
-// Separate client for creating users without logging out the current admin
+
 const authClient = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
         persistSession: false,
@@ -35,7 +35,7 @@ export const userService = {
         const { data, error } = await query.order('Nome', { ascending: true });
 
         if (error) throw error;
-        // Map 'Tipo' to 'Tipo_Acesso' for frontend consistency
+
         return data.map(u => ({
             ...u,
             Tipo_Acesso: u.Tipo
@@ -49,18 +49,18 @@ export const userService = {
 
         const cleanEmail = userData.email.trim().toLowerCase();
 
-        // Email format validation
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(cleanEmail)) {
             throw new Error(`Formato de e-mail inválido. Use o formato: nome@dominio.com`);
         }
 
-        // Validate password
+
         if (!userData.senha || userData.senha.length < 6) {
             throw new Error('A senha deve ter no mínimo 6 caracteres.');
         }
 
-        // VERIFICAÇÃO PRÉVIA: Checar se já existe na tabela Usuarios
+
         const { data: existingUser } = await supabase
             .from('Usuarios')
             .select('Usuario_ID, Nome, Email')
@@ -72,7 +72,7 @@ export const userService = {
         }
 
         try {
-            // ETAPA ZERO: Mapear papel para o padrão do sistema (PascalCase como em criarPrimeiroAdmin.ts)
+
             let mappedRole = 'Profissional';
             const roleInput = userData.role || userData.tipo;
 
@@ -80,8 +80,8 @@ export const userService = {
             else if (roleInput === 'Tutor' || roleInput === 'FAMILIA' || roleInput === 'familia') mappedRole = 'Tutor';
             else mappedRole = 'Profissional';
 
-            // ETAPA 1: Criar o registro na tabela Usuarios PRIMEIRO (Manual First Pattern)
-            // Isso evita dependência de triggers automáticos que podem falhar ao processar metadados
+
+
             console.log(`📝 Criando perfil prévio na tabela Usuarios (Role: ${mappedRole})...`);
             const { data: newUserProfile, error: insertError } = await supabase
                 .from('Usuarios')
@@ -92,7 +92,7 @@ export const userService = {
                     Foto: userData.avatar,
                     Status: 'Ativo',
                     Plataforma_ID: userData.plataforma_id,
-                    auth_uid: null // Será vinculado após o signUp bem-sucedido
+                    auth_uid: null 
                 }])
                 .select()
                 .single();
@@ -104,7 +104,7 @@ export const userService = {
 
             console.log('✅ Perfil prévio criado. Iniciando Auth...');
 
-            // ETAPA 2: Criar conta de autenticação usando client isolado
+
             const { data: authData, error: authError } = await authClient.auth.signUp({
                 email: cleanEmail,
                 password: userData.senha,
@@ -113,7 +113,7 @@ export const userService = {
                         nome: userData.nome,
                         full_name: userData.nome,
                         role: mappedRole
-                        // Nota: plataforma_id removido do metadata para evitar falhas em triggers legados
+
                     }
                 }
             });
@@ -121,7 +121,7 @@ export const userService = {
             if (authError) {
                 console.error('❌ Erro no Supabase Auth:', authError.message);
 
-                // Rollback: Deletar o perfil criado na Etapa 1
+
                 console.log('🔄 Executando rollback do perfil...');
                 await supabase.from('Usuarios').delete().eq('Usuario_ID', newUserProfile.Usuario_ID);
 
@@ -133,7 +133,7 @@ export const userService = {
 
             console.log('✅ Conta Auth criada. UID:', authData.user?.id);
 
-            // ETAPA 3: Vincular auth_uid ao perfil e criar vínculos extras
+
             if (authData.user) {
                 console.log('🔗 Vinculando auth_uid ao perfil...');
                 await supabase
@@ -141,7 +141,7 @@ export const userService = {
                     .update({ auth_uid: authData.user.id })
                     .eq('Usuario_ID', newUserProfile.Usuario_ID);
 
-                // Se for profissional, criar vínculo com escola
+
                 if (mappedRole === 'Profissional' && userData.escola_id) {
                     console.log('🏫 Criando vínculo com escola...');
                     await supabase
@@ -157,7 +157,7 @@ export const userService = {
                 }
             }
 
-            // Retornar o usuário final
+
             const { data: finalUser } = await supabase
                 .from('Usuarios')
                 .select('*')
@@ -184,7 +184,7 @@ export const userService = {
 
         if (error) throw error;
 
-        // Update school link if professional
+
         if (updates.role === 'Profissional' && updates.escola_id) {
             await supabase
                 .from('Professores')
@@ -196,7 +196,7 @@ export const userService = {
     },
 
     async delete(id: string) {
-        // 1. Check if user is a teacher
+
         const { data: teacher } = await supabase
             .from('Professores')
             .select('Professor_ID')
@@ -206,22 +206,22 @@ export const userService = {
         if (teacher) {
             const profId = teacher.Professor_ID;
 
-            // 2. Cascade cleanup for teacher dependent data
-            // nullify or delete depending on business importance
+
+
             await supabase.from('Disponibilidade').delete().eq('Professor_ID', profId);
             await supabase.from('Turmas').update({ Professor_ID: null }).eq('Professor_ID', profId);
             await supabase.from('Aulas').update({ Professor_ID: null }).eq('Professor_ID', profId);
             await supabase.from('Relatorios_PEI').update({ Professor_ID: null }).eq('Professor_ID', profId);
             await supabase.from('Avaliacoes').update({ Professor_ID: null }).eq('Professor_ID', profId);
 
-            // 3. Delete from Professors table
+
             await supabase.from('Professores').delete().eq('Professor_ID', profId);
         }
 
-        // 4. Cleanup User level data
+
         await supabase.from('Anotacoes').delete().eq('Usuario_ID', id);
 
-        // 5. Finally delete from Usuarios
+
         const { error } = await supabase
             .from('Usuarios')
             .delete()
