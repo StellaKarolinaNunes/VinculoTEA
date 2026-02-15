@@ -393,7 +393,7 @@ export const HelpCenter: React.FC = () => {
                             <h3 className="text-xl font-black mb-2 leading-tight text-white">Siga-nos no Instagram</h3>
                             <p className="text-white/70 text-sm font-medium mb-6 leading-relaxed">Fique por dentro das novidades e confira dicas rápidas de como usar o VínculoTEA diariamente.</p>
                             <a
-                                href="https://www.instagram.com/edututor.pei/"
+                                href="https://www.instagram.com/vinculotea/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="block w-full py-3 bg-white text-pink-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:shadow-lg hover:scale-[1.02] transition-all text-center"

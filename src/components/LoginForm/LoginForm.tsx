@@ -51,7 +51,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
           } else {
             // E-mail NÃO cadastrado no sistema
             console.log('❌ E-mail NÃO encontrado na tabela Usuarios');
-            setError('Esta conta não existe em nosso sistema. Entre em contato para solicitar uma demonstração: instagram.com/edututorpei');
+            setError('Esta conta não existe em nosso sistema. Entre em contato para solicitar uma demonstração: instagram.com/vinculotea');
           }
         } else {
           setError(authError.message);
@@ -77,7 +77,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
           // Fazer logout imediatamente para segurança
           await supabase.auth.signOut();
 
-          setError('⚠️ Conta não configurada corretamente. Entre em contato com o suporte para solicitar acesso: instagram.com/edututorpei');
+          setError('⚠️ Conta não configurada corretamente. Entre em contato com o suporte para solicitar acesso: instagram.com/vinculotea');
           return;
         }
 

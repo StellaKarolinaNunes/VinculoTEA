@@ -48,7 +48,7 @@ const App: React.FC = () => {
         <div className="flex flex-col items-center gap-4">
           <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <span className="font-black text-primary text-[10px] uppercase tracking-widest">
-            Carregando Vinculo PEI...
+            Carregando VínculoTEA...
           </span>
         </div>
       </div>
@@ -99,7 +99,7 @@ const App: React.FC = () => {
           <div className="text-center mt-6">
             <p className="text-slate-400 text-xs font-semibold">
               Ainda não faz parte?{' '}
-              <a href="https://instagram.com/edututorpei" className="text-primary font-black underline underline-offset-4">
+              <a href="https://instagram.com/vinculotea" className="text-primary font-black underline underline-offset-4">
                 solicite uma demonstração
               </a>
             </p>
@@ -109,7 +109,7 @@ const App: React.FC = () => {
         {/* Footer fixado no final mas sem ocupar muito espaço */}
         <footer className="mt-auto pt-6 text-center">
           <p className="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em]">
-            © 2026 Vinculo PEI
+            © 2026 VínculoTEA
           </p>
 
         </footer>

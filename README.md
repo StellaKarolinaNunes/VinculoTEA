@@ -177,9 +177,8 @@ Plataformas ──┬── Escolas ──┬── Turmas
 ### Passo a Passo
 
 ```bash
-# 1. Clonar o repositório
-git clone https://github.com/StellaKarolinaNunes/Edututor_Pei_2.0.git
-cd Edututor_Pei_2.0
+git clone https://github.com/StellaKarolinaNunes/VinculoTEA.git
+cd VinculoTEA
 
 # 2. Instalar dependências
 npm install
