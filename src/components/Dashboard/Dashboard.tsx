@@ -4,13 +4,15 @@ import {
   Calendar, Bell, Search, Settings, CheckCircle2,
   ChevronRight, TrendingUp, Menu, X, Filter,
   ArrowUpRight, Clock, MessageSquare, Briefcase,
-  ChevronLeft, ClipboardList, Lightbulb, Target
+  ChevronLeft, ClipboardList, Lightbulb, Target,
+  Sun, Moon
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/useAuth';
 import { cleanOrphanAuthUsers, checkEmailConflict } from '@/lib/cleanOrphanUsers';
 import '@/lib/criarPrimeiroAdmin'; // Carrega ferramentas de diagnóstico
 import logotipoHorizontal from '@/assets/images/logotipo_Horizontal.svg';
+import darkLogo from '@/assets/images/dark.svg';
 import { StudentsView } from './Students/StudentsView';
 import { ManagementView } from './Management/ManagementView';
 import { DisciplineView } from './Discipline/DisciplineView';
@@ -39,6 +41,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
+  });
+
   const [notifications, setNotifications] = useState<any[]>([
     { id: 1, title: 'Novo PEI criado', description: 'Arthur Silva agora tem um PEI.', time: '10 min atrás' },
     { id: 2, title: 'Atendimento agendado', description: 'Beatriz Costa às 16:30.', time: '1 hora atrás' },
@@ -165,6 +171,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   }, []);
 
   useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -266,6 +282,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                 </div>
 
                 <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 hidden lg:block"></div>
+
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-primary transition-all shadow-sm"
+                  title={isDarkMode ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
+                >
+                  {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
 
                 <div className="relative">
                   <button
@@ -447,7 +471,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       {/* Mobile Header Refinado */}
       <div className={styles.mobileHeader}>
         <div className="flex items-center gap-3">
-          <img src={logotipoHorizontal} alt="Logo" className="h-12 sm:h-14 w-auto object-contain" />
+          <img src={isDarkMode ? darkLogo : logotipoHorizontal} alt="Logo" className="h-12 sm:h-14 w-auto object-contain" />
         </div>
         <button
           onClick={() => setSidebarOpen(true)}
@@ -470,7 +494,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             {/* Header Sidebar */}
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-3">
-                <img src={logotipoHorizontal} alt="Logo" className="h-20 w-auto object-contain" />
+                <img src={isDarkMode ? darkLogo : logotipoHorizontal} alt="Logo" className="h-20 w-auto object-contain" />
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
