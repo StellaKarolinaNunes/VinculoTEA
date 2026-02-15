@@ -26,5 +26,5 @@ while true; do
   fi
   
   # Aguarda 1 minuto
-  sleep 60
+  sleep 180
 done
