@@ -1,13 +1,30 @@
-# autosync.sh
+#!/bin/bash
+
+# Script de Sincronização Automática com Vercel (via GitHub)
+# Intervalo: 60 segundos
+# 
+# AVISO: A Vercel cancela builds anteriores se um novo chegar antes do fim.
+# Se continuar vendo "Canceled", aumente o sleep para 180 (3 minutos).
+
+echo "🔄 Iniciando Auto-Sync a cada 60 segundos..."
+
 while true; do
+  # Sincroniza arquivos
   git add .
-  # Só faz o commit se houver mudanças
+  
+  # Verifica se tem mudanças
   if ! git diff-index --quiet HEAD; then
-    git commit -m "auto-sync: $(date)"
+    TIMESTAMP=$(date "+%H:%M:%S")
+    echo "[$TIMESTAMP] 📦 Mudanças detectadas! Commitando..."
+    
+    git commit -m "auto-deploy: $TIMESTAMP"
     git push origin main
-    echo "✅ Código enviado ao GitHub e Vercel às $(date)"
+    
+    echo "[$TIMESTAMP] ✅ Enviado para GitHub! O deploy na Vercel deve iniciar."
   else
-    echo "⟳ Nenhuma mudança detectada. Aguardando..."
+    echo "😴 Nenhuma alteração detectada."
   fi
+  
+  # Aguarda 1 minuto
   sleep 60
 done

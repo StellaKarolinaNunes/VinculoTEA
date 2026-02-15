@@ -212,6 +212,37 @@ O sistema estará disponível em **http://localhost:5173**
 | `npm run dev` | Inicia o servidor de desenvolvimento com HMR |
 | `npm run build` | Compila TypeScript e gera o bundle de produção |
 | `npm run preview` | Pré-visualiza o build de produção localmente |
+| `cd docs && npx mintlify dev` | Inicia o servidor de documentação localmente |
+
+---
+
+## Documentação
+
+A documentação do projeto é construída com [Mintlify](https://mintlify.com) para proporcionar uma experiência de leitura premium e moderna.
+
+### Pré-requisitos
+
+- **Node.js**: Versão 18.0 ou superior.
+- **Mintlify CLI**: (Opcional) Pode ser instalado globalmente via `npm install -g mintlify`.
+
+### Passo a Passo
+
+1. **Acessar o diretório de documentação**:
+   A configuração (`docs.json`) e o conteúdo da documentação residem na pasta `docs/`.
+   ```bash
+   cd docs
+   ```
+
+2. **Iniciar o servidor local**:
+   Execute o comando abaixo para iniciar o ambiente de desenvolvimento:
+   ```bash
+   npx mintlify dev
+   ```
+
+3. **Visualizar**:
+   A documentação estará disponível em: **http://localhost:3000**
+
+O Mintlify monitora alterações nos arquivos `.mdx` e na configuração `docs.json`, atualizando o navegador automaticamente (Hot Reload).
 
 ---
 

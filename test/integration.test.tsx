@@ -94,7 +94,7 @@ describe('VínculoTEAFull Integration Tests', () => {
             });
 
             // Click "Ver"
-            fireEvent.click(screen.getByText(/Ver/i));
+            fireEvent.click(screen.getByRole('button', { name: /^Ver$/i }));
             expect(screen.getByText(/PEI COMPLETO/i)).toBeInTheDocument();
         });
     });
