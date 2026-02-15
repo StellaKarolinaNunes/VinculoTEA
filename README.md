@@ -5,7 +5,8 @@
 <h3 align="center">Sistema de Gestão Multidisciplinar para Educação Inclusiva</h3>
 
 <p align="center">
-  <strong>Centralizando o acompanhamento pedagógico e clínico de alunos com TEA</strong>
+  <strong>Interface Premium Light Mode focada no bem-estar e acessibilidade</strong><br>
+  Centralizando o acompanhamento pedagógico e clínico de alunos com TEA
 </p>
 
 <p align="center">
@@ -40,8 +41,8 @@ O acompanhamento pedagógico de alunos com TEA é frequentemente realizado de fo
 | **PEI Automatizado** | Criação assistida com wizard de múltiplas etapas e validação integrada |
 | **Central de Relatórios** | Dashboards com estatísticas em tempo real por aluno, profissional e escola |
 | **Agenda Integrada** | Agendamento e acompanhamento de atendimentos multidisciplinares |
-| **Gestão Administrativa** | Gerenciamento de escolas, turmas, professores e profissionais de saúde |
-| **Controle de Acesso** | Permissões granulares por papel (Administrador, Profissional, Tutor, Família) |
+| **Gestão Administrativa** | Gerenciamento completo de escolas, turmas e profissionais |
+| **Controle de Acesso** | RBAC granular com isolamento total via Plataforma_ID (Multi-tenancy) |
 
 ---
 
@@ -53,11 +54,12 @@ O acompanhamento pedagógico de alunos com TEA é frequentemente realizado de fo
 - Upload de foto e documentação
 - Histórico de PEIs e acompanhamentos
 
-### Plano Educacional Individualizado (PEI)
-- Wizard guiado com validação em cada etapa
-- Definição de metas de curto e longo prazo
-- Registro de pontos fortes, barreiras e estratégias
-- Exportação em PDF com formatação profissional
+### Gestão de Alunos & PEI
+- **Student Registration Wizard**: Processo guiado de múltiplas etapas para novos cadastros (Dados, Família, Escola/Saúde).
+- **Wizard de PEI**: Elaboração assistida do Plano Educacional Individualizado com validação em tempo real.
+- Definição de metas de curto e longo prazo com indicadores de progresso.
+- Registro de pontos fortes, barreiras e estratégias personalizadas.
+- Exportação em PDF com formatação profissional e cabeçalho institucional.
 
 ### Central de Relatórios
 - **Relatório Geral**: Visão consolidada com total de alunos, atendimentos e horas
@@ -69,7 +71,8 @@ O acompanhamento pedagógico de alunos com TEA é frequentemente realizado de fo
 - Cadastro e gerenciamento de escolas da rede
 - Gestão de turmas com turno e ano letivo
 - Cadastro de professores e profissionais de saúde
-- Gestão de disciplinas e especialidades
+- Gestão dinâmica de disciplinas e especialidades com controle de acesso
+- Dashboard administrativo com indicadores de rede
 
 ### Agenda de Atendimentos
 - Calendário visual com navegação por mês
@@ -98,8 +101,9 @@ A arquitetura foi projetada com foco em **segurança**, **performance** e **esca
 | **Banco de Dados** | PostgreSQL | 17 | Banco relacional com RLS e triggers |
 | **Animações** | Framer Motion | 12.x | Micro-animações e transições fluidas |
 | **Ícones** | Lucide React | 0.284 | Sistema de ícones consistente |
-| **PDF** | jsPDF + AutoTable | 4.1 | Geração de relatórios em PDF |
-| **Testes** | Vitest + Testing Library | 4.0 | Testes unitários e de integração |
+| **PDF** | jsPDF + AutoTable | 5.0 | Geração de relatórios em PDF |
+| **Testes Unitários** | Vitest + Testing Library | 4.0 | Validação de serviços e componentes |
+| **Testes E2E** | Playwright | 1.58 | Testes de fluxo real do usuário |
 
 ---
 
@@ -210,6 +214,8 @@ O sistema estará disponível em **http://localhost:5173**
 | :--- | :--- |
 | `npm run dev` | Inicia o servidor de desenvolvimento com HMR |
 | `npm run build` | Compila TypeScript e gera o bundle de produção |
+| `npm run test` | Executa a suíte de testes unitários e integração com Vitest |
+| `npx playwright test` | Executa os testes de ponta-a-ponta (E2E) |
 | `npm run preview` | Pré-visualiza o build de produção localmente |
 | `cd docs && npx mintlify dev` | Inicia o servidor de documentação localmente |
 
@@ -247,13 +253,14 @@ O Mintlify monitora alterações nos arquivos `.mdx` e na configuração `docs.j
 
 ## Segurança
 
-### Row Level Security (RLS)
+### Row Level Security (RLS) & Segurança
 
-Todas as tabelas possuem RLS habilitado com políticas que garantem:
+Todas as tabelas possuem RLS habilitado com políticas rigorosas que garantem:
 
-- **Autenticação obrigatória**: Apenas usuários autenticados acessam dados
-- **Isolamento por plataforma**: Cada organização acessa apenas seus próprios dados
-- **Triggers seguros**: Funções com `SECURITY DEFINER` e `search_path` fixo
+- **Autenticação Avançada**: Via Supabase Auth com validação de JWT em cada requisição.
+- **Isolamento por Plataforma**: Cada organização (tenant) acessa apenas seus próprios dados através do filtro obrigatório `Plataforma_ID`.
+- **Triggers de Auditoria**: Funções automáticas para manutenção de integridade e vinculação de perfis.
+- **Security Definer**: Funções de banco protegidas com `search_path` fixo para prevenir ataques de injeção de schema.
 
 ### Multi-Tenancy
 
