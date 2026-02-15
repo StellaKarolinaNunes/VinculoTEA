@@ -132,3 +132,91 @@ body {
     border-radius: 8px !important;
   }
 }
+
+/* ==========================================================================
+   ACESSIBILIDADE E INCLUSÃO (CORE FUNCTIONS)
+   ========================================================================== */
+
+/* 1. MODO AUTISMO (TEA) - Baixa estimulação visual */
+.acc-autismo {
+  --primary: #5c7cfa; /* Azul mais suave */
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+}
+.acc-autismo * {
+  transition-duration: 0.8s !important; /* Animações muito lentas e suaves */
+  letter-spacing: 0.02em !important;
+}
+.acc-autismo img, .acc-autismo svg {
+  filter: saturate(0.7); /* Cores menos vibrantes */
+}
+.acc-autismo .animate-pulse, .acc-autismo .animate-bounce {
+  animation: none !important; /* Remove movimentos repetitivos bruscos */
+}
+
+/* 2. MODO CEGO / BAIXA VISÃO - Legibilidade e Destaque */
+.acc-cego {
+  font-size: 110%; /* Aumenta tamanho base */
+}
+.acc-cego *:focus {
+  outline: 4px solid #ef4444 !important; /* Vermelho vibrante no foco */
+  outline-offset: 4px !important;
+}
+.acc-cego img {
+  filter: contrast(1.2);
+}
+
+/* 3. MODO SURDO / AUDITIVO - Reforço Visual */
+.acc-surdo .notification-ring, .acc-auditivo .notification-ring {
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5) !important;
+  animation: pulse-border 2s infinite !important;
+}
+@keyframes pulse-border {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* 4. MODO TDAH - Foco e Ordem */
+.acc-tdah * {
+  animation: none !important;
+  transition: none !important; /* UI Estática para evitar distração */
+}
+.acc-tdah .bg-slate-50, .acc-tdah .bg-white {
+  border: 1px solid #cbd5e1 !important; /* Bordas bem definidas */
+}
+.acc-tdah main {
+  filter: grayscale(0.1);
+}
+/* Esconder elementos puramente decorativos se houver classe .decorative */
+.acc-tdah .decorative {
+  display: none !important;
+}
+
+/* 5. ALTO CONTRASTE */
+.acc-contraste {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+.acc-contraste :not(input):not(button):not(a) {
+  background-color: transparent !important;
+  border-color: #ffffff !important;
+}
+.acc-contraste .bg-white, .acc-contraste .bg-slate-800, .acc-contraste .bg-slate-50 {
+  background-color: #000000 !important;
+  border: 2px solid #ffff00 !important; /* Bordas amarelas */
+}
+.acc-contraste p, .acc-contraste h1, .acc-contraste h2, .acc-contraste h3, .acc-contraste span {
+  color: #ffff00 !important; /* Texto amarelo no preto */
+}
+.acc-contraste .text-primary, .acc-contraste .text-slate-500, .acc-contraste .text-slate-900 {
+  color: #ffffff !important;
+}
+.acc-contraste button:not(.bg-primary) {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+.acc-contraste .bg-primary {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
