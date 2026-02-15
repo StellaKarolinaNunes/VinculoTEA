@@ -23,11 +23,16 @@ export interface UserProfile {
 }
 
 export const userService = {
-    async getAll() {
-        const { data, error } = await supabase
+    async getAll(plataforma_id?: number) {
+        let query = supabase
             .from('Usuarios')
-            .select('*')
-            .order('Nome', { ascending: true });
+            .select('*');
+
+        if (plataforma_id) {
+            query = query.eq('Plataforma_ID', plataforma_id);
+        }
+
+        const { data, error } = await query.order('Nome', { ascending: true });
 
         if (error) throw error;
         // Map 'Tipo' to 'Tipo_Acesso' for frontend consistency
@@ -44,12 +49,10 @@ export const userService = {
 
         const cleanEmail = userData.email.trim().toLowerCase();
 
-        console.log('📧 Tentando criar usuário com e-mail:', cleanEmail);
-
         // Email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(cleanEmail)) {
-            throw new Error(`Formato de e-mail inválido: "${cleanEmail}". Use o formato: nome@dominio.com`);
+            throw new Error(`Formato de e-mail inválido. Use o formato: nome@dominio.com`);
         }
 
         // Validate password
@@ -57,10 +60,7 @@ export const userService = {
             throw new Error('A senha deve ter no mínimo 6 caracteres.');
         }
 
-        console.log('✅ E-mail validado localmente.');
-
         // VERIFICAÇÃO PRÉVIA: Checar se já existe na tabela Usuarios
-        console.log('🔍 Verificando se e-mail já está cadastrado...');
         const { data: existingUser } = await supabase
             .from('Usuarios')
             .select('Usuario_ID, Nome, Email')
@@ -68,11 +68,8 @@ export const userService = {
             .maybeSingle();
 
         if (existingUser) {
-            console.log('❌ E-mail já cadastrado:', existingUser);
             throw new Error(`Este e-mail já está cadastrado para o usuário: ${existingUser.Nome}`);
         }
-
-        console.log('✅ E-mail disponível. Prosseguindo com cadastro...');
 
         try {
             // ETAPA ZERO: Mapear papel para o padrão do sistema (PascalCase como em criarPrimeiroAdmin.ts)

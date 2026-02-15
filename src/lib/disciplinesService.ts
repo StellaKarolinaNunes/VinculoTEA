@@ -5,13 +5,17 @@ export interface Discipline {
     nome: string;
     descricao?: string;
     status: string;
+    professores?: string[]; // IDs of linked teachers
 }
 
 export const disciplinesService = {
     async getAll(plataforma_id?: number) {
         let query = supabase
             .from('Disciplinas')
-            .select('*');
+            .select(`
+                *,
+                Professores_Disciplinas (Professor_ID)
+            `);
 
         if (plataforma_id) {
             query = query.eq('Plataforma_ID', plataforma_id);
@@ -24,11 +28,12 @@ export const disciplinesService = {
             id: d.Disciplina_ID.toString(),
             nome: d.Nome,
             descricao: d.Descricao,
-            status: d.Status
+            status: d.Status,
+            professores: d.Professores_Disciplinas?.map((pd: any) => pd.Professor_ID.toString()) || []
         }));
     },
 
-    async create(discipline: { nome: string; descricao?: string; plataforma_id?: number }) {
+    async create(discipline: { nome: string; descricao?: string; plataforma_id?: number; professores?: string[] }) {
         const { data, error } = await supabase
             .from('Disciplinas')
             .insert([{
@@ -40,10 +45,24 @@ export const disciplinesService = {
             .select();
 
         if (error) throw error;
-        return data[0];
+        const newDiscipline = data[0];
+
+        // Save teacher relationships if provided
+        if (discipline.professores && discipline.professores.length > 0) {
+            const relationships = discipline.professores.map(pId => ({
+                Professor_ID: parseInt(pId),
+                Disciplina_ID: newDiscipline.Disciplina_ID
+            }));
+            const { error: relError } = await supabase
+                .from('Professores_Disciplinas')
+                .insert(relationships);
+            if (relError) console.error('Erro ao salvar vínculos de professores:', relError);
+        }
+
+        return newDiscipline;
     },
 
-    async update(id: string, discipline: { nome: string; descricao?: string; status?: string; plataforma_id?: number }) {
+    async update(id: string, discipline: { nome: string; descricao?: string; status?: string; plataforma_id?: number; professores?: string[] }) {
         const { data, error } = await supabase
             .from('Disciplinas')
             .update({
@@ -56,10 +75,43 @@ export const disciplinesService = {
             .select();
 
         if (error) throw error;
+
+        // Update teacher relationships
+        if (discipline.professores) {
+            // First remove existing
+            await supabase
+                .from('Professores_Disciplinas')
+                .delete()
+                .eq('Disciplina_ID', id);
+
+            // Then insert new ones
+            if (discipline.professores.length > 0) {
+                const relationships = discipline.professores.map(pId => ({
+                    Professor_ID: parseInt(pId),
+                    Disciplina_ID: parseInt(id)
+                }));
+                const { error: relError } = await supabase
+                    .from('Professores_Disciplinas')
+                    .insert(relationships);
+                if (relError) console.error('Erro ao atualizar vínculos de professores:', relError);
+            }
+        }
+
         return data[0];
     },
 
     async delete(id: string) {
+        // 1. Clean up dependencies
+        // Clean Professores_Disciplinas (though ON DELETE CASCADE should handle it, we'll be explicit)
+        await supabase.from('Professores_Disciplinas').delete().eq('Disciplina_ID', id);
+
+        // Clean Acompanhamentos
+        await supabase.from('Acompanhamentos').delete().eq('Disciplina_ID', id);
+
+        // Clean Aulas
+        await supabase.from('Aulas').delete().eq('Disciplina_ID', id);
+
+        // 2. Delete the discipline
         const { error } = await supabase
             .from('Disciplinas')
             .delete()
@@ -83,3 +135,4 @@ export const disciplinesService = {
         return count || 0;
     }
 };
+

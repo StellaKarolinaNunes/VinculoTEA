@@ -64,7 +64,7 @@ export const DisciplinesTab = ({ studentId, studentName, studentData }: { studen
                 nome: d.nome,
                 descricao: d.descricao,
                 ativa: d.status === 'Ativo',
-                professores: [] // In a real app, we'd fetch the links, for now empty
+                professores: d.professores || []
             })));
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -94,13 +94,15 @@ export const DisciplinesTab = ({ studentId, studentName, studentData }: { studen
                     nome: form.nome,
                     descricao: form.descricao,
                     status: form.ativa ? 'Ativo' : 'Inativo',
-                    plataforma_id: authUser?.plataforma_id
+                    plataforma_id: authUser?.plataforma_id,
+                    professores: form.professores
                 });
             } else {
                 await disciplinesService.create({
                     nome: form.nome,
                     descricao: form.descricao,
-                    plataforma_id: authUser?.plataforma_id
+                    plataforma_id: authUser?.plataforma_id,
+                    professores: form.professores
                 });
             }
 

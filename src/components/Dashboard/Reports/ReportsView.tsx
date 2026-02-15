@@ -4,7 +4,8 @@ import {
     BarChart3, Clock, UserCheck, Search, Filter, Loader2,
     ArrowUpRight, ListFilter, User, ChevronRight, LayoutDashboard,
     CheckCircle2, XCircle, AlertCircle, Percent, Target, TrendingUp, Info,
-    Heart, ShieldAlert, Activity, School, FileCheck
+    Heart, ShieldAlert, Activity, School, FileCheck,
+    Briefcase
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { studentService } from '@/lib/studentService';
@@ -340,53 +341,96 @@ export const ReportsView = () => {
         if (!reportData) return;
         const doc = new jsPDF();
         const primaryColor: [number, number, number] = [37, 99, 235];
+        const secondaryColor: [number, number, number] = [30, 41, 59];
 
         renderPDFHeader(doc, "RELATÓRIO GERAL DE ATIVIDADES", startDate, endDate);
 
-        // Summary Cards Section
-        doc.setFillColor(248, 250, 252);
-        doc.roundedRect(15, 45, 180, 35, 5, 5, 'F');
-
-        let xPos = 25;
-        const cardWidth = 55;
+        // Summary Cards Section - 3 Individual Cards
+        const cardWidth = 58;
+        const cardHeight = 30;
+        const startX = 15;
+        const spacing = 3;
 
         const cards = [
-            { label: "TOTAL DE ALUNOS", value: reportData.totalStudents.toString() },
-            { label: "TOTAL ATENDIMENTOS", value: reportData.totalServices.toString() },
-            { label: "TOTAL DE HORAS", value: reportData.totalHours.toString() }
+            { label: "TOTAL DE ALUNOS", value: reportData.totalStudents.toString(), color: [37, 99, 235] as [number, number, number] },
+            { label: "ATENDIMENTOS", value: reportData.totalServices.toString(), color: [16, 185, 129] as [number, number, number] },
+            { label: "HORAS CLÍNICAS", value: reportData.totalHours.toString(), color: [249, 115, 22] as [number, number, number] }
         ];
 
         cards.forEach((card, i) => {
-            doc.setFontSize(8);
+            const x = startX + (i * (cardWidth + spacing));
+
+            // Card Background
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(x, 45, cardWidth, cardHeight, 4, 4, 'F');
+
+            // Accent Line
+            doc.setFillColor(card.color[0], card.color[1], card.color[2]);
+            doc.setDrawColor(card.color[0], card.color[1], card.color[2]);
+            doc.rect(x, 45, 1.5, cardHeight, 'F');
+
+            // Label
+            doc.setFontSize(7);
             doc.setTextColor(100, 116, 139);
-            doc.text(card.label, xPos + (cardWidth / 2), 58, { align: "center" });
-            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.text(card.label, x + 5, 53);
+
+            // Value
+            doc.setFontSize(14);
             doc.setTextColor(30, 41, 59);
             doc.setFont("helvetica", "bold");
-            doc.text(card.value, xPos + (cardWidth / 2), 70, { align: "center" });
-            xPos += cardWidth + 5;
+            doc.text(card.value, x + 5, 65);
+
+            // Small icon/mark
+            doc.setDrawColor(card.color[0], card.color[1], card.color[2]);
+            doc.circle(x + cardWidth - 8, 55, 1.5, 'S');
         });
 
-        renderPDFSection(doc, "ESTATÍSTICAS POR PROFISSIONAL", 90);
+        renderPDFSection(doc, "DOCENTES & ESPECIALISTAS", 85);
         autoTable(doc, {
-            startY: 95,
-            head: [['Profissional', 'Atendimentos', 'Horas']],
-            body: reportData.professionalStats.map(p => [p.name, p.services, p.hours.toFixed(2)]),
+            startY: 92,
+            head: [['Profissional', 'Atendimentos', 'Horas Realizadas']],
+            body: reportData.professionalStats.map(p => [p.name, p.services, `${p.hours.toFixed(1)}h`]),
             theme: 'striped',
-            headStyles: { fillColor: primaryColor, fontSize: 10, fontStyle: 'bold' },
-            styles: { fontSize: 9, cellPadding: 5 },
+            headStyles: {
+                fillColor: primaryColor,
+                fontSize: 9,
+                fontStyle: 'bold',
+                halign: 'left'
+            },
+            columnStyles: {
+                0: { cellWidth: 100 },
+                1: { halign: 'center' },
+                2: { halign: 'right' }
+            },
+            styles: {
+                fontSize: 8,
+                cellPadding: 4,
+                textColor: [51, 65, 85]
+            },
+            alternateRowStyles: { fillColor: [249, 250, 251] },
             margin: { left: 15, right: 15 }
         });
 
         const finalY = (doc as any).lastAutoTable.finalY + 15;
-        renderPDFSection(doc, "ESTATÍSTICAS POR ALUNO", finalY);
+        renderPDFSection(doc, "ENGAJAMENTO DE ALUNOS", finalY);
         autoTable(doc, {
-            startY: finalY + 5,
-            head: [['Aluno', 'Atendimentos', 'Horas']],
-            body: reportData.studentStats.map(s => [s.name, s.services, s.hours.toFixed(2)]),
+            startY: finalY + 7,
+            head: [['Aluno', 'Atendimentos', 'Tempo Estimado']],
+            body: reportData.studentStats.map(s => [s.name, s.services, `${s.hours.toFixed(1)}h`]),
             theme: 'striped',
-            headStyles: { fillColor: primaryColor, fontSize: 10, fontStyle: 'bold' },
-            styles: { fontSize: 9, cellPadding: 5 },
+            headStyles: {
+                fillColor: [16, 185, 129], // Emerald
+                fontSize: 9,
+                fontStyle: 'bold'
+            },
+            columnStyles: {
+                0: { cellWidth: 100 },
+                1: { halign: 'center' },
+                2: { halign: 'right' }
+            },
+            styles: { fontSize: 8, cellPadding: 4 },
+            alternateRowStyles: { fillColor: [249, 250, 251] },
             margin: { left: 15, right: 15 }
         });
 
@@ -398,131 +442,178 @@ export const ReportsView = () => {
         if (!selectedStudent) return;
         const doc = new jsPDF();
         const primaryColor: [number, number, number] = [37, 99, 235];
+        const studentInfoColor: [number, number, number] = [248, 250, 252];
 
         if (individualTab === 'attendance') {
             renderPDFHeader(doc, "RELATÓRIO DE ACOMPANHAMENTO", startDate, endDate);
-            renderPDFSection(doc, "IDENTIFICAÇÃO", 50);
 
-            doc.setFontSize(10);
+            // Student Info Header Section
+            doc.setFillColor(studentInfoColor[0], studentInfoColor[1], studentInfoColor[2]);
+            doc.roundedRect(15, 45, 180, 25, 4, 4, 'F');
+            doc.setDrawColor(37, 99, 235);
+            doc.rect(15, 45, 1.5, 25, 'F');
+
+            doc.setFontSize(7);
+            doc.setTextColor(100, 116, 139);
             doc.setFont("helvetica", "bold");
-            doc.text("Paciente:", 15, 65);
-            doc.setFont("helvetica", "normal");
-            doc.text(selectedStudent.Nome, 45, 65);
+            doc.text("PACIENTE", 22, 52);
+            doc.text("DATA DE NASCIMENTO", 140, 52);
 
-            doc.setFont("helvetica", "bold");
-            doc.text("Nascimento:", 15, 72);
-            doc.setFont("helvetica", "normal");
-            doc.text(new Date(selectedStudent.Data_nascimento).toLocaleDateString('pt-BR'), 45, 72);
+            doc.setFontSize(11);
+            doc.setTextColor(15, 23, 42);
+            doc.text(selectedStudent.Nome, 22, 62);
+            doc.text(new Date(selectedStudent.Data_nascimento).toLocaleDateString('pt-BR'), 140, 62);
 
-            renderPDFSection(doc, "ASSIDUIDADE E FALTAS", 85);
+            renderPDFSection(doc, "ASSIDUIDADE E FALTAS", 80);
 
             autoTable(doc, {
-                startY: 90,
+                startY: 88,
                 body: [
                     ['Total de Sessões Agendadas', attendanceData?.totalScheduled || 0],
                     ['Sessões Realizadas / Concluídas', attendanceData?.completed || 0],
-                    ['Faltas Registradas', attendanceData?.missed || 0],
-                    ['Taxa de Aproveitamento', `${attendanceData?.rate || 0}%`]
+                    ['Faltas / Ausências Registradas', attendanceData?.missed || 0],
+                    ['Taxa de Assiduidade no Período', `${attendanceData?.rate || 0}%`]
                 ],
                 theme: 'grid',
-                styles: { fontSize: 10, cellPadding: 6 },
-                columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252] } },
+                styles: { fontSize: 9, cellPadding: 6 },
+                columnStyles: {
+                    0: { fontStyle: 'bold', fillColor: [248, 250, 252], cellWidth: 120 },
+                    1: { halign: 'center', fontStyle: 'bold' }
+                },
                 margin: { left: 15, right: 15 }
             });
+
+            const currentY = (doc as any).lastAutoTable.finalY + 20;
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139);
+            doc.setFont("helvetica", "italic");
+            doc.text("Observação: Este relatório reflete os registros presentes no sistema até a data de emissão.", 15, currentY);
 
             renderPDFFooter(doc);
             doc.save(`Relatorio_Acompanhamento_${selectedStudent.Nome}.pdf`);
         } else if (individualTab === 'evolution') {
             renderPDFHeader(doc, "RELATÓRIO SEMESTRAL DE EVOLUÇÃO", startDate, endDate);
 
-            renderPDFSection(doc, "IDENTIFICAÇÃO E PERÍODO", 50);
-            doc.setFontSize(10);
-            doc.text(`Nome Completo: ${selectedStudent.Nome}`, 15, 65);
-            doc.text(`Data de Nascimento: ${new Date(selectedStudent.Data_nascimento).toLocaleDateString('pt-BR')}`, 15, 72);
+            // Identification Section
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(15, 45, 180, 20, 2, 2, 'F');
+            doc.setFontSize(9);
+            doc.setTextColor(30, 41, 59);
+            doc.setFont("helvetica", "bold");
+            doc.text(`Paciente: ${selectedStudent.Nome}`, 20, 53);
+            doc.text(`ID: ${selectedStudent.Aluno_ID}`, 20, 59);
+            doc.text(`Nasc: ${new Date(selectedStudent.Data_nascimento).toLocaleDateString('pt-BR')}`, 150, 53);
 
-            renderPDFSection(doc, "OBJETIVOS INICIAIS DO PTI", 85);
+            renderPDFSection(doc, "OBJETIVOS INICIAIS DO PTI", 75);
+            doc.setFontSize(9);
+            doc.setTextColor(71, 85, 105);
             doc.setFont("helvetica", "italic");
-            const splitObj = doc.splitTextToSize(evolutionData?.objetivosPti || "Não registrado", 180);
-            doc.text(splitObj, 15, 95);
+            const splitObj = doc.splitTextToSize(evolutionData?.objetivosPti || "Não registrado", 175);
+            doc.text(splitObj, 15, 85);
 
-            renderPDFSection(doc, "EVOLUÇÃO POR ÁREA", 115);
+            renderPDFSection(doc, "EVOLUÇÃO POR ÁREA Terapêutica", 110);
             if (evolutionData?.metasPorArea.length) {
                 autoTable(doc, {
-                    startY: 120,
-                    head: [['Área', 'Meta / Objetivo', 'Status']],
+                    startY: 118,
+                    head: [['Área de Intervenção', 'Meta / Objetivo Trabalhado', 'Status']],
                     body: evolutionData.metasPorArea.map(m => [m.area, m.meta, m.status]),
                     theme: 'striped',
-                    headStyles: { fillColor: primaryColor },
-                    styles: { fontSize: 9 }
+                    headStyles: { fillColor: primaryColor, fontSize: 9 },
+                    styles: { fontSize: 8, cellPadding: 4 },
+                    margin: { left: 15, right: 15 }
                 });
             } else {
-                doc.text("Nenhum registro de evolução encontrado.", 15, 125);
+                doc.setFont("helvetica", "italic");
+                doc.text("Nenhum registro de evolução encontrado no prontuário.", 15, 122);
             }
 
             const currentY = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 15 : 140;
-            renderPDFSection(doc, "RESULTADOS QUANTITATIVOS", currentY);
+            renderPDFSection(doc, "ANÁLISE DE RESULTADOS", currentY);
             autoTable(doc, {
-                startY: currentY + 5,
+                startY: currentY + 7,
                 body: [
-                    ['Total de Metas', evolutionData?.totalMetas],
-                    ['Metas Concluídas', evolutionData?.metasConcluidas],
-                    ['Progresso Médio', `${evolutionData?.progressoMedio}%`]
+                    ['Total de Metas Monitoradas', evolutionData?.totalMetas],
+                    ['Metas Concluídas / Alcançadas', evolutionData?.metasConcluidas],
+                    ['Índice de Progresso Médio', `${evolutionData?.progressoMedio}%`]
                 ],
                 theme: 'grid',
-                columnStyles: { 0: { fontStyle: 'bold' } }
+                styles: { fontSize: 9, cellPadding: 5 },
+                columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252] } },
+                margin: { left: 15, right: 15 }
             });
 
-            const nextY = (doc as any).lastAutoTable.finalY + 15;
+            const nextY = (doc as any).lastAutoTable.finalY + 20;
             renderPDFSection(doc, "PRÓXIMAS METAS E RECOMENDAÇÕES", nextY);
+            doc.setFontSize(9);
+            doc.setTextColor(30, 41, 59);
             doc.setFont("helvetica", "bold");
-            doc.text("Próximo Ciclo:", 15, nextY + 10);
+            doc.text("Plano de Ação para o Próximo Ciclo:", 15, nextY + 12);
+
             doc.setFont("helvetica", "normal");
-            const splitNext = doc.splitTextToSize(evolutionData?.metasProximoSemestre || "", 170);
-            doc.text(splitNext, 15, nextY + 18);
+            doc.setTextColor(71, 85, 105);
+            const splitNext = doc.splitTextToSize(evolutionData?.metasProximoSemestre || "", 175);
+            doc.text(splitNext, 15, nextY + 20);
 
             renderPDFFooter(doc);
             doc.save(`Relatorio_Evolucao_${selectedStudent.Nome}.pdf`);
         } else if (individualTab === 'home_activities') {
             renderPDFHeader(doc, "RELATÓRIO DE ATIVIDADES DOMICILIARES", startDate, endDate);
-            renderPDFSection(doc, "ATIVIDADES E ORIENTAÇÕES", 50);
+
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            doc.text(`Paciente: ${selectedStudent.Nome}`, 15, 48);
+
+            renderPDFSection(doc, "ATIVIDADES E ORIENTAÇÕES À FAMÍLIA", 55);
 
             if (homeActivities.length > 0) {
                 autoTable(doc, {
-                    startY: 55,
+                    startY: 63,
                     head: [['Data', 'Atividade / Orientação Enviada']],
                     body: homeActivities.map(n => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
                     theme: 'striped',
-                    headStyles: { fillColor: primaryColor },
-                    styles: { cellPadding: 5 }
+                    headStyles: { fillColor: [79, 70, 229] }, // Indigo
+                    styles: { fontSize: 8, cellPadding: 5 },
+                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 } },
+                    margin: { left: 15, right: 15 }
                 });
             } else {
                 doc.setFont("helvetica", "italic");
-                doc.text("Nenhuma atividade registrada no período.", 15, 65);
+                doc.text("Nenhuma atividade registrada no período selecionado.", 15, 70);
             }
 
             renderPDFFooter(doc);
             doc.save(`Atividades_Casa_${selectedStudent.Nome}.pdf`);
         } else if (individualTab === 'school_guidance') {
             renderPDFHeader(doc, "RELATÓRIO DE INCLUSÃO ESCOLAR", startDate, endDate);
-            renderPDFSection(doc, "IDENTIFICAÇÃO ESCOLAR", 50);
+
+            // School Summary Card
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(15, 45, 180, 25, 4, 4, 'F');
+            doc.setDrawColor(16, 185, 129); // Emerald
+            doc.rect(15, 45, 1.5, 25, 'F');
 
             doc.setFontSize(10);
-            doc.text(`Paciente: ${selectedStudent.Nome}`, 15, 65);
-            doc.text(`Série: ${selectedStudent.Serie || 'Não informada'}`, 15, 72);
-            doc.text(`Status PTI: ${selectedStudent.Status || 'Ativo'}`, 15, 79);
+            doc.setTextColor(30, 41, 59);
+            doc.setFont("helvetica", "bold");
+            doc.text(`Paciente: ${selectedStudent.Nome}`, 22, 53);
+            doc.text(`Escolaridade: ${selectedStudent.Serie || 'Não informada'}`, 22, 60);
+            doc.text(`Status: ${selectedStudent.Status || 'Ativo'}`, 140, 53);
 
-            renderPDFSection(doc, "ORIENTAÇÕES E SUPORTE", 95);
+            renderPDFSection(doc, "ORIENTAÇÕES E SUPORTE PEDAGÓGICO", 85);
             if (schoolNotes.length > 0) {
                 autoTable(doc, {
-                    startY: 100,
-                    head: [['Data', 'Orientação Pedagógica']],
+                    startY: 93,
+                    head: [['Data', 'Orientação / Feedback Pedagógico']],
                     body: schoolNotes.map(n => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
                     theme: 'striped',
-                    headStyles: { fillColor: primaryColor }
+                    headStyles: { fillColor: [16, 185, 129] }, // Emerald
+                    styles: { fontSize: 8, cellPadding: 5 },
+                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 } },
+                    margin: { left: 15, right: 15 }
                 });
             } else {
                 doc.setFont("helvetica", "italic");
-                doc.text("Nenhuma orientação escolar registrada.", 15, 105);
+                doc.text("Nenhuma orientação escolar registrada no prontuário.", 15, 100);
             }
 
             renderPDFFooter(doc);
@@ -531,59 +622,75 @@ export const ReportsView = () => {
     };
 
     const renderPDFHeader = (doc: jsPDF, title: string, start: string, end: string) => {
-        // Aesthetic Top Header
-        doc.setFillColor(37, 99, 235);
-        doc.rect(0, 0, 210, 2, 'F');
+        // Master Header Background
+        doc.setFillColor(30, 41, 59); // Slate 800
+        doc.rect(0, 0, 210, 38, 'F');
 
-        doc.setFillColor(248, 250, 252);
-        doc.rect(0, 2, 210, 35, 'F');
+        // Accent bar
+        doc.setFillColor(37, 99, 235); // Primary
+        doc.rect(0, 38, 210, 1.5, 'F');
 
         try {
             const img = new Image();
             img.src = logoUrl;
-            doc.addImage(img, 'SVG', 15, 10, 45, 18);
+            // Draw a white circle behind the logo for contrast if needed, or just the logo
+            doc.addImage(img, 'SVG', 15, 8, 48, 20);
         } catch (e) {
-            doc.setFontSize(18);
-            doc.setTextColor(37, 99, 235);
+            doc.setFontSize(22);
+            doc.setTextColor(255, 255, 255);
             doc.setFont("helvetica", "bold");
             doc.text("VINCULO TEA", 15, 22);
         }
 
-        doc.setFontSize(14);
-        doc.setTextColor(30, 41, 59);
+        // Title and Date Range Block
+        doc.setFontSize(12);
+        doc.setTextColor(255, 255, 255);
         doc.setFont("helvetica", "bold");
-        doc.text(title, 200, 22, { align: "right" });
+        doc.text(title, 195, 18, { align: "right" });
 
-        doc.setFontSize(8);
-        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(7);
+        doc.setTextColor(148, 163, 184); // Slate 400
         doc.setFont("helvetica", "normal");
-        doc.text(`EMITIDO EM: ${new Date().toLocaleString('pt-BR')}`, 200, 30, { align: "right" });
-        doc.text(`PERÍODO DE ANÁLISE: ${new Date(start).toLocaleDateString('pt-BR')} A ${new Date(end).toLocaleDateString('pt-BR')}`, 200, 34, { align: "right" });
-
-        // Separator line
-        doc.setDrawColor(226, 232, 240);
-        doc.line(15, 40, 195, 40);
+        doc.text(`PERÍODO: ${new Date(start).toLocaleDateString('pt-BR')} — ${new Date(end).toLocaleDateString('pt-BR')}`, 195, 25, { align: "right" });
+        doc.text(`EMISSÃO: ${new Date().toLocaleString('pt-BR')}`, 195, 29, { align: "right" });
     };
 
     const renderPDFSection = (doc: jsPDF, title: string, y: number) => {
-        doc.setFillColor(37, 99, 235);
-        doc.rect(15, y, 3, 6, 'F');
-        doc.setFontSize(10);
-        doc.setTextColor(30, 41, 59);
+        // Modern Section Divider
+        doc.setFillColor(37, 99, 235); // Primary
+        doc.rect(15, y, 2.5, 6, 'F');
+
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139); // Slate 500
         doc.setFont("helvetica", "bold");
-        doc.text(title, 22, y + 5);
-        doc.setDrawColor(241, 245, 249);
+        doc.text(title, 21, y + 4.5);
+
+        doc.setDrawColor(241, 245, 249); // Slate 100
+        doc.setLineWidth(0.5);
         doc.line(15, y + 8, 195, y + 8);
     };
 
     const renderPDFFooter = (doc: jsPDF) => {
         const pageCount = (doc as any).internal.getNumberOfPages();
-        doc.setFontSize(8);
-        doc.setTextColor(148, 163, 184);
+        const pageWidth = (doc as any).internal.pageSize.width;
+        const pageHeight = (doc as any).internal.pageSize.height;
+
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
-            doc.text(`Vinculo TEA - Sistema de Gestão Terapêutica | Página ${i} de ${pageCount}`, 105, 285, { align: "center" });
-            doc.text("Este documento é confidencial e de uso restrito clínico/paciente.", 105, 290, { align: "center" });
+
+            // Subtle footer line
+            doc.setDrawColor(241, 245, 249);
+            doc.line(15, pageHeight - 15, pageWidth - 15, pageHeight - 15);
+
+            doc.setFontSize(7);
+            doc.setTextColor(148, 163, 184);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Vinculo TEA — Sistema de Gestão Inteligente`, 15, pageHeight - 10);
+            doc.text(`Página ${i} de ${pageCount}`, pageWidth - 15, pageHeight - 10, { align: "right" });
+
+            // Confientiality mark
+            doc.setFontSize(6);
+            doc.text("ESTE DOCUMENTO É CONFIDENCIAL E DE USO RESTRITO CLÍNICO.", pageWidth / 2, pageHeight - 7, { align: "center" });
         }
     };
 
@@ -678,23 +785,46 @@ export const ReportsView = () => {
 const GeneralReportView = ({ reportData }: { reportData: ReportData | null }) => {
     if (!reportData) return <EmptyState />;
     return (
-        <div className="animate-in slide-in-from-bottom duration-500 space-y-8">
+        <div className="animate-in slide-in-from-bottom duration-700 space-y-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <SummaryCard icon={Users} label="Total de Alunos" value={reportData.totalStudents} color="text-blue-500" bg="bg-blue-50" />
-                <SummaryCard icon={UserCheck} label="Total de Atendimentos" value={reportData.totalServices} color="text-emerald-500" bg="bg-emerald-50" />
-                <SummaryCard icon={Clock} label="Total de Horas" value={reportData.totalHours} color="text-orange-500" bg="bg-orange-50" />
+                <SummaryCard
+                    icon={Users}
+                    label="Alunos Ativos"
+                    value={reportData.totalStudents}
+                    color="text-blue-600"
+                    bg="bg-blue-50/50"
+                    gradient="from-blue-500/20 to-transparent"
+                />
+                <SummaryCard
+                    icon={UserCheck}
+                    label="Atendimentos Totais"
+                    value={reportData.totalServices}
+                    color="text-emerald-600"
+                    bg="bg-emerald-50/50"
+                    gradient="from-emerald-500/20 to-transparent"
+                />
+                <SummaryCard
+                    icon={Clock}
+                    label="Horas Clínicas"
+                    value={reportData.totalHours}
+                    color="text-orange-600"
+                    bg="bg-orange-50/50"
+                    gradient="from-orange-500/20 to-transparent"
+                />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <StatsTable
-                    title="Estatísticas por Profissional"
-                    icon={ListFilter}
+                    title="Docentes & Especialistas"
+                    subtitle="Distribuição de produtividade por profissional"
+                    icon={Briefcase}
                     data={reportData.professionalStats}
                     headers={['Profissional', 'Atendimentos', 'Horas']}
                     color="primary"
                 />
                 <StatsTable
-                    title="Estatísticas por Aluno"
+                    title="Engajamento de Alunos"
+                    subtitle="Volume de atendimentos por paciente"
                     icon={Users}
                     data={reportData.studentStats}
                     headers={['Aluno', 'Atendimentos', 'Horas']}
@@ -1192,66 +1322,102 @@ const EmptyState = () => (
     </div>
 );
 
-const SummaryCard = ({ icon: Icon, label, value, color, bg }: any) => (
-    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all group overflow-hidden relative">
-        <div className="flex justify-between items-start mb-6">
-            <div className={`size-14 rounded-2xl ${bg} ${color} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-lg shadow-black/5`}>
-                <Icon size={28} />
+const SummaryCard = ({ icon: Icon, label, value, color, bg, gradient }: any) => (
+    <div className="bg-white dark:bg-slate-800 p-10 rounded-[3.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 group overflow-hidden relative">
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+
+        <div className="flex justify-between items-start mb-10 relative z-10">
+            <div className={`size-16 rounded-[1.75rem] ${bg} ${color} flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg shadow-black/5`}>
+                <Icon size={32} strokeWidth={2.5} />
             </div>
-            <div className="opacity-10 group-hover:opacity-20 transition-opacity">
-                <BarChart3 size={40} />
+            <div className="size-10 rounded-xl bg-slate-50 dark:bg-slate-700/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                <ArrowUpRight size={18} className={color} />
             </div>
         </div>
-        <div>
-            <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">{label}</h3>
-            <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter group-hover:translate-x-1 transition-transform">{value}</p>
+
+        <div className="relative z-10">
+            <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-3">{label}</h3>
+            <div className="flex items-baseline gap-2">
+                <p className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter group-hover:translate-x-1 transition-transform duration-500">{value}</p>
+                <div className="size-2 rounded-full bg-primary animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
         </div>
-        <div className="absolute -right-6 -bottom-6 opacity-[0.02] dark:opacity-[0.05] group-hover:scale-110 transition-transform duration-1000">
-            <Icon size={140} />
+
+        <div className="absolute -right-8 -bottom-8 opacity-[0.03] dark:opacity-[0.07] group-hover:scale-125 transition-transform duration-1000 rotate-12">
+            <Icon size={180} />
         </div>
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+
+        <div className="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center" />
     </div>
 );
 
-const StatsTable = ({ title, icon: Icon, data, headers, color }: any) => {
+const StatsTable = ({ title, subtitle, icon: Icon, data, headers, color }: any) => {
     const accent = color === 'primary' ? 'text-primary' : 'text-emerald-500';
     const accentBg = color === 'primary' ? 'bg-primary/5' : 'bg-emerald-500/5';
+    const accentBorder = color === 'primary' ? 'border-primary/20' : 'border-emerald-500/20';
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
-            <div className={`p-8 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center ${accentBg} dark:bg-slate-900/20`}>
-                <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3">
-                    <Icon size={18} className={accent} />
-                    {title}
-                </h3>
+        <div className="bg-white dark:bg-slate-800 rounded-[3.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/20 dark:shadow-none overflow-hidden flex flex-col group/table">
+            <div className={`p-10 border-b border-slate-50 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 ${accentBg} dark:bg-slate-900/20 relative overflow-hidden`}>
+                <div className="relative z-10">
+                    <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-3">
+                        <div className={`size-10 rounded-2xl ${accentBg} ${accent} border ${accentBorder} flex items-center justify-center shadow-lg shadow-black/5`}>
+                            <Icon size={20} />
+                        </div>
+                        {title}
+                    </h3>
+                    <p className="text-xs font-bold text-slate-400 mt-2 ml-13">{subtitle}</p>
+                </div>
+                <div className="absolute right-0 top-0 p-8 opacity-5 group-hover/table:scale-110 transition-transform duration-1000 italic font-black text-8xl pointer-events-none">
+                    {title.charAt(0)}
+                </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto custom-scrollbar">
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
-                            <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{headers[0]}</th>
-                            <th className="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">{headers[1]}</th>
-                            <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">{headers[2]}</th>
+                        <tr className="bg-white dark:bg-slate-800/50 border-b border-slate-50 dark:border-slate-700">
+                            <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{headers[0]}</th>
+                            <th className="px-10 py-6 text-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{headers[1]}</th>
+                            <th className="px-10 py-6 text-right text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{headers[2]}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50 dark:divide-slate-700/50">
                         {data.map((item: any, i: number) => (
-                            <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group">
-                                <td className="px-8 py-5 text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-3">
-                                    <div className={`size-8 rounded-lg ${accentBg} ${accent} flex items-center justify-center text-[10px] font-black`}>
-                                        {item.name.charAt(0)}
+                            <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-all duration-300 group">
+                                <td className="px-10 py-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`size-11 rounded-[1.25rem] ${accentBg} ${accent} border ${accentBorder} flex items-center justify-center text-xs font-black shadow-inner group-hover:scale-110 transition-transform`}>
+                                            {item.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-800 dark:text-white group-hover:text-primary transition-colors">{item.name}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5">ID: {Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                                        </div>
                                     </div>
-                                    {item.name}
                                 </td>
-                                <td className="px-8 py-5 text-center font-black text-slate-900 dark:text-white text-sm">{item.services}</td>
-                                <td className={`px-8 py-5 text-right font-bold ${accent} text-sm flex items-center justify-end gap-2`}>
-                                    {item.hours.toFixed(1)}h
-                                    <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <td className="px-10 py-6 text-center">
+                                    <span className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-2xl text-sm font-black text-slate-900 dark:text-white shadow-inner">
+                                        {item.services}
+                                    </span>
+                                </td>
+                                <td className="px-10 py-6 text-right">
+                                    <div className="flex flex-col items-end">
+                                        <span className={`text-sm font-black ${accent} flex items-center gap-2 group-hover:translate-x-[-4px] transition-transform`}>
+                                            {item.hours.toFixed(1)}h
+                                            <div className={`size-1.5 rounded-full ${color === 'primary' ? 'bg-primary' : 'bg-emerald-500'} animate-pulse`} />
+                                        </span>
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tempo Total</span>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+            </div>
+            <div className="p-8 bg-slate-50/30 dark:bg-slate-900/10 border-t border-slate-50 dark:border-slate-700 flex justify-center">
+                <button className="text-[10px] font-black text-slate-400 hover:text-primary uppercase tracking-[0.3em] transition-all flex items-center gap-2 group/btn">
+                    Ver Detalhamento Completo <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
             </div>
         </div>
     );

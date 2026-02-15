@@ -23,11 +23,17 @@ const TYPE_MAP: Record<string, string> = {
 };
 
 export const notesService = {
-    async getAllByStudent(studentId: string): Promise<Note[]> {
-        const { data, error } = await supabase
+    async getAllByStudent(studentId: string, plataforma_id?: number): Promise<Note[]> {
+        let query = supabase
             .from('Anotacoes')
-            .select('*')
-            .eq('Aluno_ID', studentId)
+            .select('*, Alunos!inner(Plataforma_ID)')
+            .eq('Aluno_ID', studentId);
+
+        if (plataforma_id) {
+            query = query.eq('Alunos.Plataforma_ID', plataforma_id);
+        }
+
+        const { data, error } = await query
             .order('Data', { ascending: false });
 
         if (error) throw error;

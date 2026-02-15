@@ -58,9 +58,7 @@ export const DisciplineView = () => {
             descricao: disc.descricao || '',
             status: disc.status || 'Ativo'
         });
-        // Note: Linking specific teachers to a discipline would normally require a pivot table in the DB.
-        // For now, we'll continue the automatic specialty link for listing,
-        // but the "creation" UI will show real teachers available on the platform.
+        setSelectedTeachersIds(disc.professores || []);
         setIsCreating(true);
     };
 
@@ -79,11 +77,15 @@ export const DisciplineView = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const dataWithPlatform = { ...formData, plataforma_id: user?.plataforma_id };
+            const dataToSave = {
+                ...formData,
+                plataforma_id: user?.plataforma_id,
+                professores: selectedTeachersIds
+            };
             if (editingDiscipline) {
-                await disciplinesService.update(editingDiscipline.id, dataWithPlatform);
+                await disciplinesService.update(editingDiscipline.id, dataToSave);
             } else {
-                await disciplinesService.create(dataWithPlatform);
+                await disciplinesService.create(dataToSave);
             }
             setIsCreating(false);
             setEditingDiscipline(null);
@@ -104,10 +106,18 @@ export const DisciplineView = () => {
         );
     };
 
-    const getTeachersForDiscipline = (disciplineName: string) => {
+    const getTeachersForDiscipline = (disc: Discipline) => {
+        // First priority: manually linked teachers via ID
+        const linkedByRecord = teachers.filter(t =>
+            disc.professores?.includes(t.Professor_ID?.toString() || t.id)
+        );
+
+        if (linkedByRecord.length > 0) return linkedByRecord;
+
+        // Fallback: automatic specialty link if no manual records exist
         return teachers.filter(t =>
-            t.Especialidade?.toLowerCase().includes(disciplineName.toLowerCase()) ||
-            t.Especialidades?.toLowerCase().includes(disciplineName.toLowerCase())
+            t.Especialidade?.toLowerCase().includes(disc.nome.toLowerCase()) ||
+            t.Especialidades?.toLowerCase().includes(disc.nome.toLowerCase())
         );
     };
 
@@ -280,7 +290,7 @@ export const DisciplineView = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                     {filteredDisciplines.length > 0 ? filteredDisciplines.map((disc) => {
-                        const relatedTeachers = getTeachersForDiscipline(disc.nome);
+                        const relatedTeachers = getTeachersForDiscipline(disc);
                         return (
                             <div key={disc.id} className="group bg-white dark:bg-slate-800 p-10 rounded-[3.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 relative flex flex-col items-center text-center">
                                 <div className={`size-20 rounded-[2rem] ${disc.status === 'Ativo' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-400'} flex items-center justify-center shadow-lg group-hover:rotate-6 transition-all mb-8`}>
@@ -325,7 +335,7 @@ export const DisciplineView = () => {
                                         onClick={() => setShowTeachersModal(disc)}
                                         className="text-[10px] font-black text-slate-400 group-hover:text-primary uppercase tracking-[0.3em] transition-colors flex items-center gap-2"
                                     >
-                                        <Users size={14} /> Gerenciar Docentes
+                                        <Users size={14} /> {disc.professores && disc.professores.length > 0 ? 'Ver Docentes' : 'Gerenciar Docentes'}
                                     </button>
                                 </div>
                             </div>
@@ -354,8 +364,8 @@ export const DisciplineView = () => {
                         </div>
                         <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
                             <div className="space-y-4">
-                                {getTeachersForDiscipline(showTeachersModal.nome).length > 0 ? (
-                                    getTeachersForDiscipline(showTeachersModal.nome).map((teacher, i) => (
+                                {getTeachersForDiscipline(showTeachersModal).length > 0 ? (
+                                    getTeachersForDiscipline(showTeachersModal).map((teacher, i) => (
                                         <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-primary/20 transition-all group">
                                             <div className="flex items-center gap-4">
                                                 <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-xs overflow-hidden">

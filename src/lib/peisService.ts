@@ -9,11 +9,17 @@ export interface PEI {
 }
 
 export const peisService = {
-    async getAllByStudent(studentId: string) {
-        const { data, error } = await supabase
+    async getAllByStudent(studentId: string, plataforma_id?: number) {
+        let query = supabase
             .from('PEIs')
-            .select('*')
-            .eq('Aluno_ID', studentId)
+            .select('*, Alunos!inner(Plataforma_ID)')
+            .eq('Aluno_ID', studentId);
+
+        if (plataforma_id) {
+            query = query.eq('Alunos.Plataforma_ID', plataforma_id);
+        }
+
+        const { data, error } = await query
             .order('Data_Criacao', { ascending: false });
 
         if (error) throw error;

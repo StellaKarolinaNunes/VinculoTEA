@@ -14,15 +14,21 @@ export interface Execution {
 }
 
 export const executionService = {
-    async getAllByStudent(studentId: string) {
-        const { data, error } = await supabase
+    async getAllByStudent(studentId: string, plataforma_id?: number) {
+        let query = supabase
             .from('Acompanhamentos')
             .select(`
                 *,
-                Disciplinas (Nome)
+                Disciplinas (Nome),
+                Alunos!inner(Plataforma_ID)
             `)
-            .eq('Aluno_ID', studentId)
-            .order('Data', { ascending: false });
+            .eq('Aluno_ID', studentId);
+
+        if (plataforma_id) {
+            query = query.eq('Alunos.Plataforma_ID', plataforma_id);
+        }
+
+        const { data, error } = await query.order('Data', { ascending: false });
 
         if (error) throw error;
         return data;
