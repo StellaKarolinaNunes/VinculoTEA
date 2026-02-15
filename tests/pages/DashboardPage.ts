@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 
 export class DashboardPage {
-    constructor(private page: Page) { }
+    constructor(public page: Page) { }
 
     async goToStudents() {
         await this.page.click('role=button[name=/Alunos/i]');
@@ -18,6 +18,10 @@ export class DashboardPage {
     async openSearch() {
         await this.page.keyboard.press('Control+K');
         await expect(this.page.getByTestId('search-input')).toBeVisible();
+    }
+
+    async openGlobalSearch() {
+        return this.openSearch();
     }
 
     async checkNotification() {

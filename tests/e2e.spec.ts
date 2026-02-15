@@ -69,15 +69,15 @@ test.describe('VínculoTEA E2E Robust Suite', () => {
         await expect(page.locator(`text=${longDiagnosis}`)).toBeVisible();
     });
 
-    test('Fluxo Administrativo: Gestão de Professores e Escolas', async () => {
+    test('Fluxo Administrativo: Gestão de Professores e Escolas', async ({ page }) => {
         await dashboard.goToManagement();
         await management.createSchool('Escola E2E Playwright', 'Rua das Flores, 123');
         await management.createTeacher('Professor E2E', 'prof@e2e.com', '12345678900');
 
         // Verification is implicit in POM steps if it doesn't fail, 
         // but it's better to check list
-        await expect(dashboard.page.locator('text=Escola E2E Playwright')).toBeVisible();
-        await expect(dashboard.page.locator('text=Professor E2E')).toBeVisible();
+        await expect(page.locator('text=Escola E2E Playwright')).toBeVisible();
+        await expect(page.locator('text=Professor E2E')).toBeVisible();
     });
 
     test('Segurança & Global Search', async ({ page }) => {
