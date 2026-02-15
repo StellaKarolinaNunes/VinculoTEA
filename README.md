@@ -311,9 +311,17 @@ docker-compose up --build
 
 ---
 
+## Equipe de Desenvolvimento
+
+| [<img src="https://github.com/StellaKarolinaNunes.png" width="100px;" alt="Stella Karolina Nunes"/><br /><sub><b>Stella Karolina</b></sub>](https://github.com/StellaKarolinaNunes) | [<img src="https://github.com/AlineCely.png" width="100px;" alt="Aline Cely"/><br /><sub><b>Aline Cely</b></sub>](https://github.com/AlineCely) | [<img src="https://github.com/Aydeelauanda.png" width="100px;" alt="Aydee Lauanda"/><br /><sub><b>Aydee Lauanda</b></sub>](https://github.com/Aydeelauanda) |
+| :---: | :---: | :---: |
+
+---
+
 ## Licença
 
-Este projeto é proprietário e desenvolvido por **Stella Karolina Nunes**. Todos os direitos reservados.
+Este projeto é proprietário e desenvolvido por **Stella Karolina Nunes; Aline Cely; Aydee Lauanda**. Todos os direitos reservados.
+
 
 ---
 
