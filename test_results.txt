@@ -1,0 +1,413 @@
+
+> vinculotea@1.0.0 test
+> vitest run --no-watch
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90m/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0[39m
+
+ [32m✓[39m test/peis_advanced.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+[90mstdout[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mStudent Management UI[2m > [22m[2mopens the Student Registration Wizard
+[22m[39m🛠️ Ferramenta carregada!
+💡 Para criar o primeiro admin, execute:
+   criarPrimeiroAdmin()
+
+ [32m✓[39m test/studentService.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+TypeError: __vite_ssr_import_3__.supabase.channel is not a function
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:354:8
+    at commitHookEffectListMount (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+    at flushPassiveEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:26808:9
+    at flushActQueue (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react/cjs/react.development.js:2667:24)
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mStudent Management UI[2m > [22m[2mopens the Student Registration Wizard
+[22m[39mThe above error occurred in the <Dashboard> component:
+
+    at Dashboard (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:36:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mStudent Management UI[2m > [22m[2mopens the Student Registration Wizard
+[22m[39mError fetching stats: TypeError: __vite_ssr_import_3__.supabase.from(...).select(...).gte is not a function
+    at fetchStats [90m(/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/[39msrc/components/Dashboard/Dashboard.tsx:113:12[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m
+
+[90mstdout[2m | test/others.test.ts[2m > [22m[2mNotes and User Management Services[2m > [22m[2mUser Service[2m > [22m[2mshould create a user (profile + auth link)
+[22m[39m📝 Criando perfil prévio na tabela Usuarios (Role: Profissional)...
+
+[90mstdout[2m | test/others.test.ts[2m > [22m[2mNotes and User Management Services[2m > [22m[2mUser Service[2m > [22m[2mshould create a user (profile + auth link)
+[22m[39m✅ Perfil prévio criado. Iniciando Auth...
+
+[90mstdout[2m | test/others.test.ts[2m > [22m[2mNotes and User Management Services[2m > [22m[2mUser Service[2m > [22m[2mshould create a user (profile + auth link)
+[22m[39m✅ Conta Auth criada. UID: new-auth-id
+🔗 Vinculando auth_uid ao perfil...
+
+ [32m✓[39m test/others.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+TypeError: __vite_ssr_import_3__.supabase.channel is not a function
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:354:8
+    at commitHookEffectListMount (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+    at flushPassiveEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:26808:9
+    at flushActQueue (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react/cjs/react.development.js:2667:24)
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mManagement & Settings Navigation[2m > [22m[2mnavigates through Management tabs (Schools, Teachers, Classes)
+[22m[39mThe above error occurred in the <Dashboard> component:
+
+    at Dashboard (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:36:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mManagement & Settings Navigation[2m > [22m[2mnavigates through Management tabs (Schools, Teachers, Classes)
+[22m[39mError fetching stats: TypeError: __vite_ssr_import_3__.supabase.from(...).select(...).gte is not a function
+    at fetchStats [90m(/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/[39msrc/components/Dashboard/Dashboard.tsx:113:12[90m)[39m
+
+ [31m❯[39m tests/e2e.spec.ts [2m([22m[2m0 test[22m[2m)[22m
+TypeError: __vite_ssr_import_3__.supabase.channel is not a function
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:354:8
+    at commitHookEffectListMount (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+    at flushPassiveEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:26808:9
+    at flushActQueue (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react/cjs/react.development.js:2667:24)
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mManagement & Settings Navigation[2m > [22m[2mnavigates to Settings and User Management
+[22m[39mThe above error occurred in the <Dashboard> component:
+
+    at Dashboard (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:36:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mManagement & Settings Navigation[2m > [22m[2mnavigates to Settings and User Management
+[22m[39mError fetching stats: TypeError: __vite_ssr_import_3__.supabase.from(...).select(...).gte is not a function
+    at fetchStats [90m(/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/[39msrc/components/Dashboard/Dashboard.tsx:113:12[90m)[39m
+
+TypeError: __vite_ssr_import_3__.supabase.channel is not a function
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:354:8
+    at commitHookEffectListMount (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+    at flushPassiveEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:26808:9
+    at flushActQueue (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react/cjs/react.development.js:2667:24)
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mGlobal Features[2m > [22m[2mtriggers Search Modal with Ctrl+K
+[22m[39mThe above error occurred in the <Dashboard> component:
+
+    at Dashboard (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:36:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mGlobal Features[2m > [22m[2mtriggers Search Modal with Ctrl+K
+[22m[39mError fetching stats: TypeError: __vite_ssr_import_3__.supabase.from(...).select(...).gte is not a function
+    at fetchStats [90m(/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/[39msrc/components/Dashboard/Dashboard.tsx:113:12[90m)[39m
+
+TypeError: __vite_ssr_import_3__.supabase.channel is not a function
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:354:8
+    at commitHookEffectListMount (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+    at flushPassiveEffects (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+    at /home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react-dom/cjs/react-dom.development.js:26808:9
+    at flushActQueue (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/node_modules/react/cjs/react.development.js:2667:24)
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mGlobal Features[2m > [22m[2mshows and hides Notification center
+[22m[39mThe above error occurred in the <Dashboard> component:
+
+    at Dashboard (/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/src/components/Dashboard/Dashboard.tsx:36:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+[90mstderr[2m | test/integration.test.tsx[2m > [22m[2mVínculoTEAFull Integration Tests[2m > [22m[2mGlobal Features[2m > [22m[2mshows and hides Notification center
+[22m[39mError fetching stats: TypeError: __vite_ssr_import_3__.supabase.from(...).select(...).gte is not a function
+    at fetchStats [90m(/home/stella_karolina/Documentos/vinculo/origin/vinculotea-2.0/[39msrc/components/Dashboard/Dashboard.tsx:113:12[90m)[39m
+
+ [31m❯[39m test/integration.test.tsx [2m([22m[2m6 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 7725[2mms[22m[39m
+[31m       [31m×[31m opens the Student Registration Wizard[39m[33m 5248[2mms[22m[39m
+[31m       [31m×[31m renders PEIs and allows opening the wizard[39m[33m 1984[2mms[22m[39m
+[31m       [31m×[31m navigates through Management tabs (Schools, Teachers, Classes)[39m[32m 106[2mms[22m[39m
+[31m       [31m×[31m navigates to Settings and User Management[39m[32m 145[2mms[22m[39m
+[31m       [31m×[31m triggers Search Modal with Ctrl+K[39m[32m 123[2mms[22m[39m
+[31m       [31m×[31m shows and hides Notification center[39m[32m 100[2mms[22m[39m
+ [32m✓[39m test/management.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m test/security.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m test/peisService.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/e2e.spec.ts[2m [ tests/e2e.spec.ts ][22m
+[31m[1mError[22m: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.[39m
+[90m [2m❯[22m TestTypeImpl._currentSuite node_modules/playwright/lib/common/testType.js:[2m75:13[22m[39m
+[90m [2m❯[22m TestTypeImpl._describe node_modules/playwright/lib/common/testType.js:[2m115:24[22m[39m
+[90m [2m❯[22m Function.describe node_modules/playwright/lib/transform/transform.js:[2m282:12[22m[39m
+[36m [2m❯[22m tests/e2e.spec.ts:[2m8:6[22m[39m
+    [90m  6| [39m[35mimport[39m { [33mManagementPage[39m } [35mfrom[39m [32m'./pages/ManagementPage'[39m[33m;[39m
+    [90m  7| [39m
+    [90m  8| [39mtest[33m.[39m[34mdescribe[39m([32m'VínculoTEA E2E Robust Suite'[39m[33m,[39m () [33m=>[39m {
+    [90m   | [39m     [31m^[39m
+    [90m  9| [39m    [35mlet[39m loginPage[33m:[39m [33mLoginPage[39m[33m;[39m
+    [90m 10| [39m    [35mlet[39m dashboard[33m:[39m [33mDashboardPage[39m[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m test/integration.test.tsx[2m > [22mVínculoTEAFull Integration Tests[2m > [22mStudent Management UI[2m > [22mopens the Student Registration Wizard
+[41m[1m FAIL [22m[49m test/integration.test.tsx[2m > [22mVínculoTEAFull Integration Tests[2m > [22mManagement & Settings Navigation[2m > [22mnavigates through Management tabs (Schools, Teachers, Classes)
+[41m[1m FAIL [22m[49m test/integration.test.tsx[2m > [22mVínculoTEAFull Integration Tests[2m > [22mManagement & Settings Navigation[2m > [22mnavigates to Settings and User Management
+[41m[1m FAIL [22m[49m test/integration.test.tsx[2m > [22mVínculoTEAFull Integration Tests[2m > [22mGlobal Features[2m > [22mtriggers Search Modal with Ctrl+K
+[41m[1m FAIL [22m[49m test/integration.test.tsx[2m > [22mVínculoTEAFull Integration Tests[2m > [22mGlobal Features[2m > [22mshows and hides Notification center
+[31m[1mTypeError[22m: __vite_ssr_import_3__.supabase.channel is not a function[39m
+[36m [2m❯[22m src/components/Dashboard/Dashboard.tsx:[2m354:8[22m[39m
+    [90m352| [39m
+    [90m353| [39m    [35mconst[39m peiChannel [33m=[39m supabase
+    [90m354| [39m      [33m.[39m[34mchannel[39m([32m'realtime-peis'[39m)
+    [90m   | [39m       [31m^[39m
+    [90m355| [39m      [33m.[39m[34mon[39m([32m'postgres_changes'[39m[33m,[39m {
+    [90m356| [39m        event[33m:[39m [32m'INSERT'[39m[33m,[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom.development.js:[2m23189:26[22m[39m
+[90m [2m❯[22m commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom.development.js:[2m24970:11[22m[39m
+[90m [2m❯[22m commitPassiveMountEffects_complete node_modules/react-dom/cjs/react-dom.development.js:[2m24930:9[22m[39m
+[90m [2m❯[22m commitPassiveMountEffects_begin node_modules/react-dom/cjs/react-dom.development.js:[2m24917:7[22m[39m
+[90m [2m❯[22m commitPassiveMountEffects node_modules/react-dom/cjs/react-dom.development.js:[2m24905:3[22m[39m
+[90m [2m❯[22m flushPassiveEffectsImpl node_modules/react-dom/cjs/react-dom.development.js:[2m27078:3[22m[39m
+[90m [2m❯[22m flushPassiveEffects node_modules/react-dom/cjs/react-dom.development.js:[2m27023:14[22m[39m
+[90m [2m❯[22m node_modules/react-dom/cjs/react-dom.development.js:[2m26808:9[22m[39m
+[90m [2m❯[22m flushActQueue node_modules/react/cjs/react.development.js:[2m2667:24[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m test/integration.test.tsx[2m > [22mVínculoTEAFull Integration Tests[2m > [22mPEI Operations UI[2m > [22mrenders PEIs and allows opening the wizard
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: /PEI COMPLETO/i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33mclass[39m=[32m"flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/25 hover:scale-[1.05] transition-all"[39m
+[36m>[39m
+  [36m<svg[39m
+    [33mclass[39m=[32m"lucide lucide-plus"[39m
+    [33mfill[39m=[32m"none"[39m
+    [33mheight[39m=[32m"20"[39m
+    [33mstroke[39m=[32m"currentColor"[39m
+    [33mstroke-linecap[39m=[32m"round"[39m
+    [33mstroke-linejoin[39m=[32m"round"[39m
+    [33mstroke-width[39m=[32m"3"[39m
+    [33mviewBox[39m=[32m"0 0 24 24"[39m
+    [33mwidth[39m=[32m"20"[39m
+    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+  [36m>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M5 12h14"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M12 5v14"[39m
+    [36m/>[39m
+  [36m</svg>[39m
+  [0mNovo PEI Completo[0m
+[36m</button>[39m
+
+Ignored nodes: comments, script, style
+[36m<h3[39m
+  [33mclass[39m=[32m"text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic"[39m
+[36m>[39m
+  [0mPEI COMPLETO - [0m
+  [0m2024[0m
+[36m</h3>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"space-y-8 animate-in fade-in duration-500"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"space-y-1"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"text-xl font-black text-slate-800 dark:text-white tracking-tight italic"[39m
+          [36m>[39m
+            [0mHistórico de [0m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-primary italic"[39m
+            [36m>[39m
+              [0mPEIs[0m
+            [36m</span>[39m
+          [36m</h3>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest"[39m
+          [36m>[39m
+            [0mDocumentação pedagógica completa[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/25 hover:scale-[1.05] transition-all"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-plus"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"3"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M5 12h14"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 5v14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mNovo PEI Completo[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-4 gap-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"md:col-span-2 relative"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"11"[39m
+              [33mcy[39m=[32m"11"[39m
+              [33mr[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m21 21-4.3-4.3"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-slate-800 border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm outline-none focus:border-primary/50 transition-all font-bold text-sm dark:text-white"[39m
+            [33mplaceholder[39m=[32m"Pesquisar..."[39m
+            [33mtype[39m=[32m"text"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"w-full px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 border-[1.5px] border-slate-100 dark:border-slate-700 font-black text-[9px] uppercase tracking-widest outline-none shadow-sm cursor-pointer dark:text-white"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mclass[39m=[32m"dark:bg-slate-800"[39m
+            [33mvalue[39m=[32m"Ativo"[39m
+          [36m>[39m
+            [0mApenas Ativos[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mclass[39m=[32m"dark:bg-slate-800"[39m
+            [33mvalue[39m=[32m"Arquivado"[39m
+          [36m>[39m
+            [0mArquivados[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mclass[39m=[32m"dark:bg-slate-800"[39m
+            [33mvalue[39m=[32m"Todos"[39m
+          [36m>[39m
+            [0mTodos[0m
+          [36m</option>[39m
+        [36m</select>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"w-full px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 border-[1.5px] border-slate-100 dark:border-slate-700 font-black text-[9px] uppercase tracking-widest outline-none shadow-sm cursor-pointer"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"recent"[39m
+          [36m>[39m
+            [0mMais Recentes[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"oldest"[39m
+          [36m>[39m
+            [0mMais Antigos[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"group bg-white dark:bg-slate-800 p-1 rounded-[3.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 hover:border-primary/40 transition-all relative flex flex-col h-full shadow-lg shadow-slate-200/50 dark:shadow-none hover:shadow-primary/10"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-slate-50/50 dark:bg-slate-900/50 m-2 p-8 rounded-[3rem] space-y-6 flex-1"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between items-start"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"size-16 rounded-3xl bg-white dark:bg-slate-800 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform bounce-in"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-file-check"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"32"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m test/integration.test.tsx:[2m98:27[22m[39m
+    [90m 96| [39m            [90m// Click "Ver"[39m
+    [90m 97| [39m            fireEvent.click(screen.getByRole('button', { name: /^Ver$/…
+    [90m 98| [39m            expect(screen.getByText(/PEI COMPLETO/i)).toBeInTheDocumen…
+    [90m   | [39m                          [31m^[39m
+    [90m 99| [39m        })[33m;[39m
+    [90m100| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m29 passed[39m[22m[90m (35)[39m
+[2m   Start at [22m 19:17:38
+[2m   Duration [22m 13.54s[2m (transform 3.68s, setup 3.47s, import 941ms, tests 7.86s, environment 15.60s)[22m
+

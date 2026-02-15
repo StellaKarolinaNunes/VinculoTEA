@@ -24,12 +24,13 @@ import { syncOfflineActions } from '@/lib/offlineService';
 import { exportProntuarioPDF } from '@/lib/exportService';
 
 import styles from './Dashboard.module.css';
-import { div, section } from 'framer-motion/client';
+
 
 interface DashboardProps {
   user: {
     id: string;
     email?: string;
+    role?: string;
     user_metadata?: any;
     plataforma_id?: string;
   };

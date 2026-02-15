@@ -15,6 +15,14 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       globals: true,
       environment: 'jsdom',
       setupFiles: './test/setup.ts',
+      exclude: [
+        'node_modules',
+        'dist',
+        '.idea',
+        '.git',
+        '.cache',
+        'tests'
+      ],
       css: true,
     },
   };
