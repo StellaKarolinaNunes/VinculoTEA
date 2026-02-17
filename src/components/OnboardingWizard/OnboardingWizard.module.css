@@ -1,0 +1,280 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    max-width: 560px;
+    border-radius: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header {
+    padding: 2rem 2.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 900;
+    color: var(--primary, #002447);
+    letter-spacing: -0.05em;
+    font-size: 1.25rem;
+}
+
+.skipBtn {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+
+.skipBtn:hover {
+    color: #64748b;
+}
+
+.progressTrack {
+    height: 4px;
+    background: #f1f5f9;
+    margin: 0 2.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: #F97316;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.content {
+    padding: 3rem 2.5rem;
+    text-align: center;
+    flex: 1;
+}
+
+.iconCircle {
+    width: 64px;
+    height: 64px;
+    background: #fff7ed;
+    color: #F97316;
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+}
+
+.description {
+    color: #64748b;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto 2.5rem;
+}
+
+.optionsArea {
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.optionsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+.optionCard {
+    background: #f8fafc;
+    border: 2px solid transparent;
+    padding: 1.5rem 1rem;
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.optionCard span {
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: #334155;
+}
+
+.activeOption {
+    background: white;
+    border-color: #F97316;
+    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.1);
+}
+
+.checkRing {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.2s;
+}
+
+.activeOption .checkRing {
+    background: #F97316;
+    border-color: #F97316;
+}
+
+.togglesList {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.toggleItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: #f8fafc;
+    border-radius: 1.25rem;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+    width: 100%;
+}
+
+.toggleItem span {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #334155;
+}
+
+.activeToggle {
+    background: white;
+    border-color: #F97316;
+}
+
+.switch {
+    width: 44px;
+    height: 24px;
+    background: #e2e8f0;
+    border-radius: 12px;
+    padding: 3px;
+    transition: background 0.3s;
+    position: relative;
+}
+
+.activeToggle .switch {
+    background: #F97316;
+}
+
+.switchKnob {
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.activeToggle .switchKnob {
+    transform: translateX(20px);
+}
+
+.footer {
+    padding: 1.5rem 2.5rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navBtn {
+    display: flex;
+    items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    font-size: 0.875rem;
+    color: #64748b;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    transition: all 0.2s;
+}
+
+.navBtn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.primaryBtn {
+    background: #002447;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1.25rem;
+    font-weight: 900;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s;
+    box-shadow: 0 10px 15px -3px rgba(0, 36, 71, 0.2);
+}
+
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 36, 71, 0.25);
+    background: #001a33;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

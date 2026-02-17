@@ -23,6 +23,9 @@ import { HelpCenter } from './HelpCenter';
 import { syncOfflineActions } from '@/lib/offlineService';
 import { exportProntuarioPDF } from '@/lib/exportService';
 
+import { OnboardingWizard } from '../OnboardingWizard/OnboardingWizard';
+import { useAccessibility } from '@/contexts/AccessibilityContext';
+
 import styles from './Dashboard.module.css';
 
 
@@ -60,6 +63,7 @@ type ViewState = 'dashboard' | 'students' | 'management' | 'discipline' | 'repor
 export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
   const { user: authUser, permissions, loading: authLoading } = useAuth();
+  const { tutorialCompleted } = useAccessibility();
 
   const [activeView, setActiveView] = useState<ViewState>('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -536,7 +540,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               </div>
             </header>
 
-            {}
+            { }
             <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
@@ -569,7 +573,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               )}
             </div>
 
-            {}
+            { }
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-12">
               {stats.map((stat, i) => (
                 <div key={i} className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-black/20 transition-all group overflow-hidden relative">
@@ -592,7 +596,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               ))}
             </div>
 
-            {}
+            { }
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
               <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 shadow-sm border border-slate-100 dark:border-slate-700/50">
                 <div className="flex justify-between items-center mb-8">
@@ -673,7 +677,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                     </div>
                   </div>
                 </div>
-                {}
+                { }
                 <div className="absolute top-0 right-0 -mr-12 -mt-12 size-64 bg-white/5 rounded-full blur-3xl"></div>
               </div>
             </div>
@@ -685,7 +689,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
   return (
     <div className={styles.dashboard}>
-      {}
+      {!tutorialCompleted && <OnboardingWizard />}
+      { }
       <div className={styles.mobileHeader}>
         <div className="flex items-center gap-3">
           <img src={isDarkMode ? darkLogo : logotipoHorizontal} alt="Logo" className="h-12 sm:h-14 w-auto object-contain" />
@@ -698,17 +703,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         </button>
       </div>
 
-      {}
+      { }
       <div
         className={`${styles.overlay} ${isSidebarOpen ? styles.overlayVisible : ''}`}
         onClick={() => setSidebarOpen(false)}
       />
 
-      {}
+      { }
       <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
         <div className="flex flex-col h-full">
           <div className="p-8 pb-4">
-            {}
+            { }
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-3">
                 <img src={isDarkMode ? darkLogo : logotipoHorizontal} alt="Logo" className="h-20 w-auto object-contain" />
@@ -721,7 +726,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               </button>
             </div>
 
-            {}
+            { }
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-2">Navegação</p>
             <nav className="space-y-1">
               {[
@@ -800,7 +805,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         </div>
       </aside>
 
-      {}
+      { }
       <main className={styles.mainContent}>
         {renderContent()}
       </main>

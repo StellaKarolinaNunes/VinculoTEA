@@ -9,14 +9,14 @@ export const SystemTab = () => {
         return localStorage.getItem('sound_notifications') !== 'false';
     });
 
-    
-    const { config, toggleMode } = useAccessibility();
+
+    const { config, toggleMode, setTutorialCompleted } = useAccessibility();
 
     useEffect(() => {
         localStorage.setItem('sound_notifications', notifications.toString());
     }, [notifications]);
 
-    
+
 
     useEffect(() => {
         const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
@@ -103,13 +103,23 @@ export const SystemTab = () => {
                             </p>
                         </div>
 
-                        <button
-                            onClick={() => document.querySelector<HTMLElement>('button[aria-label="Menu de Acessibilidade"]')?.click()}
-                            className="mt-2 px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wide hover:bg-primary-600 transition-colors shadow-lg shadow-primary/20 flex items-center gap-2"
-                        >
-                            <Accessibility size={16} />
-                            Abrir Menu Acessibilidade
-                        </button>
+                        <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+                            <button
+                                onClick={() => document.querySelector<HTMLElement>('button[aria-label="Menu de Acessibilidade"]')?.click()}
+                                className="px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wide hover:bg-primary-600 transition-colors shadow-lg shadow-primary/20 flex items-center gap-2"
+                            >
+                                <Accessibility size={16} />
+                                Abrir Menu Acessibilidade
+                            </button>
+
+                            <button
+                                onClick={() => setTutorialCompleted(false)}
+                                className="px-6 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-[1.5px] border-slate-200 dark:border-slate-700 text-xs font-bold uppercase tracking-wide hover:border-primary/50 hover:text-primary transition-all shadow-sm flex items-center gap-2"
+                            >
+                                <Zap size={16} className="text-orange-500" />
+                                Refazer Guia de Configuração
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>

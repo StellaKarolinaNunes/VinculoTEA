@@ -20,6 +20,10 @@ export interface UserData {
     tipo: 'GESTOR' | 'PROFISSIONAL' | 'FAMILIA';
     status?: string;
     plataforma_id?: number | null;
+    preferencias?: {
+        onboarding_completed: boolean;
+        config: any;
+    };
 }
 
 export const usersService = {
@@ -69,7 +73,7 @@ export const usersService = {
         const { data, error } = await supabase
             .from('Usuarios')
             .insert([{
-                auth_uid: authData.user?.id, 
+                auth_uid: authData.user?.id,
                 Nome: user.nome,
                 Email: user.email,
                 Tipo: user.tipo,
@@ -120,5 +124,35 @@ export const usersService = {
             throw error;
         }
         return true;
+    },
+
+    async updatePreferences(userId: string, prefs: any) {
+        const { data, error } = await supabase
+            .from('Usuarios')
+            .update({
+                preferencias: prefs
+            })
+            .eq('Usuario_ID', userId)
+            .select();
+
+        if (error) {
+            console.error('Erro ao atualizar preferências:', error);
+            throw error;
+        }
+        return data ? data[0] : null;
+    },
+
+    async getPreferences(userId: string) {
+        const { data, error } = await supabase
+            .from('Usuarios')
+            .select('preferencias')
+            .eq('Usuario_ID', userId)
+            .single();
+
+        if (error) {
+            console.error('Erro ao buscar preferências:', error);
+            throw error;
+        }
+        return data?.preferencias;
     }
 };
