@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/images/logotipo_Horizontal.svg" alt="VínculoTEA" width="320" />
+  <img src="src/assets/images/dark.svg" alt="VínculoTEA" width="320" />
 </p>
 
 <h3 align="center">Sistema de Gestão Multidisciplinar para Educação Inclusiva</h3>
