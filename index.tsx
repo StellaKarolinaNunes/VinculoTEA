@@ -4,8 +4,8 @@ import App from './App'
 import "./styles/globals.css";
 import "./styles/App.module.css";
 import { SpeedInsights } from "@vercel/speed-insights/react"
-
-
+import { AccessibilityProvider } from './src/contexts/AccessibilityContext';
+import { AccessibilityMenu } from './src/components/AccessibilityMenu/AccessibilityMenu';
 
 import { ErrorBoundary } from './src/components/Erro/ErrorBoundary'
 
@@ -17,9 +17,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-    <SpeedInsights />
+    <AccessibilityProvider>
+      <ErrorBoundary>
+        <App />
+        <AccessibilityMenu />
+      </ErrorBoundary>
+      <SpeedInsights />
+    </AccessibilityProvider>
   </StrictMode>
 )

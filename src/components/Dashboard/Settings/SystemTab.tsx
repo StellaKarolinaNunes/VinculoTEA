@@ -1,5 +1,7 @@
+// ... imports
 import { useState, useEffect } from 'react';
 import { Moon, Sun, Bell, Accessibility, EyeOff, EarOff, Brain, Ear, Zap } from 'lucide-react';
+import { useAccessibility } from '../../../contexts/AccessibilityContext';
 
 export const SystemTab = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -7,30 +9,14 @@ export const SystemTab = () => {
         return localStorage.getItem('sound_notifications') !== 'false';
     });
 
+    // Use Accessibility Context
+    const { config, toggleMode } = useAccessibility();
+
     useEffect(() => {
         localStorage.setItem('sound_notifications', notifications.toString());
     }, [notifications]);
 
-    const [accessConfig, setAccessConfig] = useState(() => {
-        const saved = localStorage.getItem('accessibility_config');
-        return saved ? JSON.parse(saved) : {
-            autismo: false,
-            cego: false,
-            surdo: false,
-            auditivo: false,
-            tdah: false,
-            contraste: false
-        };
-    });
-
-    useEffect(() => {
-        localStorage.setItem('accessibility_config', JSON.stringify(accessConfig));
-
-        Object.entries(accessConfig).forEach(([key, value]) => {
-            if (value) document.documentElement.classList.add(`acc-${key}`);
-            else document.documentElement.classList.remove(`acc-${key}`);
-        });
-    }, [accessConfig]);
+    // ... (rest of local storage logic for theme - unrelated to accessibility config which is now in context)
 
     useEffect(() => {
         const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
@@ -102,46 +88,28 @@ export const SystemTab = () => {
                     <div className="h-px flex-1 bg-slate-100 dark:bg-slate-700" />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                        { id: 'autismo', label: 'Modo Autismo (TEA)', desc: 'Interface simplificada, tons pastéis e baixa estimulação visual.', icon: Accessibility, color: 'bg-blue-100 text-blue-600' },
-                        { id: 'cego', label: 'Deficiência Visual / Cego', desc: 'Otimização para leitores de tela e comandos de voz.', icon: EyeOff, color: 'bg-indigo-100 text-indigo-600' },
-                        { id: 'surdo', label: 'Surdo / Libras', desc: 'Prioriza sinalização visual e suporte a intérprete virtual.', icon: EarOff, color: 'bg-rose-100 text-rose-600' },
-                        { id: 'auditivo', label: 'Dificuldade Auditiva', desc: 'Legendas automáticas e reforço visual para alertas sonoros.', icon: Ear, color: 'bg-emerald-100 text-emerald-600' },
-                        { id: 'tdah', label: 'Modo Foco (TDAH)', desc: 'Bloqueio de distrações, timers e redução de animações.', icon: Brain, color: 'bg-orange-100 text-orange-600' },
-                        { id: 'contraste', label: 'Alto Contraste', desc: 'Maximiza a distinção entre elementos para melhor leitura.', icon: Zap, color: 'bg-slate-800 text-white' }
-                    ].map((item) => (
-                        <div
-                            key={item.id}
-                            onClick={() => setAccessConfig((prev: any) => ({ ...prev, [item.id]: !prev[item.id] }))}
-                            className={`flex items-start gap-4 p-5 rounded-[2rem] border-[1.5px] transition-all cursor-pointer group ${accessConfig[item.id as keyof typeof accessConfig]
-                                ? 'bg-white dark:bg-slate-800 border-primary shadow-md shadow-primary/5'
-                                : 'bg-slate-50 dark:bg-slate-900/50 border-transparent hover:border-slate-200'}`}
-                        >
-                            <div className={`size-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${item.color}`}>
-                                <item.icon size={20} strokeWidth={2.5} />
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex items-center justify-between mb-1">
-                                    <p className="font-black text-slate-900 dark:text-white text-sm">{item.label}</p>
-                                    <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${accessConfig[item.id as keyof typeof accessConfig] ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'}`}>
-                                        <div className={`size-3 bg-white rounded-full shadow-md transition-all duration-300 ${accessConfig[item.id as keyof typeof accessConfig] ? 'translate-x-5' : 'translate-x-0'}`} />
-                                    </div>
-                                </div>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{item.desc}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <div className="p-8 rounded-[2rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-[1.5px] border-slate-200 dark:border-slate-700 text-center relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-10 bg-primary/5 rounded-bl-[100%] transition-transform group-hover:scale-150 duration-700" />
 
-                <div className="p-6 rounded-[2rem] bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
-                    <div className="flex gap-4">
-                        <div className="size-10 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
-                            <Zap size={20} />
+                    <div className="relative z-10 flex flex-col items-center gap-4">
+                        <div className="size-16 rounded-full bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center text-primary mb-2 ring-4 ring-primary/10">
+                            <Accessibility size={32} strokeWidth={2.5} />
                         </div>
-                        <p className="text-xs text-amber-800 dark:text-amber-200 font-medium leading-relaxed">
-                            <strong>Dica de Inclusão:</strong> Ativar mais de um modo simultaneamente permite personalizar a plataforma para necessidades específicas de cada profissional ou paciente.
-                        </p>
+
+                        <div className="max-w-md mx-auto space-y-2">
+                            <h3 className="text-lg font-black text-slate-800 dark:text-white">Menu Global de Acessibilidade</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                                Todas as ferramentas de inclusão (VLibras, Leitor de Tela, Modos de Contraste e Perfis) agora estão reunidas no menu flutuante no canto inferior direito da tela.
+                            </p>
+                        </div>
+
+                        <button
+                            onClick={() => document.querySelector<HTMLElement>('button[aria-label="Menu de Acessibilidade"]')?.click()}
+                            className="mt-2 px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wide hover:bg-primary-600 transition-colors shadow-lg shadow-primary/20 flex items-center gap-2"
+                        >
+                            <Accessibility size={16} />
+                            Abrir Menu Acessibilidade
+                        </button>
                     </div>
                 </div>
             </section>

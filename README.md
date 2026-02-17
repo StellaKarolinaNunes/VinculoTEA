@@ -88,6 +88,42 @@ O acompanhamento pedagógico de alunos com TEA é frequentemente realizado de fo
 
 ---
 
+## Perfis de Acessibilidade (Inclusão Total)
+
+O sistema conta com um conjunto avançado de perfis de acessibilidade, permitindo personalizar a experiência para cada necessidade específica (TEA, TDAH, Deficiências Visuais/Motoras).
+
+### 1. Modo Autismo (TEA)
+- **Interface Simplificada**: Remove distrações visuais e elementos decorativos.
+- **Tons Pastéis**: Paleta de cores calmante para reduzir sobrecarga sensorial.
+- **Baixa Estimulação**: Bloqueio de animações e transições bruscas.
+
+### 2. Deficiência Visual / Cego
+- **Leitor de Tela**: Integração nativa para leitura de menus e conteúdo.
+- **Comando de Voz**: Navegação básica por voz.
+- **Feedback Sonoro**: Retorno auditivo para ações importantes.
+
+### 3. Surdo / Libras
+- **Widget VLibras**: Intérprete virtual de Libras (Língua Brasileira de Sinais).
+- **Alertas Visuais**: Notificações piscantes para substituir alertas sonoros.
+
+### 4. Dificuldade Auditiva
+- **Legendas Automáticas**: (Em desenvolvimento) para conteúdo de vídeo.
+- **Reforço Visual**: Destaque visual para interações que teriam feedback sonoro.
+
+### 5. Modo Foco (TDAH)
+- **Bloqueio de Distrações**: Oculta menus laterais não essenciais.
+- **Redução de Animações**: Interface estática para manter a atenção.
+- **Régua de Leitura**: Guia visual para foco em linhas de texto.
+
+### 6. Alto Contraste & Cognitivo
+- **Alto Contraste**: Cores vibrantes (Amarelo/Preto) para distinção máxima.
+- **Fonte Dislexia**: Tipografia especial para facilitar a leitura.
+- **Botões Gigantes**: Facilita o clique para quem tem dificuldades motoras.
+
+> **Dica de Inclusão**: É possível ativar múltiplos modos simultaneamente para criar um ambiente híbrido e personalizado.
+
+---
+
 ## Stack Tecnológica
 
 A arquitetura foi projetada com foco em **segurança**, **performance** e **escalabilidade**.

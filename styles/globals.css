@@ -372,3 +372,188 @@ body {
 .acc-contraste aside [class*="active"] svg {
   stroke: #000000 !important;
 }
+
+/* 6. ESCALA DE CINZA */
+.acc-grayscale {
+  filter: grayscale(100%) !important;
+}
+
+html.acc-grayscale {
+  filter: grayscale(100%) !important;
+}
+
+/* 7. CONTRASTE NEGATIVO */
+.acc-negative {
+  filter: invert(100%) hue-rotate(180deg) !important;
+}
+
+html.acc-negative {
+  filter: invert(100%) hue-rotate(180deg) !important;
+}
+
+.acc-negative img,
+.acc-negative video {
+  filter: invert(100%) hue-rotate(180deg) !important;
+  /* Reverte para imagens e videos */
+}
+
+/* 8. LINKS SUBLINHADOS */
+.acc-underlineLinks a,
+.acc-underlineLinks button {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 4px !important;
+}
+
+/* 9. FONTE LEGÍVEL */
+.acc-readableFont * {
+  font-family: Arial, Helvetica, sans-serif !important;
+  word-spacing: 0.1rem !important;
+  letter-spacing: 0.05rem !important;
+  line-height: 1.6 !important;
+}
+
+/* 10. CURSOR AMPLIADO */
+.acc-bigCursor,
+.acc-bigCursor * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewport="0 0 48 48" style="fill:black;stroke:white;stroke-width:2px;transform:rotate(-45deg);"><path d="M0,0 L0,36 L8,24 L20,36 L24,32 L12,20 L24,20 Z" /></svg>'), auto !important;
+}
+
+/* 11. PAUSA EM ANIMAÇÕES */
+.acc-pauseAnimations *,
+.acc-pauseAnimations *:before,
+.acc-pauseAnimations *:after {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+/* 12. DALTONISMO & FILTROS DE COR */
+.acc-protanopia {
+  filter: url('#protanopia-filter') !important;
+}
+
+.acc-deuteranopia {
+  filter: url('#deuteranopia-filter') !important;
+}
+
+.acc-tritanopia {
+  filter: url('#tritanopia-filter') !important;
+}
+
+/* 13. FOCUS & KEYBOARD */
+.acc-keyboardFocus *:focus-visible {
+  outline: 4px solid #F59E0B !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* --- NOVOS RECURSOS (SETUP COMPLETO) --- */
+
+/* 14. MODO DISLEXIA */
+/* Using a locally defined font-face or a system fallback that mimics it */
+/* Note: For real OpenDyslexic, we need the woff2 file. I will use Comic Sans MS as a universally available fallback that is often cited as dyslexia-friendly due to unique letter shapes. */
+.acc-dyslexia * {
+  font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif !important;
+  line-height: 1.8 !important;
+  word-spacing: 0.2em !important;
+}
+
+/* 15. ESPAÇAMENTO AJUSTÁVEL */
+.acc-spacing-wide * {
+  line-height: 2 !important;
+  letter-spacing: 0.1em !important;
+  word-spacing: 0.2em !important;
+}
+
+.acc-spacing-extra-wide * {
+  line-height: 2.5 !important;
+  letter-spacing: 0.2em !important;
+  word-spacing: 0.4em !important;
+}
+
+/* 16. MODO SIMPLIFICADO */
+.acc-simplified .decorative,
+.acc-simplified .bg-gradient-to-r,
+.acc-simplified .bg-gradient-to-b,
+.acc-simplified [class*="gradient"] {
+  background: none !important;
+  background-color: var(--bg-primary) !important;
+  background-image: none !important;
+}
+
+.acc-simplified img {
+  opacity: 0.8;
+}
+
+/* 17. BOTÕES GIGANTES (MOTOR) */
+.acc-giantButtons button,
+.acc-giantButtons a[href],
+.acc-giantButtons [role="button"] {
+  padding: 1.5rem 2rem !important;
+  font-size: 1.25rem !important;
+  min-height: 64px !important;
+  min-width: 64px !important;
+  margin: 4px !important;
+}
+
+/* 18. MODO ANTI-ANSIEDADE */
+.acc-antiAnxiety {
+  --primary: #5b7c99 !important;
+  /* Muted Blue */
+  --secondary: #8e9aaf !important;
+  background-color: #f0f4f8 !important;
+  /* Soft Gray-Blue */
+}
+
+.acc-antiAnxiety * {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  /* Softer, slightly rounded but stable */
+}
+
+/* 19. BRIGHTNESS OVERLAY (Handled in Context via inline style div, but reset hints here) */
+
+/* 10. CURSOR AMPLIADO */
+.acc-bigCursor,
+.acc-bigCursor * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewport="0 0 48 48" style="fill:black;stroke:white;stroke-width:2px;transform:rotate(-45deg);"><path d="M0,0 L0,36 L8,24 L20,36 L24,32 L12,20 L24,20 Z" /></svg>'), auto !important;
+}
+
+/* 11. PAUSA EM ANIMAÇÕES */
+.acc-pauseAnimations *,
+.acc-pauseAnimations *:before,
+.acc-pauseAnimations *:after {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+/* 12. DALTONISMO & FILTROS DE COR */
+/* Protanopia (Red-Blind) */
+.acc-protanopia {
+  filter: url('#protanopia-filter') !important;
+}
+
+/* Deuteranopia (Green-Blind) */
+.acc-deuteranopia {
+  filter: url('#deuteranopia-filter') !important;
+}
+
+/* Tritanopia (Blue-Blind) */
+.acc-tritanopia {
+  filter: url('#tritanopia-filter') !important;
+}
+
+/* 13. MODO LEITURA (SIMPLIFICAÇÃO) */
+.acc-readingGuide {
+  /* Requires JS overlay, just a marker class */
+}
+
+/* 14. Destaque de Foco (Teclado) */
+.acc-keyboardFocus *:focus-visible {
+  outline: 4px solid #F59E0B !important;
+  /* Amber-500 */
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.8) !important;
+}
