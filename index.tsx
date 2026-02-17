@@ -8,6 +8,7 @@ import { AccessibilityProvider } from './src/contexts/AccessibilityContext';
 import { AccessibilityMenu } from './src/components/AccessibilityMenu/AccessibilityMenu';
 
 import { ErrorBoundary } from './src/components/Erro/ErrorBoundary'
+import { NotificationProvider } from './src/contexts/NotificationContext';
 
 const rootElement = document.getElementById('root')
 
@@ -18,10 +19,12 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <AccessibilityProvider>
-      <ErrorBoundary>
-        <App />
-        <AccessibilityMenu />
-      </ErrorBoundary>
+      <NotificationProvider>
+        <ErrorBoundary>
+          <App />
+          <AccessibilityMenu />
+        </ErrorBoundary>
+      </NotificationProvider>
       <SpeedInsights />
     </AccessibilityProvider>
   </StrictMode>

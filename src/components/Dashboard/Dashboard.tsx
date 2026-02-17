@@ -25,6 +25,7 @@ import { exportProntuarioPDF } from '@/lib/exportService';
 
 import { OnboardingWizard } from '../OnboardingWizard/OnboardingWizard';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 import styles from './Dashboard.module.css';
 
@@ -76,10 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   });
   const [isVoiceActive, setIsVoiceActive] = useState(false);
 
-  const [notifications, setNotifications] = useState<any[]>([
-    { id: 1, title: 'Novo PEI criado', description: 'Arthur Silva agora tem um PEI.', time: '10 min atrás' },
-    { id: 2, title: 'Atendimento agendado', description: 'Beatriz Costa às 16:30.', time: '1 hora atrás' },
-  ]);
+  const { notifications, unreadCount, clearAll, removeNotification, markAsRead, playNotificationSound } = useNotifications();
   const [realStats, setRealStats] = useState({
     alunosAtivos: 0,
     totalAlunos: 0,
@@ -319,82 +317,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   };
 
   const handleClearNotifications = () => {
-    setNotifications([]);
+    clearAll();
   };
 
-  const handleRemoveNotification = (id: number) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+  const handleRemoveNotification = (id: string) => {
+    removeNotification(id);
   };
 
 
-  const playNotificationSound = () => {
-    if (localStorage.getItem('sound_notifications') === 'false') return;
-
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-
-      oscillator.start(audioCtx.currentTime);
-      oscillator.stop(audioCtx.currentTime + 0.5);
-    } catch (e) {
-      console.warn('Audio context not supported or blocked:', e);
-    }
-  };
-
-  useEffect(() => {
-    if (!authUser?.plataforma_id) return;
-
-
-    const peiChannel = supabase
-      .channel('realtime-peis')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'PEIs'
-      }, (payload) => {
-        setNotifications(prev => [{
-          id: Date.now(),
-          title: 'Novo PEI Detectado',
-          description: `Um novo plano individual foi iniciado.`,
-          time: 'Agora'
-        }, ...prev]);
-        playNotificationSound();
-      })
-      .subscribe();
-
-
-    const notesChannel = supabase
-      .channel('realtime-notes')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'Anotacoes'
-      }, (payload) => {
-        setNotifications(prev => [{
-          id: Date.now(),
-          title: 'Nova Anotação',
-          description: `Uma nova observação foi registrada no prontuário.`,
-          time: 'Agora'
-        }, ...prev]);
-        playNotificationSound();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(peiChannel);
-      supabase.removeChannel(notesChannel);
-    };
-  }, [authUser]);
+  // Removed local real-time notification effects as they are now in NotificationContext
 
   const handleSelectSearchResult = (result: any) => {
     setIsSearchModalOpen(false);
@@ -486,7 +417,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                     className="relative p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-primary transition-all shadow-sm"
                   >
                     <Bell size={20} />
-                    {notifications.length > 0 && (
+                    {unreadCount > 0 && (
                       <span className="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
                     )}
                   </button>
@@ -499,15 +430,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                       </div>
                       <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar">
                         {notifications.length > 0 ? notifications.map((n) => (
-                          <div key={n.id} className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-700/30 border border-transparent hover:border-slate-200 transition-all cursor-pointer group relative">
+                          <div
+                            key={n.id}
+                            onClick={() => markAsRead(n.id)}
+                            className={`p-3 rounded-2xl border border-transparent hover:border-slate-200 transition-all cursor-pointer group relative ${n.read ? 'bg-slate-50/50 dark:bg-slate-700/10' : 'bg-primary/5 dark:bg-primary/10 border-primary/10'}`}
+                          >
                             <button
                               onClick={(e) => { e.stopPropagation(); handleRemoveNotification(n.id); }}
                               className="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 hover:bg-white dark:hover:bg-slate-600 rounded-lg transition-all"
                             >
                               <X size={12} className="text-slate-400" />
                             </button>
-                            <p className="text-sm font-bold text-slate-900 dark:text-white">{n.title}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{n.description}</p>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className={`text-sm font-bold ${n.read ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-white'}`}>{n.title}</p>
+                              {!n.read && <span className="size-1.5 bg-primary rounded-full" />}
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{n.description}</p>
                             <p className="text-[10px] text-slate-400 mt-2 font-medium">{n.time}</p>
                           </div>
                         )) : (
