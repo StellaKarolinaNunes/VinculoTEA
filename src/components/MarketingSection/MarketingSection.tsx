@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Monitor, Target, Settings, User, Globe, LayoutDashboard, TrendingUp, Activity, ClipboardList, AlertCircle, CheckCircle2, ArrowRight, ShieldCheck, Star } from 'lucide-react';
 
-// --- DATA & COPYWRITING (Elite Marketing Strategy) ---
 
 const slides = [
   {
