@@ -165,7 +165,7 @@ export const DisciplinesTab = ({ studentId, studentName, studentData }: { studen
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
+            {}
             <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div className="space-y-1">
                     <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight italic">Grade de <span className="text-primary">Disciplinas</span></h3>
@@ -179,7 +179,7 @@ export const DisciplinesTab = ({ studentId, studentName, studentData }: { studen
                 </button>
             </div>
 
-            {/* List of Disciplines */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loading ? (
                     <div className="col-span-full p-20 flex flex-col items-center gap-4 bg-white dark:bg-slate-800 rounded-[2.5rem]">
@@ -251,7 +251,7 @@ export const DisciplinesTab = ({ studentId, studentName, studentData }: { studen
                 )}
             </div>
 
-            {/* Modal: Nova Disciplina */}
+            {}
             {isAdding && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 overflow-y-auto">
                     <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-[3rem] shadow-2xl my-8 animate-in zoom-in-95 duration-300">
@@ -312,7 +312,7 @@ export const DisciplinesTab = ({ studentId, studentName, studentData }: { studen
                 </div>
             )}
 
-            {/* Modal: Executar Tarefa */}
+            {}
             {isExecuting && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 overflow-y-auto">
                     <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-[3rem] shadow-2xl my-8 animate-in zoom-in-95 duration-300">

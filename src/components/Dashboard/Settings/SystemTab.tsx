@@ -1,4 +1,4 @@
-// ... imports
+
 import { useState, useEffect } from 'react';
 import { Moon, Sun, Bell, Accessibility, EyeOff, EarOff, Brain, Ear, Zap } from 'lucide-react';
 import { useAccessibility } from '../../../contexts/AccessibilityContext';
@@ -9,14 +9,14 @@ export const SystemTab = () => {
         return localStorage.getItem('sound_notifications') !== 'false';
     });
 
-    // Use Accessibility Context
+    
     const { config, toggleMode } = useAccessibility();
 
     useEffect(() => {
         localStorage.setItem('sound_notifications', notifications.toString());
     }, [notifications]);
 
-    // ... (rest of local storage logic for theme - unrelated to accessibility config which is now in context)
+    
 
     useEffect(() => {
         const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';

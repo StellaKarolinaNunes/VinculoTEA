@@ -9,7 +9,7 @@ export const DetailsTab = ({ student }: Props) => {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Responsável e Contato */}
+            {}
             <Section title="Responsável e Contato" icon={User}>
                 <div className="space-y-4">
                     <DetailItem label="Nome do Responsável" value={student.responsavel} />
@@ -20,7 +20,7 @@ export const DetailsTab = ({ student }: Props) => {
                 </div>
             </Section>
 
-            {/* História Pré/Peri/Neonatal */}
+            {}
             <Section title="História de Vida" icon={BookOpen}>
                 <div className="space-y-4">
                     <DetailItem label="Gestação" value={details.historia?.gravidez || 'Não informado'} />
@@ -31,7 +31,7 @@ export const DetailsTab = ({ student }: Props) => {
                 </div>
             </Section>
 
-            {/* Desenvolvimento */}
+            {}
             <Section title="Desenvolvimento" icon={Brain}>
                 <div className="space-y-4">
                     <DetailItem label="Marcos do Desenvolvimento" value={details.desenvolvimento?.marcosDesenvolvimento || 'Não informado'} />
@@ -42,7 +42,7 @@ export const DetailsTab = ({ student }: Props) => {
                 </div>
             </Section>
 
-            {/* Saúde e Rotinas */}
+            {}
             <Section title="Saúde e Rotinas" icon={Activity}>
                 <div className="space-y-4">
                     <DetailItem label="Doenças/Histórico" value={details.saude?.doencas || 'Não informado'} />

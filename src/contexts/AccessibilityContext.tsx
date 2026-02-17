@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 
-type AccessibilityProfile = 'none' | 'autismo' | 'visual' | 'auditivo' | 'motor' | 'tdah' | 'leitura';
+type AccessibilityProfile = 'none' | 'autismo' | 'visual' | 'auditivo' | 'motor' | 'tdah' | 'leitura' | 'dislexia' | 'epilepsia' | 'baixa_visao' | 'idoso' | 'alfabetizacao' | 'daltonismo';
 
 type AccessibilityConfig = {
-    // Core
+    
     activeProfile: AccessibilityProfile;
 
     autismo: boolean;
@@ -11,46 +11,87 @@ type AccessibilityConfig = {
     surdo: boolean;
     auditivo: boolean;
     tdah: boolean;
-    contraste: boolean;
-    grayscale: boolean;
-    negative: boolean;
-    underlineLinks: boolean;
-    readableFont: boolean;
-    fontSize: number; // Percentage
+    baixa_visao: boolean;
 
-    // Extended Phase 1
+    
+    contraste: boolean; 
+    contrastTheme: 'default' | 'high-contrast-light' | 'high-contrast-dark' | 'yellow-on-black';
+    grayscale: boolean; 
+    saturation: 'normal' | 'low' | 'high' | 'monochrome';
+    negative: boolean;
+
+    underlineLinks: boolean;
+    highlightLinks: boolean; 
+    highlightHeaders: boolean; 
+    readableFont: boolean;
+    fontFamily: 'default' | 'opendyslexic' | 'arial' | 'comicsans'; 
+    fontSize: number; 
+
+    
     screenReader: boolean;
     voiceControl: boolean;
     vlibras: boolean;
     handTalk: boolean;
     pauseAnimations: boolean;
+    hideImages: boolean; 
+
     bigCursor: boolean;
+    cursorColor: 'default' | 'white' | 'black' | 'yellow' | 'cyan'; 
+
     colorBlindness: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
     keyboardFocus: boolean;
 
-    // Cognitive & Reading (Phase 2)
+    
     dyslexia: boolean;
     spacing: 'normal' | 'wide' | 'extra-wide';
     lineFocus: boolean;
     simplified: boolean;
-    ttsSpeed: number; // 0.5 to 2.0
+    ttsSpeed: number; 
+    textToSpeech: boolean; 
+    syllableHighlight: boolean; 
+    dictionary: boolean; 
 
-    // Visual & Motor (Phase 3)
+    
+    structureMap: boolean; 
+    smartNavigation: boolean; 
+    pageSummary: boolean; 
+    distractionFree: boolean; 
+
+    
     giantButtons: boolean;
-    smartMagnifier: boolean; // Just a toggle for now
-    brightness: number; // 100% default (down to 20%)
-    focusMode: boolean; // Dim background
+    smartMagnifier: boolean; 
+    magnifierFixed: boolean; 
+    brightness: number; 
+    focusMode: boolean; 
     antiAnxiety: boolean;
 
-    // Auditory (Phase 4)
-    visualNotifications: boolean; // Flash
+    
+    mouseGrid: boolean; 
+    highlightElement: boolean; 
+    clickDelay: 'normal' | 'slow' | 'very-slow'; 
+    virtualKeyboard: boolean; 
+
+    
+    visualNotifications: boolean; 
     adaptiveVibration: boolean;
-    audioDescription: boolean;
+    audioDescription: boolean; 
+
+    
+    captions: boolean; 
+    muteMedia: boolean; 
+    stopAutoPlay: boolean; 
+    spatialAudio: boolean; 
+    soundVolume: number; 
+
+    
+    autoDetect: boolean; 
+    syncToCloud: boolean; 
 };
 
 type AccessibilityContextType = {
     config: AccessibilityConfig;
-    toggleMode: (mode: keyof Omit<AccessibilityConfig, 'fontSize' | 'colorBlindness' | 'spacing' | 'ttsSpeed' | 'brightness' | 'activeProfile'>) => void;
+    setConfig: React.Dispatch<React.SetStateAction<AccessibilityConfig>>;
+    toggleMode: (mode: keyof Omit<AccessibilityConfig, 'fontSize' | 'colorBlindness' | 'spacing' | 'ttsSpeed' | 'brightness' | 'activeProfile' | 'contrastTheme' | 'saturation' | 'cursorColor' | 'fontFamily' | 'clickDelay' | 'soundVolume'>) => void;
     activateProfile: (profile: AccessibilityProfile) => void;
     setColorBlindness: (mode: AccessibilityConfig['colorBlindness']) => void;
     setSpacing: (mode: AccessibilityConfig['spacing']) => void;
@@ -59,7 +100,17 @@ type AccessibilityContextType = {
     setFontSize: (size: number) => void;
     increaseFontSize: () => void;
     decreaseFontSize: () => void;
+
+    
+    setContrastTheme: (theme: AccessibilityConfig['contrastTheme']) => void;
+    setSaturation: (level: AccessibilityConfig['saturation']) => void;
+    setCursorColor: (color: AccessibilityConfig['cursorColor']) => void;
+    setFontFamily: (font: AccessibilityConfig['fontFamily']) => void;
+    setClickDelay: (delay: AccessibilityConfig['clickDelay']) => void;
+
     reset: () => void;
+    tutorialCompleted: boolean;
+    setTutorialCompleted: (completed: boolean) => void;
 };
 
 const defaultConfig: AccessibilityConfig = {
@@ -70,18 +121,26 @@ const defaultConfig: AccessibilityConfig = {
     surdo: false,
     auditivo: false,
     tdah: false,
+    baixa_visao: false,
     contraste: false,
+    contrastTheme: 'default',
     grayscale: false,
+    saturation: 'normal',
     negative: false,
     underlineLinks: false,
+    highlightLinks: false,
+    highlightHeaders: false,
     readableFont: false,
+    fontFamily: 'default',
     fontSize: 100,
     screenReader: false,
     voiceControl: false,
     vlibras: false,
     handTalk: false,
     pauseAnimations: false,
+    hideImages: false,
     bigCursor: false,
+    cursorColor: 'default',
     colorBlindness: 'none',
     keyboardFocus: false,
 
@@ -90,54 +149,95 @@ const defaultConfig: AccessibilityConfig = {
     lineFocus: false,
     simplified: false,
     ttsSpeed: 1.0,
+    textToSpeech: false,
+    syllableHighlight: false,
+    dictionary: false,
+
+    structureMap: false,
+    smartNavigation: false,
+    pageSummary: false,
+    distractionFree: false,
 
     giantButtons: false,
     smartMagnifier: false,
+    magnifierFixed: false,
     brightness: 100,
     focusMode: false,
     antiAnxiety: false,
 
+    mouseGrid: false,
+    highlightElement: false,
+    clickDelay: 'normal',
+    virtualKeyboard: false,
+
     visualNotifications: false,
     adaptiveVibration: false,
-    audioDescription: false
+    audioDescription: false,
+    captions: false,
+    muteMedia: false,
+    stopAutoPlay: false,
+
+    spatialAudio: false,
+    soundVolume: 80,
+    autoDetect: true,
+    syncToCloud: true,
 };
 
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
 export const AccessibilityProvider = ({ children }: { children: ReactNode }) => {
     const [config, setConfig] = useState<AccessibilityConfig>(() => {
-        const saved = localStorage.getItem('accessibility_config_v5'); // V5 for profiles
+        const saved = localStorage.getItem('accessibility_config_v7'); 
         return saved ? { ...defaultConfig, ...JSON.parse(saved) } : defaultConfig;
     });
 
+    const [tutorialCompleted, setTutorialCompletedState] = useState<boolean>(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('accessibility_tutorial_completed') === 'true';
+        }
+        return false;
+    });
+
+    const setTutorialCompleted = (completed: boolean) => {
+        setTutorialCompletedState(completed);
+        localStorage.setItem('accessibility_tutorial_completed', String(completed));
+    };
+
     useEffect(() => {
-        localStorage.setItem('accessibility_config_v5', JSON.stringify(config));
+        localStorage.setItem('accessibility_config_v7', JSON.stringify(config));
 
         const root = document.documentElement;
 
-        // Reset and Re-apply classes
+        
         root.className = '';
         if (localStorage.getItem('theme') === 'dark') root.classList.add('dark');
 
-        // Boolean toggles
+        
         Object.entries(config).forEach(([key, value]) => {
             if (typeof value === 'boolean' && value === true) {
                 root.classList.add(`acc-${key}`);
             }
         });
 
-        // Enums
+        
         if (config.colorBlindness !== 'none') root.classList.add(`acc-${config.colorBlindness}`);
         if (config.spacing !== 'normal') root.classList.add(`acc-spacing-${config.spacing}`);
         if (config.activeProfile !== 'none') root.classList.add(`acc-profile-${config.activeProfile}`);
 
-        // Values
+        
+        if (config.contrastTheme !== 'default') root.classList.add(`acc-contrast-${config.contrastTheme}`);
+        if (config.saturation !== 'normal') root.classList.add(`acc-saturation-${config.saturation}`);
+        if (config.cursorColor !== 'default') root.classList.add(`acc-cursor-${config.cursorColor}`);
+        if (config.fontFamily !== 'default') root.classList.add(`acc-font-${config.fontFamily}`);
+        if (config.clickDelay !== 'normal') root.classList.add(`acc-delay-${config.clickDelay}`);
+
+        
         root.style.fontSize = `${config.fontSize}%`;
         root.style.setProperty('--acc-brightness', `${config.brightness}%`);
 
     }, [config]);
 
-    // TTS Logic with Speed
+    
     useEffect(() => {
         if (!config.screenReader) {
             window.speechSynthesis.cancel();
@@ -166,32 +266,32 @@ export const AccessibilityProvider = ({ children }: { children: ReactNode }) => 
         };
     }, [config.screenReader, config.ttsSpeed]);
 
-    // Vibration Logic
+    
     const triggerVibration = (pattern: number | number[]) => {
         if (config.adaptiveVibration && navigator.vibrate) {
             navigator.vibrate(pattern);
         }
     };
 
-    // Generic toggle
-    const toggleMode = (mode: keyof Omit<AccessibilityConfig, 'fontSize' | 'colorBlindness' | 'spacing' | 'ttsSpeed' | 'brightness' | 'activeProfile'>) => {
+    
+    const toggleMode = (mode: keyof Omit<AccessibilityConfig, 'fontSize' | 'colorBlindness' | 'spacing' | 'ttsSpeed' | 'brightness' | 'activeProfile' | 'contrastTheme' | 'saturation' | 'cursorColor' | 'fontFamily' | 'clickDelay' | 'soundVolume'>) => {
         setConfig(prev => {
             const newValue = !prev[mode];
             if (mode === 'adaptiveVibration' && newValue) triggerVibration(200);
 
-            // If manual toggle, we might want to unset active profile if it conflicts, but let's keep it simple for now
+            
             return { ...prev, [mode]: newValue };
         });
     };
 
     const activateProfile = (profile: AccessibilityProfile) => {
         if (profile === config.activeProfile) {
-            // Deactivate if already active
+            
             setConfig(defaultConfig);
             return;
         }
 
-        // Reset first to avoid conflicts, then apply profile settings
+        
         const newConfig = { ...defaultConfig, activeProfile: profile };
 
         switch (profile) {
@@ -200,43 +300,91 @@ export const AccessibilityProvider = ({ children }: { children: ReactNode }) => 
                 newConfig.simplified = true;
                 newConfig.antiAnxiety = true;
                 newConfig.pauseAnimations = true;
-                newConfig.visualNotifications = false; // Reduce noise
+                newConfig.visualNotifications = false; 
+                newConfig.saturation = 'low'; 
+                newConfig.stopAutoPlay = true; 
                 break;
-            case 'visual': // Cego/Deficiência Visual
+            case 'visual': 
                 newConfig.cego = true;
                 newConfig.screenReader = true;
                 newConfig.voiceControl = true;
                 newConfig.adaptiveVibration = true;
+                newConfig.highlightHeaders = true; 
+                newConfig.structureMap = true; 
                 break;
-            case 'auditivo': // Surdo/Libras
+            case 'baixa_visao':
+                newConfig.contrastTheme = 'yellow-on-black';
+                newConfig.fontSize = 150;
+                newConfig.bigCursor = true;
+                newConfig.cursorColor = 'white';
+                newConfig.smartMagnifier = true;
+                break;
+            case 'auditivo': 
                 newConfig.surdo = true;
                 newConfig.vlibras = true;
                 newConfig.visualNotifications = true;
+                newConfig.captions = true;
                 break;
             case 'motor':
                 newConfig.giantButtons = true;
                 newConfig.keyboardFocus = true;
-                newConfig.simplified = true; // Bigger click areas often mean simplified UI
+                newConfig.simplified = true; 
+                newConfig.mouseGrid = true;
+                newConfig.clickDelay = 'slow'; 
                 break;
-            case 'tdah': // Foco
+            case 'tdah': 
                 newConfig.tdah = true;
                 newConfig.focusMode = true;
                 newConfig.pauseAnimations = true;
-                newConfig.lineFocus = false; // Optional
+                newConfig.lineFocus = false; 
+                newConfig.highlightLinks = true; 
+                newConfig.distractionFree = true;
                 break;
-            case 'leitura': // Dislexia + Melhor Leitura
+            case 'leitura': 
+            case 'dislexia':
                 newConfig.dyslexia = true;
                 newConfig.spacing = 'wide';
+                newConfig.fontFamily = 'opendyslexic';
                 newConfig.readableFont = true;
                 newConfig.lineFocus = true;
+                newConfig.syllableHighlight = true;
+                newConfig.contrastTheme = 'high-contrast-light'; 
+                break;
+            case 'epilepsia':
+                newConfig.pauseAnimations = true; 
+                newConfig.stopAutoPlay = true; 
+                newConfig.muteMedia = true; 
+                newConfig.saturation = 'low'; 
+                newConfig.brightness = 80; 
+                break;
+            case 'idoso':
+                newConfig.fontSize = 125;
+                newConfig.contrastTheme = 'high-contrast-light';
+                newConfig.giantButtons = true;
+                newConfig.clickDelay = 'slow';
+                newConfig.simplified = true;
+                newConfig.voiceControl = true; 
+                break;
+            case 'alfabetizacao':
+                newConfig.lineFocus = true; 
+                newConfig.syllableHighlight = true;
+                newConfig.highlightElement = true;
+                newConfig.fontFamily = 'comicsans'; 
+                newConfig.textToSpeech = true;
+                newConfig.dictionary = true;
+                break;
+            case 'daltonismo':
+                newConfig.saturation = 'high'; 
+                newConfig.colorBlindness = 'protanopia'; 
+                newConfig.highlightLinks = true; 
                 break;
         }
 
         setConfig(newConfig);
-        triggerVibration([100, 50, 100]); // Confirmation vibe
+        triggerVibration([100, 50, 100]); 
     };
 
-    // Setters
+    
     const setColorBlindness = (mode: AccessibilityConfig['colorBlindness']) => setConfig(prev => ({ ...prev, colorBlindness: mode }));
     const setSpacing = (mode: AccessibilityConfig['spacing']) => setConfig(prev => ({ ...prev, spacing: mode }));
     const setTTSSpeed = (speed: number) => setConfig(prev => ({ ...prev, ttsSpeed: speed }));
@@ -246,13 +394,40 @@ export const AccessibilityProvider = ({ children }: { children: ReactNode }) => 
     const increaseFontSize = () => setConfig(prev => ({ ...prev, fontSize: Math.min(prev.fontSize + 10, 200) }));
     const decreaseFontSize = () => setConfig(prev => ({ ...prev, fontSize: Math.max(prev.fontSize - 10, 70) }));
 
+    const setContrastTheme = (theme: AccessibilityConfig['contrastTheme']) => setConfig(prev => ({ ...prev, contrastTheme: theme }));
+    const setSaturation = (level: AccessibilityConfig['saturation']) => setConfig(prev => ({ ...prev, saturation: level }));
+    const setCursorColor = (color: AccessibilityConfig['cursorColor']) => setConfig(prev => ({ ...prev, cursorColor: color }));
+
+    const setFontFamily = (font: AccessibilityConfig['fontFamily']) => setConfig(prev => ({ ...prev, fontFamily: font }));
+    const setClickDelay = (delay: AccessibilityConfig['clickDelay']) => setConfig(prev => ({ ...prev, clickDelay: delay }));
+
     const reset = () => setConfig(defaultConfig);
 
     return (
-        <AccessibilityContext.Provider value={{ config, toggleMode, activateProfile, setColorBlindness, setSpacing, setTTSSpeed, setBrightness, setFontSize, increaseFontSize, decreaseFontSize, reset }}>
+        <AccessibilityContext.Provider value={{
+            config,
+            setConfig,
+            toggleMode,
+            activateProfile,
+            setColorBlindness,
+            setSpacing,
+            setTTSSpeed,
+            setBrightness,
+            setFontSize,
+            increaseFontSize,
+            decreaseFontSize,
+            setContrastTheme,
+            setSaturation,
+            setCursorColor,
+            setFontFamily,
+            setClickDelay,
+            reset,
+            tutorialCompleted,
+            setTutorialCompleted
+        }}>
             {children}
 
-            {/* Filters */}
+            {}
             <svg style={{ display: 'none' }}>
                 <defs>
                     <filter id="protanopia-filter"><feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0 0.558, 0.442, 0, 0, 0 0, 0.242, 0.758, 0, 0 0, 0, 0, 1, 0" /></filter>
@@ -261,7 +436,7 @@ export const AccessibilityProvider = ({ children }: { children: ReactNode }) => 
                 </defs>
             </svg>
 
-            {/* Overlays */}
+            {}
             <div
                 className="fixed inset-0 pointer-events-none z-[10000]"
                 style={{
@@ -270,7 +445,7 @@ export const AccessibilityProvider = ({ children }: { children: ReactNode }) => 
                 }}
             />
 
-        </AccessibilityContext.Provider>
+        </AccessibilityContext.Provider >
     );
 };
 

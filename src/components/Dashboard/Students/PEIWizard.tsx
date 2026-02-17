@@ -91,7 +91,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-900 w-full max-w-5xl max-h-[95vh] rounded-4xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-500">
-                {/* Header */}
+                {}
                 <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/30">
                     <div className="flex items-center gap-6">
                         <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner">
@@ -109,10 +109,10 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                     </button>
                 </div>
 
-                {/* Progress Bar */}
+                {}
                 <div className="px-10 py-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex justify-between items-center relative">
-                        {/* Connecting Line */}
+                        {}
                         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 z-0" />
                         <div
                             className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 z-0 transition-all duration-500"
@@ -134,11 +134,11 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                     </div>
                 </div>
 
-                {/* Form Content */}
+                {}
                 <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
                     <div className="max-w-3xl mx-auto space-y-12">
 
-                        {/* Step 1: Identificação do Aluno */}
+                        {}
                         {step === 1 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Identificação do Aluno" subtitle="Dados gerais e diagnósticos laboratoriais/médicos." />
@@ -160,7 +160,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                             </div>
                         )}
 
-                        {/* Step 2: Histórico e Desenvolvimento */}
+                        {}
                         {step === 2 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Histórico e Desenvolvimento" subtitle="Marcos importantes e áreas de foco." />
@@ -182,7 +182,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                             </div>
                         )}
 
-                        {/* Step 3: Análise de Habilidades */}
+                        {}
                         {step === 3 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Análise de Habilidades" subtitle="Avaliação das competências atuais do aluno." />
@@ -196,7 +196,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                             </div>
                         )}
 
-                        {/* Step 4: Sensibilidades e Barreiras */}
+                        {}
                         {step === 4 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Sensibilidades e Barreiras" subtitle="Identificando desafios e facilitadores." />
@@ -210,7 +210,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                             </div>
                         )}
 
-                        {/* Step 5: Definição de Metas */}
+                        {}
                         {step === 5 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Definição de Metas" subtitle="Objetivos escalonados por período." />
@@ -222,7 +222,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                             </div>
                         )}
 
-                        {/* Step 6: Planejamento e Recursos */}
+                        {}
                         {step === 6 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Planejamento e Recursos" subtitle="Metodologias e suporte pedagógico." />
@@ -237,7 +237,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                             </div>
                         )}
 
-                        {/* Step 7: Avaliação e Revisão */}
+                        {}
                         {step === 7 && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-500 space-y-8">
                                 <StepTitle title="Avaliação e Revisão" subtitle="Como o progresso será medido e reavaliado." />
@@ -260,7 +260,7 @@ export const PEIWizard = ({ studentName, studentData, onCancel, onComplete }: Pr
                     </div>
                 </div>
 
-                {/* Footer Actions */}
+                {}
                 <div className="p-10 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/10 dark:bg-slate-900/10">
                     <button
                         onClick={back}

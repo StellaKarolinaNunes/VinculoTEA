@@ -60,7 +60,7 @@
 }
 
 
-/* Config Panel */
+
 .configPanel {
     background-color: white;
     padding: 1.5rem;
@@ -135,7 +135,7 @@
     color: white;
 }
 
-/* Summary Box */
+
 .summaryBox {
     margin-top: 1.5rem;
     padding: 1rem;
@@ -170,7 +170,7 @@
     color: #94a3b8;
 }
 
-/* Reports Grid */
+
 .reportsGrid {
     display: grid;
     grid-template-columns: 1fr;
@@ -218,16 +218,16 @@
     justify-content: center;
     margin-bottom: 1rem;
     background-color: #eff6ff;
-    /* blue-50 */
+    
     color: #1d4ed8;
-    /* blue-700 */
+    
 }
 
 :global(.dark) .cardIcon {
     background-color: #1e3a8a;
-    /* blue-900 */
+    
     color: #60a5fa;
-    /* blue-400 */
+    
 }
 
 .cardTitle {

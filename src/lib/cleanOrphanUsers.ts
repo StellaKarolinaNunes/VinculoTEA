@@ -1,12 +1,6 @@
 import { supabase } from './supabase';
 
-/**
- * Script para limpar usuários órfãos do sistema
- * Usuários órfãos = Existem no Supabase Auth mas não na tabela Usuarios
- * 
- * Execute este script quando houver erro de "e-mail já utilizado" 
- * mas o usuário não aparecer na lista
- */
+
 
 export async function cleanOrphanAuthUsers() {
     console.log('🧹 Iniciando limpeza de usuários órfãos...');
@@ -44,9 +38,7 @@ export async function cleanOrphanAuthUsers() {
     }
 }
 
-/**
- * Verifica se um e-mail específico tem conflito
- */
+
 export async function checkEmailConflict(email: string) {
     const cleanEmail = email.trim().toLowerCase();
 

@@ -244,7 +244,7 @@ export const StudentsView = () => {
                 </div>
             </header>
 
-            {/* List Content */}
+            {}
 
             <div className="bg-white dark:bg-slate-800/80 p-6 md:p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm backdrop-blur-sm">
                 <div className="flex flex-col lg:flex-row gap-6 items-end">
@@ -288,7 +288,7 @@ export const StudentsView = () => {
                     </button>
                 </div>
 
-                {/* Advanced Filters Modal Popover */}
+                {}
                 {isAdvancedFiltersOpen && (
                     <div className="absolute top-full left-0 right-0 mt-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
                         <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-2xl p-8 max-w-2xl mx-auto ring-4 ring-black/5">

@@ -138,7 +138,7 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-900 w-full max-w-5xl max-h-[95vh] rounded-4xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-500">
-                {/* Header */}
+                {}
                 <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/30">
                     <div className="flex items-center gap-6">
                         <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner dark:bg-primary/20">
@@ -156,7 +156,7 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
                     </button>
                 </div>
 
-                {/* Progress Bar */}
+                {}
                 <div className="px-10 py-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex justify-between items-center relative">
                         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 z-0" />
@@ -182,7 +182,7 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
                     </div>
                 </div>
 
-                {/* Form Content */}
+                {}
                 <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
                     <div className="max-w-3xl mx-auto space-y-12">
 
@@ -298,7 +298,7 @@ export const PEIWizard = ({ studentName, studentData, initialData, onCancel, onC
                     </div>
                 </div>
 
-                {/* Footer Actions */}
+                {}
                 <div className="p-10 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/10 dark:bg-slate-900/10">
                     <button
                         onClick={back}

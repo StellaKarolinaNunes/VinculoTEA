@@ -277,7 +277,7 @@ export const HelpCenter: React.FC = () => {
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Hero Section */}
+            {}
             <div className="bg-slate-900 dark:bg-slate-800 rounded-[3rem] p-12 mb-12 relative overflow-hidden group">
                 <div className="relative z-10 max-w-2xl">
                     <h1 className="text-4xl font-black text-white mb-4 tracking-tight">Central de Ajuda</h1>
@@ -301,7 +301,7 @@ export const HelpCenter: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                 <div className="lg:col-span-2 space-y-8">
-                    {/* Categories Grid */}
+                    {}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {filteredCategories.map((cat) => (
                             <button
@@ -321,7 +321,7 @@ export const HelpCenter: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* FAQ Section */}
+                    {}
                     <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-700 shadow-sm">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="size-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
@@ -353,7 +353,7 @@ export const HelpCenter: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Contact Sidebar */}
+                {}
                 <div className="space-y-8">
                     <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden relative group">
                         <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 relative z-10">Suporte Direto</h3>

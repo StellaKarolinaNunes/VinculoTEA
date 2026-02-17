@@ -91,7 +91,7 @@ export const NotesTab = ({ studentId }: { studentId: string }) => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header & Controls */}
+            {}
             <div className="bg-white dark:bg-slate-800 p-8 rounded-[3rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm flex flex-col xl:flex-row gap-6 items-center">
                 <div className="relative flex-1 w-full group">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
@@ -132,7 +132,7 @@ export const NotesTab = ({ studentId }: { studentId: string }) => {
                 </div>
             </div>
 
-            {/* Form */}
+            {}
             {isAdding && (
                 <div className="bg-primary/5 border-[1.5px] border-primary/20 p-8 rounded-[2.5rem] animate-in slide-in-from-top-4 duration-300 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -178,7 +178,7 @@ export const NotesTab = ({ studentId }: { studentId: string }) => {
                 </div>
             )}
 
-            {/* List */}
+            {}
             <div className="grid grid-cols-1 gap-6">
                 {loading ? (
                     <div className="p-20 flex flex-col items-center gap-4 bg-white dark:bg-slate-800 rounded-[2.5rem]">

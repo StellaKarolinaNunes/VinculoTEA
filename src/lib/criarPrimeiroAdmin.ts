@@ -1,9 +1,4 @@
-/**
- * Script para criar o primeiro administrador do sistema
- * Execute no Console do Navegador (F12)
- * 
- * IMPORTANTE: Só execute se a tabela Usuarios estiver vazia!
- */
+
 
 import { supabase } from './supabase';
 

@@ -55,7 +55,7 @@
     flex: 1;
     height: 100%;
     background-color: #000c14;
-    /* Mantendo fundo escuro premium */
+    
     position: relative;
     overflow: hidden;
     animation: slideInRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -101,7 +101,7 @@
     gap: 0.5rem;
     padding: 0.35rem 0.85rem;
     background-color: rgba(225, 29, 72, 0.05);
-    /* Usando tons de vermelho para erro */
+    
     color: #e11d48;
     border-radius: 9999px;
     font-size: 10px;

@@ -133,14 +133,12 @@ body {
   }
 }
 
-/* ==========================================================================
-   ACESSIBILIDADE E INCLUSÃO (CORE FUNCTIONS)
-   ========================================================================== */
 
-/* 1. MODO AUTISMO (TEA) - Redução de Sobrecarga */
+
+
 .acc-autismo {
   --primary: #4A69BD;
-  /* Azul marinho calmo */
+  
   --bg-primary: #F1F2F6;
   --bg-secondary: #FFFFFF;
 }
@@ -148,7 +146,7 @@ body {
 .acc-autismo * {
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
   box-shadow: none !important;
-  /* Remove sombras complexas que podem confundir */
+  
   text-shadow: none !important;
 }
 
@@ -156,7 +154,7 @@ body {
 .acc-autismo [class*="blur-"] {
   filter: none !important;
   box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.05) !important;
-  /* Sombras extremamente sutis */
+  
 }
 
 .acc-autismo img {
@@ -169,31 +167,31 @@ body {
   animation: none !important;
 }
 
-/* 2. MODO CEGO / DEFICIÊNCIA VISUAL - Extrema Legibilidade */
+
 .acc-cego {
   font-size: 115% !important;
 }
 
 .acc-cego *:focus {
   outline: 5px solid #E11D48 !important;
-  /* Destaque Rosa/Vermelho forte */
+  
   outline-offset: 4px !important;
 }
 
 .acc-cego [role="button"],
 .acc-cego button {
   min-height: 48px;
-  /* Tamanho mínimo de toque/alvo conforme WCAG */
+  
   min-width: 48px;
 }
 
 .acc-cego .text-slate-500,
 .acc-cego .text-slate-400 {
   color: #1e293b !important;
-  /* Força contraste máximo em subtextos */
+  
 }
 
-/* 3. MODO SURDO / AUDITIVOS - Feedback Visual de Som */
+
 .acc-surdo .notification-dot,
 .acc-auditivo .notification-dot {
   animation: pulse-visual-alert 1.5s infinite !important;
@@ -213,7 +211,7 @@ body {
   }
 }
 
-/* 4. MODO TDAH (FOCO TOTAL) - Higiene Visual */
+
 .acc-tdah * {
   animation: none !important;
   transition: none !important;
@@ -223,13 +221,13 @@ body {
 .acc-tdah .bg-orange-100,
 .acc-tdah .bg-indigo-100 {
   background-color: #f1f5f9 !important;
-  /* Cores neutras para não desviar o olho */
+  
 }
 
 .acc-tdah [class*="badge"],
 .acc-tdah [class*="Premium"] {
   display: none !important;
-  /* Esconde selos de "Premium" ou badges coloridos desnecessários */
+  
 }
 
 .acc-tdah .decorative-element {
@@ -242,20 +240,20 @@ body {
   border-color: var(--primary) !important;
 }
 
-/* 5. ALTO CONTRASTE (WCAG AAA - PREMIUM REDESIGN) */
+
 .acc-contraste {
   background-color: #000000 !important;
   color: #FFFFFF !important;
 }
 
-/* Base elements */
+
 .acc-contraste body,
 .acc-contraste #root,
 .acc-contraste main {
   background-color: #000000 !important;
 }
 
-/* Cards, Containers and Sections */
+
 .acc-contraste .bg-white,
 .acc-contraste .bg-slate-50,
 .acc-contraste .bg-slate-800,
@@ -265,11 +263,11 @@ body {
 .acc-contraste aside {
   background-color: #000000 !important;
   border: 3px solid #FFFFFF !important;
-  /* Bordas mais grossas e brancas */
+  
   box-shadow: none !important;
 }
 
-/* Typography - Yellow for information, White for static text */
+
 .acc-contraste p,
 .acc-contraste span:not(.text-primary),
 .acc-contraste label,
@@ -284,17 +282,17 @@ body {
 .acc-contraste h4,
 .acc-contraste strong {
   color: #FFFF00 !important;
-  /* Amarelo vibrante para destaques */
+  
   font-weight: 900 !important;
 }
 
-/* Global Icons */
+
 .acc-contraste svg {
   stroke: #FFFF00 !important;
   fill: none !important;
 }
 
-/* Interactive Elements - Primary Actions */
+
 .acc-contraste .bg-primary,
 .acc-contraste .btn-primary,
 .acc-contraste button[class*="bg-primary"] {
@@ -305,7 +303,7 @@ body {
   text-transform: uppercase !important;
 }
 
-/* Secondary Buttons and Inputs */
+
 .acc-contraste button,
 .acc-contraste input,
 .acc-contraste select,
@@ -314,14 +312,14 @@ body {
   color: #FFFFFF !important;
   border: 3px solid #FFFFFF !important;
   border-radius: 4px !important;
-  /* Formas mais quadradas e nítidas */
+  
 }
 
 .acc-contraste input::placeholder {
   color: #aaaaaa !important;
 }
 
-/* Hover States */
+
 .acc-contraste button:hover,
 .acc-contraste a:hover {
   background-color: #FFFF00 !important;
@@ -333,14 +331,14 @@ body {
   stroke: #000000 !important;
 }
 
-/* Focus States */
+
 .acc-contraste *:focus {
   outline: 6px solid #00FFFF !important;
-  /* Ciano Elétrico para foco no alto contraste */
+  
   outline-offset: 4px !important;
 }
 
-/* Tables and Lists */
+
 .acc-contraste table {
   border-collapse: separate !important;
   border-spacing: 0 8px !important;
@@ -354,15 +352,15 @@ body {
   color: #FFFF00 !important;
 }
 
-/* Links */
+
 .acc-contraste a {
   color: #00FFFF !important;
-  /* Links em Ciano para destaque */
+  
   text-decoration: underline !important;
   font-weight: bold !important;
 }
 
-/* Sidebar Specifics */
+
 .acc-contraste aside [class*="active"] {
   background-color: #FFFF00 !important;
   color: #000000 !important;
@@ -373,7 +371,7 @@ body {
   stroke: #000000 !important;
 }
 
-/* 6. ESCALA DE CINZA */
+
 .acc-grayscale {
   filter: grayscale(100%) !important;
 }
@@ -382,7 +380,7 @@ html.acc-grayscale {
   filter: grayscale(100%) !important;
 }
 
-/* 7. CONTRASTE NEGATIVO */
+
 .acc-negative {
   filter: invert(100%) hue-rotate(180deg) !important;
 }
@@ -394,10 +392,10 @@ html.acc-negative {
 .acc-negative img,
 .acc-negative video {
   filter: invert(100%) hue-rotate(180deg) !important;
-  /* Reverte para imagens e videos */
+  
 }
 
-/* 8. LINKS SUBLINHADOS */
+
 .acc-underlineLinks a,
 .acc-underlineLinks button {
   text-decoration: underline !important;
@@ -405,7 +403,7 @@ html.acc-negative {
   text-underline-offset: 4px !important;
 }
 
-/* 9. FONTE LEGÍVEL */
+
 .acc-readableFont * {
   font-family: Arial, Helvetica, sans-serif !important;
   word-spacing: 0.1rem !important;
@@ -413,13 +411,13 @@ html.acc-negative {
   line-height: 1.6 !important;
 }
 
-/* 10. CURSOR AMPLIADO */
+
 .acc-bigCursor,
 .acc-bigCursor * {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewport="0 0 48 48" style="fill:black;stroke:white;stroke-width:2px;transform:rotate(-45deg);"><path d="M0,0 L0,36 L8,24 L20,36 L24,32 L12,20 L24,20 Z" /></svg>'), auto !important;
 }
 
-/* 11. PAUSA EM ANIMAÇÕES */
+
 .acc-pauseAnimations *,
 .acc-pauseAnimations *:before,
 .acc-pauseAnimations *:after {
@@ -427,7 +425,7 @@ html.acc-negative {
   transition: none !important;
 }
 
-/* 12. DALTONISMO & FILTROS DE COR */
+
 .acc-protanopia {
   filter: url('#protanopia-filter') !important;
 }
@@ -440,25 +438,25 @@ html.acc-negative {
   filter: url('#tritanopia-filter') !important;
 }
 
-/* 13. FOCUS & KEYBOARD */
+
 .acc-keyboardFocus *:focus-visible {
   outline: 4px solid #F59E0B !important;
   outline-offset: 4px !important;
   box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* --- NOVOS RECURSOS (SETUP COMPLETO) --- */
 
-/* 14. MODO DISLEXIA */
-/* Using a locally defined font-face or a system fallback that mimics it */
-/* Note: For real OpenDyslexic, we need the woff2 file. I will use Comic Sans MS as a universally available fallback that is often cited as dyslexia-friendly due to unique letter shapes. */
+
+
+
+
 .acc-dyslexia * {
   font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif !important;
   line-height: 1.8 !important;
   word-spacing: 0.2em !important;
 }
 
-/* 15. ESPAÇAMENTO AJUSTÁVEL */
+
 .acc-spacing-wide * {
   line-height: 2 !important;
   letter-spacing: 0.1em !important;
@@ -471,7 +469,7 @@ html.acc-negative {
   word-spacing: 0.4em !important;
 }
 
-/* 16. MODO SIMPLIFICADO */
+
 .acc-simplified .decorative,
 .acc-simplified .bg-gradient-to-r,
 .acc-simplified .bg-gradient-to-b,
@@ -485,7 +483,7 @@ html.acc-negative {
   opacity: 0.8;
 }
 
-/* 17. BOTÕES GIGANTES (MOTOR) */
+
 .acc-giantButtons button,
 .acc-giantButtons a[href],
 .acc-giantButtons [role="button"] {
@@ -496,13 +494,13 @@ html.acc-negative {
   margin: 4px !important;
 }
 
-/* 18. MODO ANTI-ANSIEDADE */
+
 .acc-antiAnxiety {
   --primary: #5b7c99 !important;
-  /* Muted Blue */
+  
   --secondary: #8e9aaf !important;
   background-color: #f0f4f8 !important;
-  /* Soft Gray-Blue */
+  
 }
 
 .acc-antiAnxiety * {
@@ -510,18 +508,18 @@ html.acc-negative {
   transition: none !important;
   box-shadow: none !important;
   border-radius: 8px !important;
-  /* Softer, slightly rounded but stable */
+  
 }
 
-/* 19. BRIGHTNESS OVERLAY (Handled in Context via inline style div, but reset hints here) */
 
-/* 10. CURSOR AMPLIADO */
+
+
 .acc-bigCursor,
 .acc-bigCursor * {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewport="0 0 48 48" style="fill:black;stroke:white;stroke-width:2px;transform:rotate(-45deg);"><path d="M0,0 L0,36 L8,24 L20,36 L24,32 L12,20 L24,20 Z" /></svg>'), auto !important;
 }
 
-/* 11. PAUSA EM ANIMAÇÕES */
+
 .acc-pauseAnimations *,
 .acc-pauseAnimations *:before,
 .acc-pauseAnimations *:after {
@@ -529,31 +527,445 @@ html.acc-negative {
   transition: none !important;
 }
 
-/* 12. DALTONISMO & FILTROS DE COR */
-/* Protanopia (Red-Blind) */
+
+
 .acc-protanopia {
   filter: url('#protanopia-filter') !important;
 }
 
-/* Deuteranopia (Green-Blind) */
+
 .acc-deuteranopia {
   filter: url('#deuteranopia-filter') !important;
 }
 
-/* Tritanopia (Blue-Blind) */
+
 .acc-tritanopia {
   filter: url('#tritanopia-filter') !important;
 }
 
-/* 13. MODO LEITURA (SIMPLIFICAÇÃO) */
-.acc-readingGuide {
-  /* Requires JS overlay, just a marker class */
+
+
+.acc-cursor-white,
+.acc-cursor-white * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='2'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/%3E%3C/svg%3E"), auto !important;
 }
 
-/* 14. Destaque de Foco (Teclado) */
-.acc-keyboardFocus *:focus-visible {
-  outline: 4px solid #F59E0B !important;
-  /* Amber-500 */
-  outline-offset: 4px !important;
-  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.8) !important;
+.acc-cursor-black,
+.acc-cursor-black * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='black' stroke='white' stroke-width='2'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/%3E%3C/svg%3E"), auto !important;
+}
+
+.acc-cursor-yellow,
+.acc-cursor-yellow * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='%23FFFF00' stroke='black' stroke-width='3'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/%3E%3C/svg%3E"), auto !important;
+}
+
+.acc-cursor-cyan,
+.acc-cursor-cyan * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='%2300FFFF' stroke='black' stroke-width='3'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/%3E%3C/svg%3E"), auto !important;
+}
+
+
+
+
+.acc-font-opendyslexic,
+.acc-font-opendyslexic * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  line-height: 1.6 !important;
+}
+
+.acc-font-arial,
+.acc-font-arial * {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.acc-font-comicsans,
+.acc-font-comicsans * {
+  font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif !important;
+}
+
+
+
+
+.acc-delay-slow button:active,
+.acc-delay-slow a:active {
+  transition: transform 0.5s ease-out !important;
+  transform: scale(0.95);
+}
+
+.acc-delay-very-slow button:active,
+.acc-delay-very-slow a:active {
+  transition: transform 1.0s ease-out !important;
+  transform: scale(0.95);
+}
+
+
+
+
+.acc-contrast-high-contrast-light {
+  --primary: #000000;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F0F0F0;
+  --text-primary: #000000;
+  --text-secondary: #000000;
+}
+
+.acc-contrast-high-contrast-light * {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.acc-contrast-high-contrast-light button,
+.acc-contrast-high-contrast-light [role="button"] {
+  background-color: #E2E2E2 !important;
+  border: 2px solid #000000 !important;
+  font-weight: 800 !important;
+}
+
+.acc-contrast-high-contrast-light a {
+  color: #0000EE !important;
+  text-decoration: underline !important;
+}
+
+
+.acc-contrast-high-contrast-dark {
+  --primary: #FFFFFF;
+  --bg-primary: #000000;
+  --bg-secondary: #121212;
+  --text-primary: #FFFFFF;
+  --text-secondary: #DDDDDD;
+}
+
+.acc-contrast-high-contrast-dark body,
+.acc-contrast-high-contrast-dark main,
+.acc-contrast-high-contrast-dark div,
+.acc-contrast-high-contrast-dark span,
+.acc-contrast-high-contrast-dark p {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border-color: #FFFFFF !important;
+}
+
+.acc-contrast-high-contrast-dark button,
+.acc-contrast-high-contrast-dark [role="button"] {
+  background-color: #333333 !important;
+  border: 2px solid #FFFFFF !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+.acc-contrast-high-contrast-dark a {
+  color: #80AAFF !important;
+  text-decoration: underline !important;
+}
+
+
+.acc-contrast-yellow-on-black {
+  filter: contrast(120%);
+}
+
+.acc-contrast-yellow-on-black * {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border-color: #FFFF00 !important;
+  fill: #FFFF00 !important;
+  stroke: #FFFF00 !important;
+}
+
+.acc-contrast-yellow-on-black img {
+  opacity: 0.8 !important;
+}
+
+
+
+.acc-saturation-low {
+  filter: saturate(50%);
+}
+
+.acc-saturation-high {
+  filter: saturate(200%);
+}
+
+.acc-saturation-monochrome {
+  filter: grayscale(100%);
+}
+
+
+
+.acc-cursor-white,
+.acc-cursor-white * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" style="fill:white;stroke:black;stroke-width:2px;"><path d="M0,0 L0,24 L6,16 L16,28 L20,24 L10,12 L18,12 Z"/></svg>'), auto !important;
+}
+
+.acc-cursor-black,
+.acc-cursor-black * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" style="fill:black;stroke:white;stroke-width:2px;"><path d="M0,0 L0,24 L6,16 L16,28 L20,24 L10,12 L18,12 Z"/></svg>'), auto !important;
+}
+
+
+
+
+.acc-highlightLinks a,
+.acc-highlightLinks [role="link"],
+.acc-highlightLinks button.link {
+  background-color: #FFEB3B !important;
+  color: #000000 !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  font-weight: bold !important;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.dark .acc-highlightLinks a {
+  background-color: #FACC15 !important;
+}
+
+
+.acc-highlightHeaders h1,
+.acc-highlightHeaders h2,
+.acc-highlightHeaders h3,
+.acc-highlightHeaders h4,
+.acc-highlightHeaders h5,
+.acc-highlightHeaders h6 {
+  background-color: rgba(0, 0, 255, 0.1) !important;
+  border-left: 5px solid #2563EB !important;
+  padding-left: 10px !important;
+  color: #1E40AF !important;
+}
+
+.dark .acc-highlightHeaders h1,
+.dark .acc-highlightHeaders h2 {
+  background-color: rgba(100, 200, 255, 0.1) !important;
+  border-left-color: #60A5FA !important;
+  color: #93C5FD !important;
+}
+
+
+.acc-structureMap header {
+  border: 4px solid #8B5CF6 !important;
+  position: relative;
+}
+
+.acc-structureMap header::before {
+  content: "CABEÇALHO";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #8B5CF6;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  z-index: 50;
+  font-weight: bold;
+}
+
+.acc-structureMap nav {
+  border: 4px solid #EC4899 !important;
+  position: relative;
+}
+
+.acc-structureMap nav::before {
+  content: "NAVEGAÇÃO";
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #EC4899;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  z-index: 50;
+  font-weight: bold;
+}
+
+.acc-structureMap main {
+  border: 4px solid #10B981 !important;
+  position: relative;
+}
+
+.acc-structureMap main::before {
+  content: "CONTEÚDO PRINCIPAL";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #10B981;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  z-index: 50;
+  font-weight: bold;
+}
+
+.acc-structureMap footer {
+  border: 4px solid #F59E0B !important;
+  position: relative;
+}
+
+.acc-structureMap footer::before {
+  content: "RODAPÉ";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #F59E0B;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  z-index: 50;
+  font-weight: bold;
+}
+
+
+
+
+.acc-mouseGrid body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 0, 0, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.3) 1px, transparent 1px);
+  background-size: 100px 100px;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+
+.acc-highlightElement *:hover:not(body):not(html) {
+  outline: 3px solid #F43F5E !important;
+  outline-offset: 2px !important;
+  background-color: rgba(244, 63, 94, 0.1) !important;
+  cursor: crosshair !important;
+}
+
+
+
+
+.acc-muteMedia video,
+.acc-muteMedia audio {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+
+
+.acc-captions .caption-container {
+  font-size: 1.5rem !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  color: #FFFF00 !important;
+  font-weight: bold !important;
+}
+
+
+.acc-smartNavigation button,
+.acc-smartNavigation a {
+  position: relative;
+}
+
+.acc-smartNavigation button::after,
+.acc-smartNavigation a::after {
+  content: "⚡";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 10px;
+  background: #FFFF00;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+
+
+
+* {
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-secondary) transparent;
+}
+
+
+::-webkit-scrollbar {
+  width: 10px;
+  
+  height: 10px;
+  
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  
+  border-radius: 9999px;
+  
+  border: 3px solid transparent;
+  
+  background-clip: content-box;
+  transition: background-color 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary);
+  
+  border: 2px solid transparent;
+  
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--secondary);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #475569;
+  
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary);
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #94a3b8;
+  
+  border: 1px solid transparent;
+  background-clip: content-box;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
+  
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #475569;
+  
 }

@@ -281,7 +281,7 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                 </div>
             )}
 
-            {/* Modal de Confirmação de Exclusão */}
+            {}
             {classToDelete && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

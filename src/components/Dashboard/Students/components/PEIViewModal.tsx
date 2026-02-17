@@ -190,7 +190,7 @@ export const PEIViewModal: React.FC<PEIViewModalProps> = ({ pei, studentName, on
 
             <div className="bg-white dark:bg-slate-900 w-full max-w-5xl max-h-[92vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-500 border border-white/20 print-container">
 
-                {/* Header */}
+                {}
                 <div className="p-8 md:p-10 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-slate-50/30 dark:bg-slate-900/30 print:bg-white print:border-b-2 print:pb-8 print:mb-8 print-header">
                     <div className="flex items-center gap-6">
                         <div className="size-16 rounded-[1.5rem] bg-primary/10 text-primary flex items-center justify-center shadow-inner print:border print:border-slate-200">
@@ -234,7 +234,7 @@ export const PEIViewModal: React.FC<PEIViewModalProps> = ({ pei, studentName, on
                     </div>
                 </div>
 
-                {/* Content */}
+                {}
                 <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar bg-slate-50/20 dark:bg-transparent print-content">
                     <div className="max-w-4xl mx-auto space-y-12 pb-12">
                         {sections.map((section) => (
@@ -265,7 +265,7 @@ export const PEIViewModal: React.FC<PEIViewModalProps> = ({ pei, studentName, on
                             </div>
                         ))}
 
-                        {/* Signature area fixed for print */}
+                        {}
                         <div className="hidden print:block pt-20 mt-20 border-t-2 border-slate-200">
                             <div className="grid grid-cols-2 gap-20">
                                 <div className="text-center space-y-3">
@@ -286,7 +286,7 @@ export const PEIViewModal: React.FC<PEIViewModalProps> = ({ pei, studentName, on
                     </div>
                 </div>
 
-                {/* Footer no-print */}
+                {}
                 <div className="p-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 flex justify-center no-print">
                     <button
                         onClick={onClose}

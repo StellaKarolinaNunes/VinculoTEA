@@ -87,7 +87,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Main Search & Quick Toggle */}
+            {}
             <div className="bg-white dark:bg-slate-800 p-8 rounded-[3rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm space-y-6">
                 <div className="flex flex-col xl:flex-row gap-6 items-center">
                     <div className="relative flex-1 w-full group">
@@ -115,10 +115,10 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                     </button>
                 </div>
 
-                {/* Advanced Filters Panel */}
+                {}
                 {showAdvanced && (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-6 border-t border-slate-100 dark:border-slate-700 animate-in slide-in-from-top-4 duration-300">
-                        {/* Status Filter */}
+                        {}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-xs">Status</label>
                             <select
@@ -133,7 +133,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                             </select>
                         </div>
 
-                        {/* Materia Filter */}
+                        {}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-xs">Disciplina / Matéria</label>
                             <select
@@ -146,7 +146,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                             </select>
                         </div>
 
-                        {/* Suporte Filter */}
+                        {}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-xs">Nível de Suporte</label>
                             <select
@@ -159,7 +159,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                             </select>
                         </div>
 
-                        {/* Barreira Filter */}
+                        {}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-xs">Tipo de Barreira</label>
                             <select
@@ -172,7 +172,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                             </select>
                         </div>
 
-                        {/* Date Range Filters */}
+                        {}
                         <div className="md:col-span-2 grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-xs">De (Data)</label>
@@ -194,7 +194,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                             </div>
                         </div>
 
-                        {/* Clear Action */}
+                        {}
                         <div className="xl:col-span-3 flex justify-end">
                             <button
                                 onClick={clearFilters}
@@ -207,7 +207,7 @@ export const ExecutionTab = ({ studentId }: { studentId: string }) => {
                 )}
             </div>
 
-            {/* List Content */}
+            {}
             <div className="grid grid-cols-1 gap-6 pb-20">
                 {loading ? (
                     <div className="p-20 flex flex-col items-center gap-4 bg-white dark:bg-slate-800 rounded-[3rem]">

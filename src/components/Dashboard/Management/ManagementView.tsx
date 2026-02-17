@@ -79,7 +79,7 @@ export const ManagementView = () => {
                 </div>
             </div>
 
-            {/* Tabs Premium */}
+            {}
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
                     { id: 'escolas' as const, label: 'Unidades / Escolas', icon: Building2 },
@@ -104,7 +104,7 @@ export const ManagementView = () => {
                 })}
             </div>
 
-            {/* Content Area - No overflow-hidden to prevent cutting */}
+            {}
             <div className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-sm min-h-[600px] overflow-hidden">
                 <div className="p-8 md:p-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="mb-10">

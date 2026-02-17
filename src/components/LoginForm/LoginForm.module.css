@@ -1,10 +1,10 @@
-/* LoginForm.module.css */
+
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  /* Aumentado para dar mais "ar" entre os blocos de campos */
+  
   width: 100%;
 }
 
@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  /* Mais espaço entre o label e o input */
+  
 }
 
 .labelRow {
@@ -24,7 +24,7 @@
 .label {
   color: #1e293b;
   font-size: 0.85rem;
-  /* Aumentado de 0.75rem */
+  
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -33,7 +33,7 @@
 .forgotLink {
   color: #2379BC;
   font-size: 0.8rem;
-  /* Aumentado de 0.75rem */
+  
   font-weight: 700;
   text-decoration: none;
   transition: all 0.23s ease;
@@ -70,17 +70,17 @@
   width: 100%;
   background-color: #ffffff;
   border: 2px solid #edeff2;
-  /* Borda inicial mais suave */
+  
   border-radius: 1rem;
-  /* Borda mais arredondada para ar premium */
+  
   padding: 1.25rem 3.75rem 1.25rem 3.75rem !important;
-  /* Aumentado o padding */
+  
   font-weight: 600;
   color: #0f172a;
   outline: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 1.1rem;
-  /* Aumentado de 1rem */
+  
   line-height: normal;
 }
 
@@ -131,11 +131,11 @@
   cursor: pointer;
   color: #64748b;
   font-size: 0.9rem;
-  /* Texto maior */
+  
   font-weight: 600;
   user-select: none;
   gap: 0.75rem;
-  /* Espaço maior entre box e texto */
+  
 }
 
 .checkbox {
@@ -153,11 +153,11 @@
   background-color: #14396D;
   color: white;
   padding: 1.25rem;
-  /* Aumentado de 1.125rem */
+  
   border-radius: 1rem;
   font-weight: 800;
   font-size: 1.15rem;
-  /* Aumentado de 1.05rem */
+  
   border: none;
   cursor: pointer;
   display: flex;

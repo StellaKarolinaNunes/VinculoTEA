@@ -45,7 +45,7 @@
     color: var(--text-secondary);
 }
 
-/* Stepper */
+
 .stepper {
     display: flex;
     justify-content: space-between;
@@ -169,7 +169,7 @@
     color: var(--primary);
 }
 
-/* Form Styles */
+
 .form {
     background-color: var(--bg-secondary);
     padding: 1.25rem;
@@ -257,7 +257,7 @@
     resize: vertical;
 }
 
-/* Buttons */
+
 .actions {
     display: flex;
     flex-direction: column-reverse;

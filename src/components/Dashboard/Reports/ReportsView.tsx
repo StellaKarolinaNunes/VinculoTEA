@@ -696,7 +696,7 @@ export const ReportsView = () => {
 
     return (
         <div className="animate-in fade-in duration-700 space-y-8 pb-10">
-            {/* Nav Header */}
+            {}
             <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -854,7 +854,7 @@ const IndividualReportView = ({
 }: any) => {
     return (
         <div className="space-y-8 animate-in slide-in-from-bottom duration-500">
-            {/* Student Filter / Slider-like Selector */}
+            {}
             <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
                     <Sliders size={80} className="text-primary" />
@@ -876,7 +876,7 @@ const IndividualReportView = ({
                     ))}
                 </div>
 
-                {/* Report Type Selector */}
+                {}
                 {selectedStudentId && (
                     <div className="flex gap-2 mt-6 border-t border-slate-50 dark:border-slate-700 pt-6">
                         <button
@@ -911,7 +911,7 @@ const IndividualReportView = ({
                 )}
             </div>
 
-            {/* PEI Selector - Only for Evolution Tab */}
+            {}
             {selectedStudent && individualTab === 'evolution' && peis.length > 0 && (
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm animate-in slide-in-from-top-4 duration-500">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 block mb-4">Selecione o PEI para Análise</label>
@@ -966,7 +966,7 @@ const AttendanceReport = ({ student, data }: any) => {
     if (!data) return null;
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-700 slide-in-from-bottom-4">
-            {/* Identification Section */}
+            {}
             <div className="lg:col-span-4 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/5 transition-all">
                 <div className="p-8 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20 relative">
                     <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3 relative z-10">
@@ -995,7 +995,7 @@ const AttendanceReport = ({ student, data }: any) => {
                 </div>
             </div>
 
-            {/* Attendance Section */}
+            {}
             <div className="lg:col-span-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-emerald-500/5 transition-all">
                 <div className="p-8 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20 relative">
                     <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3 relative z-10">
@@ -1041,7 +1041,7 @@ const EvolutionReport = ({ student, data }: any) => {
     return (
         <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-bottom-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* 1. Identification Header */}
+                {}
                 <div className="lg:col-span-12 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden p-10 flex flex-col md:flex-row justify-between items-center gap-10 relative group">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 group-hover:scale-110 transition-transform duration-[2000ms]" />
                     <div className="flex items-center gap-10 relative z-10 w-full md:w-auto">
@@ -1063,7 +1063,7 @@ const EvolutionReport = ({ student, data }: any) => {
                     </div>
                 </div>
 
-                {/* 2. PTI Objectives & 3. Evolution Details */}
+                {}
                 <div className="lg:col-span-6">
                     <section className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden h-full group hover:shadow-2xl hover:shadow-primary/5 transition-all">
                         <div className="p-8 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">
@@ -1112,7 +1112,7 @@ const EvolutionReport = ({ student, data }: any) => {
                     </section>
                 </div>
 
-                {/* 4. Quantitative Analysis Summary */}
+                {}
                 <div className="lg:col-span-12">
                     <section className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden group hover:shadow-2xl hover:shadow-emerald-500/5 transition-all">
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">
@@ -1193,7 +1193,7 @@ const SchoolInclusionReport = ({ student, notes }: any) => {
     return (
         <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-bottom-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* Identification Header */}
+                {}
                 <div className="lg:col-span-12 bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden p-12 flex flex-col md:flex-row justify-between items-center gap-10 relative group">
                     <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full -mr-40 -mt-40 group-hover:scale-110 transition-transform duration-[2500ms]" />
                     <div className="flex items-center gap-8 relative z-10">
@@ -1217,7 +1217,7 @@ const SchoolInclusionReport = ({ student, notes }: any) => {
                     </div>
                 </div>
 
-                {/* Medical Observations Card */}
+                {}
                 <div className="lg:col-span-12">
                     <section className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden group hover:shadow-2xl hover:shadow-orange-500/5 transition-all">
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">
@@ -1246,7 +1246,7 @@ const SchoolInclusionReport = ({ student, notes }: any) => {
                     </section>
                 </div>
 
-                {/* Pedagogy/School Guidance Card */}
+                {}
                 <div className="lg:col-span-12">
                     <section className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden group hover:shadow-2xl hover:shadow-primary/5 transition-all">
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">

@@ -245,7 +245,7 @@ CID: ${d.cid}
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
+            {}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="space-y-1">
                     <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight italic">Histórico de <span className="text-primary italic">PEIs</span></h3>
@@ -260,7 +260,7 @@ CID: ${d.cid}
                 </button>
             </div>
 
-            {/* Filters */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-2 relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -357,7 +357,7 @@ CID: ${d.cid}
                 </div>
             )}
 
-            {/* Detailed View Modal */}
+            {}
             {viewingPEI && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/70 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-800 w-full max-w-5xl max-h-[95vh] rounded-[3.5rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">

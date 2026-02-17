@@ -18,7 +18,7 @@
   background-color: #0f172a;
 }
 
-/* Mobile Header */
+
 .mobileHeader {
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 100;
 
-  /* Mobile: Fixed and hidden by default */
+  
   position: fixed;
   top: 0;
   bottom: 0;
@@ -143,25 +143,9 @@
   }
 }
 
-/* Scrollbar Styling */
-.mainContent::-webkit-scrollbar {
-  width: 5px;
-}
 
-.mainContent::-webkit-scrollbar-track {
-  background: transparent;
-}
 
-.mainContent::-webkit-scrollbar-thumb {
-  background-color: #e2e8f0;
-  border-radius: 20px;
-}
 
-:global(.dark) .mainContent::-webkit-scrollbar-thumb {
-  background-color: #1e293b;
-}
-
-/* Custom Effects */
 .glassCard {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);

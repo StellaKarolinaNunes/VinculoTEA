@@ -59,7 +59,7 @@
     color: #94a3b8;
 }
 
-/* Tabs */
+
 .tabsContainer {
     display: flex;
     gap: 0.5rem;
@@ -124,7 +124,7 @@
     border-bottom-color: #38bdf8;
 }
 
-/* Shared List/Form Styles */
+
 .contentArea {
     flex: 1;
     display: flex;
@@ -185,7 +185,7 @@
     box-shadow: 0 6px 8px -1px rgba(20, 57, 109, 0.3);
 }
 
-/* Form Styles Override/Additions */
+
 .formContainer {
     background-color: white;
     padding: 1.25rem;

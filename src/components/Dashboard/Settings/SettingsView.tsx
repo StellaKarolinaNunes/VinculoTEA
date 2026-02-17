@@ -24,7 +24,7 @@ export const SettingsView = () => {
                 </div>
             </div>
 
-            {/* Tabs Premium */}
+            {}
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
                     { id: 'users', icon: Users, label: 'Usuários' },
@@ -48,7 +48,7 @@ export const SettingsView = () => {
                 })}
             </div>
 
-            {/* Content Area - No overflow-hidden to prevent cutting */}
+            {}
             <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm min-h-[500px]">
                 <div className="p-8 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {activeTab === 'users' && <UsersTab />}

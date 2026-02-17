@@ -72,7 +72,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
 
     return (
         <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8 pb-20">
-            {/* Top Bar with Navigation */}
+            {}
             <div className="flex items-center justify-between">
                 <button
                     onClick={() => onBack()}
@@ -98,10 +98,10 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 </div>
             </div>
 
-            {/* Student Profile Header Card */}
+            {}
             <div className="bg-white dark:bg-slate-800 rounded-[3rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-10">
                 <div className="flex flex-col xl:flex-row items-start gap-10">
-                    {/* Avatar with Status */}
+                    {}
                     <div className="relative">
                         <div className="size-40 rounded-[3rem] bg-slate-900 flex items-center justify-center text-white text-5xl font-black shadow-2xl rotate-3">
                             {student.foto ? <img src={student.foto} alt={student.nome} className="size-full object-cover" /> : student.nome.charAt(0)}
@@ -112,7 +112,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                         </div>
                     </div>
 
-                    {/* Basic Info */}
+                    {}
                     <div className="flex-1 space-y-6 w-full">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-2 italic">
@@ -123,7 +123,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                             </p>
                         </div>
 
-                        {/* Info Grid */}
+                        {}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <InfoBox icon={Building2} label="Escola" value={student.escola} />
                             <InfoBox icon={Activity} label="CID" value={student.cid || 'N/A'} />
@@ -138,7 +138,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 </div>
             </div>
 
-            {/* Tabs Navigation */}
+            {}
             <div className="flex bg-slate-100/50 dark:bg-slate-900/50 p-2 rounded-[2rem] gap-2 max-w-fit border-[1.5px] border-slate-100/50 dark:border-slate-800">
                 <TabButton
                     active={activeTab === 'peis'}
@@ -178,7 +178,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 />
             </div>
 
-            {/* Tab Content */}
+            {}
             <div className="animate-in fade-in zoom-in-95 duration-500">
                 {activeTab === 'peis' && (
                     <PEIsTab
@@ -196,7 +196,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 {activeTab === 'agenda' && <AgendaView key={`agenda-${refreshKey}`} studentId={student.id} />}
             </div>
 
-            {/* Render Wizard outside tab container to prevent position:fixed trap */}
+            {}
             {isCreatingPEI && (
                 <PEIWizard
                     studentName={student.nome}

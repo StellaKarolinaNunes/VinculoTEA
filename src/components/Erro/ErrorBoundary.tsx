@@ -45,7 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
         if (this.state.hasError) {
             return (
                 <div className={styles.container}>
-                    {/* Lado Esquerdo: Identidade e Ação */}
+                    {}
                     <div className={styles.leftPane}>
                         <header className={styles.header}>
                             <Logo />
@@ -83,7 +83,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         </footer>
                     </div>
 
-                    {/* Lado Direito: Visual Premium */}
+                    {}
                     <div className={styles.rightPane}>
                         <div className={styles.rightPaneContent}>
                             <div className={styles.patternOverlay} />

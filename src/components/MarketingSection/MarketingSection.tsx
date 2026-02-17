@@ -64,7 +64,7 @@ const MarketingSection: React.FC = () => {
         }
       `}</style>
 
-      {/* Fundo com Grid e Glow */}
+      {}
       <div className="absolute inset-0 pattern-bg"></div>
       <motion.div
         animate={{ backgroundColor: active.glow }}
@@ -73,7 +73,7 @@ const MarketingSection: React.FC = () => {
 
       <div className="relative z-10 w-full max-w-5xl flex flex-col items-center">
 
-        {/* Área do Gráfico / Visual */}
+        {}
         <div className="relative w-full h-[320px] sm:h-[420px] md:h-[520px] flex items-center justify-center mb-2">
           <AnimatePresence mode="wait">
             <motion.div
@@ -93,7 +93,7 @@ const MarketingSection: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        {/* Conteúdo de Texto */}
+        {}
         <div className="text-center max-w-3xl px-4">
           <motion.div
             key={`header-${current}`}
@@ -124,7 +124,7 @@ const MarketingSection: React.FC = () => {
           </motion.p>
         </div>
 
-        {/* Paginação Dots */}
+        {}
         <div className="flex gap-3 sm:gap-4 mt-2">
           {slides.map((s, i) => (
             <button key={s.id} onClick={() => setCurrent(i)} className="relative py-2 group">
@@ -144,7 +144,7 @@ const MarketingSection: React.FC = () => {
 };
 
 
-/* --- Componente Ecosystem Radar --- */
+
 const EcosystemRadar: React.FC = () => {
   const nodes = [
     { icon: <Users size={28} />, label: "FAMÍLIA", color: "#00a8ff", position: "top-left" },
@@ -156,20 +156,20 @@ const EcosystemRadar: React.FC = () => {
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-visible">
 
-      {/* 1. Orbit Paths Geometry */}
+      {}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        {/* Subtle Dotted Rings */}
+        {}
         <div className="absolute w-[300px] h-[300px] rounded-full border border-white/5 border-dashed" />
         <div className="absolute w-[400px] h-[400px] rounded-full border border-white/[0.03]" />
         <div className="absolute w-[520px] h-[520px] rounded-full border border-white/[0.015] border-dashed" />
 
-        {/* Orbiting Particles */}
+        {}
         <div className="absolute w-1.5 h-1.5 rounded-full bg-blue-500 blur-[1px]" style={{ animation: 'float-particle 14s linear infinite' }}></div>
         <div className="absolute w-2 h-2 rounded-full bg-orange-500 blur-[2px]" style={{ animation: 'float-particle 18s linear infinite reverse' }}></div>
         <div className="absolute w-1.5 h-1.5 rounded-full bg-purple-500 blur-[1px]" style={{ animation: 'float-particle 22s linear infinite', animationDelay: '-5s' }}></div>
       </div>
 
-      {/* 2. Central Hub (ALUNO CENTRAL) */}
+      {}
       <div className="relative z-50">
         <div className="absolute inset-[-18px] border-[1.5px] border-transparent border-t-orange-500/40 border-r-orange-500/20 rounded-full animate-rotate-dashed" />
         <div className="absolute inset-[-10px] border-[1.5px] border-transparent border-b-purple-500/30 border-l-purple-500/10 rounded-full animate-rotate-dashed" style={{ animationDirection: 'reverse', animationDuration: '8s' }} />
@@ -192,7 +192,7 @@ const EcosystemRadar: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* 3. Peripheral Cards - NOW TRANSPARENT */}
+      {}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none md:scale-110">
         {nodes.map((node, i) => {
           const isLeft = node.position.includes('left');
@@ -233,7 +233,7 @@ const EcosystemRadar: React.FC = () => {
   );
 };
 
-/* --- Componente de Analytics --- */
+
 const AnalyticsChart = ({ color }: { color: string }) => {
   const points = "0,80 15,40 30,65 45,25 60,50 75,15 90,45 100,30";
   const areaPoints = `0,100 ${points} 100,100`;
@@ -286,7 +286,7 @@ const AnalyticsChart = ({ color }: { color: string }) => {
   );
 };
 
-/* --- Componente Dashboard Bars --- */
+
 const DashboardBars = ({ color }: { color: string }) => {
   const metrics = [
     { label: "Alunos Ativos", value: "1.240", icon: <User size={18} />, trend: "+12%" },

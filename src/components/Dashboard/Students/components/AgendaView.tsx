@@ -287,9 +287,9 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
         <div className="animate-in fade-in duration-700 space-y-8 pb-12">
             <div className="flex flex-col xl:flex-row gap-10">
 
-                {/* Lateral: Mini Calendar & Resume */}
+                {}
                 <div className="w-full xl:w-80 space-y-8">
-                    {/* Mini Calendar */}
+                    {}
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest px-2">{format(currentMonth, 'MMMM', { locale: ptBR })}</h3>
@@ -326,7 +326,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
                         </div>
                     </div>
 
-                    {/* Resume Sidebar */}
+                    {}
                     <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-8">
                         <div>
                             <h4 className="flex items-center gap-2 text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] mb-4">
@@ -360,7 +360,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
                     </div>
                 </div>
 
-                {/* Main Content: Agenda Calendar Grid */}
+                {}
                 <div className="flex-1 bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden flex flex-col">
                     <div className="p-8 border-b border-slate-50 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-6">
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
@@ -451,7 +451,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
                 </div>
             </div>
 
-            {/* Create Event Modal */}
+            {}
             {isCreating && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden max-w-xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

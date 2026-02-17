@@ -263,13 +263,13 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
 
     return (
         <div className={styles.container}>
-            {/* Header */}
+            {}
             <div className={styles.header}>
                 <h2 className={styles.title}>{initialData ? 'Editar Aluno' : 'Novo Aluno/PEI'}</h2>
                 <p className={styles.subtitle}>{initialData ? 'Atualize as informações do aluno' : 'Preencha as informações por etapas'}</p>
             </div>
 
-            {/* Stepper */}
+            {}
             <div className={styles.stepper}>
                 {steps.map((step) => {
                     const isActive = step.id === currentStep;
@@ -289,14 +289,14 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                 })}
             </div>
 
-            {/* Form Content */}
+            {}
             <form className={styles.form} onSubmit={handleSubmit}>
 
-                {/* Step 1: Dados Pessoais */}
+                {}
                 {currentStep === 1 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <div className="flex flex-col md:flex-row gap-10">
-                            {/* Photo Upload */}
+                            {}
                             <div className="flex flex-col items-center gap-4">
                                 <div className="size-32 rounded-[2rem] bg-slate-100 dark:bg-slate-800/50 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group transition-all hover:border-primary/50">
                                     {photoUrl ? (
@@ -386,7 +386,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {/* Step 2: Responsável */}
+                {}
                 {currentStep === 2 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><MapPin size={20} /> Dados do Responsável e Endereço</h3>
@@ -474,7 +474,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {/* Step 3: Vínculo Escolar */}
+                {}
                 {currentStep === 3 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><School size={20} /> Vínculo Escolar</h3>
@@ -518,7 +518,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {/* Step 4: História */}
+                {}
                 {currentStep === 4 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><BookOpen size={20} /> História Pré/Peri/Neonatal</h3>
@@ -558,7 +558,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {/* Step 5: Desenvolvimento */}
+                {}
                 {currentStep === 5 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><Brain size={20} /> Desenvolvimento e Comunicação</h3>
@@ -598,7 +598,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {/* Step 6: Saúde e Rotinas */}
+                {}
                 {currentStep === 6 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><Activity size={20} /> Saúde e Rotinas</h3>
@@ -638,7 +638,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {/* Actions */}
+                {}
                 <div className={styles.actions}>
                     <button type="button" onClick={handleBack} className={`${styles.button} ${styles.btnSecondary}`}>
                         <ArrowLeft size={18} />

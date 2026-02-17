@@ -18,7 +18,7 @@
   );
 }
 
-/* Grid suave estilo Apple */
+
 .grid {
   position: fixed;
   inset: 0;
@@ -41,9 +41,7 @@
   to { background-position: 600px 600px; }
 }
 
-/* ===========================
-   GLOWS
-=========================== */
+
 
 .glowTop {
   position: fixed;
@@ -67,9 +65,7 @@
   opacity: 0.5;
 }
 
-/* ===========================
-   CONTAINER
-=========================== */
+
 
 .content {
   position: relative;
@@ -82,9 +78,7 @@
   justify-content: center;
 }
 
-/* ===========================
-   GLASS CARD
-=========================== */
+
 
 .glass {
   background: linear-gradient(180deg, rgba(15,30,70,.75), rgba(8,15,40,.85));
@@ -94,9 +88,7 @@
   box-shadow: 0 40px 120px rgba(0,40,120,.4);
 }
 
-/* ===========================
-   TÍTULOS
-=========================== */
+
 
 .headerLabel {
   font-size: 11px;
@@ -122,9 +114,7 @@
   line-height: 1.7;
 }
 
-/* ===========================
-   DOTS
-=========================== */
+
 
 .dots {
   display: flex;
