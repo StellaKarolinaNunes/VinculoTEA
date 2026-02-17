@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VínculoTEA - Plataforma de Gestão do Cuidado no Autismo</title>
+    <meta name="description"
+        content="A solução completa para clínicas, terapeutas e famílias. Gestão de terapias, evolução clínica e comunicação integrada em uma única plataforma segura.">
+
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="dark.svg">
+</head>
+
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-contact">
+                <span><i data-lucide="phone"
+                        style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;"></i> 0800 123
+                    4567</span>
+                <span><i data-lucide="mail"
+                        style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;"></i>
+                    contato@vinculotea.com.br</span>
+            </div>
+            <div class="top-a11y">
+                <button aria-label="Acessibilidade"><i data-lucide="accessibility"
+                        style="width: 14px; height: 14px;"></i> Acessibilidade</button>
+                <a href="#" class="libras-link">VLibras</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="dark.svg" alt="VínculoTEA" class="logo-img" style="height: 40px;">
+            </a>
+
+            <nav class="nav-menu">
+                <a href="#solucoes" class="nav-link">Soluções</a>
+                <a href="#processo" class="nav-link">Como Funciona</a>
+                <a href="#compliance" class="nav-link">Segurança</a>
+                <a href="#contato" class="nav-link">Contato</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="#" class="btn btn-outline" style="padding: 0.6rem 1.2rem;">Entrar</a>
+                <a href="#contato" class="btn btn-primary" style="padding: 0.6rem 1.2rem;">Agendar Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <span class="section-tag">Versão Enterprise 2.0</span>
+                    <h1>Gestão do Cuidado no Autismo Baseada em Dados</h1>
+                    <p>A plataforma SaaS completa que conecta clínicas, terapeutas e famílias para otimizar a evolução
+                        clínica com segurança e conformidade.</p>
+
+                    <div class="hero-btns">
+                        <a href="#contato" class="btn btn-primary btn-lg">Solicitar Demonstração</a>
+                        <a href="#solucoes" class="btn btn-secondary btn-lg">Explorar Soluções</a>
+                    </div>
+
+                    <div class="trust-badges">
+                        <span class="trust-text">Conformidade e Segurança</span>
+                        <div class="badge-group">
+                            <span><i data-lucide="shield-check"></i> LGPD</span>
+                            <span><i data-lucide="lock"></i> Criptografia AES-256</span>
+                            <span><i data-lucide="check-circle-2"></i> WCAG 2.1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="dashboard-mockup">
+                        <div class="mockup-topbar">
+                            <div class="mockup-dot"></div>
+                            <div class="mockup-dot"></div>
+                            <div class="mockup-dot"></div>
+                        </div>
+                        <div class="mockup-content">
+                            <!-- Dashboard Layout -->
+                            <div
+                                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="background: var(--slate-50); padding: 1.25rem; border-radius: 8px;">
+                                    <div style="font-size: 0.75rem; color: var(--slate-500); margin-bottom: 0.25rem;">
+                                        Pacientes Ativos</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700;">142</div>
+                                </div>
+                                <div style="background: var(--slate-50); padding: 1.25rem; border-radius: 8px;">
+                                    <div style="font-size: 0.75rem; color: var(--slate-500); margin-bottom: 0.25rem;">
+                                        Sessões Realizadas</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700;">1.280</div>
+                                </div>
+                            </div>
+                            <div
+                                style="background: var(--slate-50); height: 120px; border-radius: 8px; display: flex; align-items: flex-end; justify-content: space-around; padding: 1rem;">
+                                <div style="width: 12%; height: 40%; background: var(--slate-200); border-radius: 4px;">
+                                </div>
+                                <div style="width: 12%; height: 70%; background: var(--slate-200); border-radius: 4px;">
+                                </div>
+                                <div style="width: 12%; height: 55%; background: var(--slate-200); border-radius: 4px;">
+                                </div>
+                                <div
+                                    style="width: 12%; height: 90%; background: var(--accent-main); border-radius: 4px;">
+                                </div>
+                                <div style="width: 12%; height: 65%; background: var(--slate-200); border-radius: 4px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Marquee -->
+    <section class="clients-marquee">
+        <div class="container">
+            <div class="marquee-track">
+                <div class="marquee-content">
+                    <span class="client-logo">CLÍNICA EVOLUIR</span>
+                    <span class="client-logo">INSTITUTO ABA</span>
+                    <span class="client-logo">REDE ACESSO</span>
+                    <span class="client-logo">HOSPITAL SÃO LUIZ</span>
+                    <span class="client-logo">COLÉGIO INTEGRAL</span>
+                    <!-- Duplicate -->
+                    <span class="client-logo">CLÍNICA EVOLUIR</span>
+                    <span class="client-logo">INSTITUTO ABA</span>
+                    <span class="client-logo">REDE ACESSO</span>
+                    <span class="client-logo">HOSPITAL SÃO LUIZ</span>
+                    <span class="client-logo">COLÉGIO INTEGRAL</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section id="solucoes" class="solutions reveal">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Ecosystem SaaS</span>
+                <h2>Soluções Especializadas para cada Elo</h2>
+                <p>Uma infraestrutura tecnológica completa para centralizar dados e aproximar pessoas.</p>
+            </div>
+
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <div class="icon-box"><i data-lucide="building-2"></i></div>
+                    <h3>Gestão de Clínicas</h3>
+                    <p>Controle financeiro, faturamento de convênios, prontuário eletrônico e gestão de escala de
+                        terapeutas em uma única interface.</p>
+                </div>
+
+                <div class="solution-card">
+                    <div class="icon-box"><i data-lucide="users"></i></div>
+                    <h3>Evolução Clínica</h3>
+                    <p>Coleta de dados em tempo real para ABA, Denver e ESDM. Gráficos de evolução gerados
+                        automaticamente para decisões baseadas em evidências.</p>
+                </div>
+
+                <div class="solution-card">
+                    <div class="icon-box"><i data-lucide="home"></i></div>
+                    <h3>Engajamento Familiar</h3>
+                    <p>Portal da família para acompanhamento de rotina, orientações parentais e canal direto de
+                        comunicação com a equipe multidisciplinar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials reveal">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Depoimentos</span>
+                <h2>Confiado por grandes nomes da neurologia</h2>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-content">"O VínculoTEA revolucionou nossa coleta de dados. A precisão dos
+                        gráficos ABA nos permite ajustar o tratamento em tempo real, melhorando drasticamente os
+                        resultados."</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>Dra. Ana Silveira</h4>
+                            <span>Diretora Clínica - Espaço TEA</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-content">"Como gestor, a transparência e a facilidade de faturamento que a
+                        plataforma oferece nos economizou mais de 20 horas semanais de trabalho burocrático."</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>Marcos Oliveira</h4>
+                            <span>Gestor Administrativo - Clínica Evolução</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="precos" class="pricing reveal">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Planos</span>
+                <h2>Investimento em Qualidade e Eficiência</h2>
+            </div>
+            <div class="pricing-grid">
+                <!-- Essencial -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Essencial</h3>
+                        <p>Para profissionais autônomos</p>
+                    </div>
+                    <div class="price">
+                        <span class="amount">R$ 149</span>
+                        <span class="period">/mês</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i data-lucide="check"></i> Até 15 pacientes</li>
+                        <li><i data-lucide="check"></i> Prontuário Digital</li>
+                        <li><i data-lucide="check"></i> Coleta de Dados Básica</li>
+                        <li><i data-lucide="check"></i> Portal da Família</li>
+                    </ul>
+                    <a href="#contato" class="btn btn-outline">Começar agora</a>
+                </div>
+
+                <!-- Profissional -->
+                <div class="pricing-card popular">
+                    <span class="popular-tag">Mais Escolhido</span>
+                    <div class="pricing-header">
+                        <h3>Profissional</h3>
+                        <p>Para clínicas em crescimento</p>
+                    </div>
+                    <div class="price">
+                        <span class="amount">R$ 399</span>
+                        <span class="period">/mês</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i data-lucide="check"></i> Pacientes Ilimitados</li>
+                        <li><i data-lucide="check"></i> Gestão Financeira Completa</li>
+                        <li><i data-lucide="check"></i> Gráficos Avançados ABA/Denver</li>
+                        <li><i data-lucide="check"></i> Relatórios Automatizados</li>
+                        <li><i data-lucide="check"></i> Suporte Prioritário</li>
+                    </ul>
+                    <a href="#contato" class="btn btn-primary">Falar com Consultor</a>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Enterprise</h3>
+                        <p>Para grandes redes e hospitais</p>
+                    </div>
+                    <div class="price">
+                        <span class="amount">Consultar</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i data-lucide="check"></i> Customização de Fluxos</li>
+                        <li><i data-lucide="check"></i> API de Integração</li>
+                        <li><i data-lucide="check"></i> Treinamento Presencial</li>
+                        <li><i data-lucide="check"></i> Gerente de Conta Dedicado</li>
+                    </ul>
+                    <a href="#contato" class="btn btn-outline">Solicitar Proposta</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq reveal">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Dúvidas</span>
+                <h2>Perguntas Frequentes</h2>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Os dados estão de acordo com a LGPD?
+                        <i data-lucide="chevron-down" class="faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim, nossa plataforma foi construída seguindo rigorosamente a Lei Geral de Proteção de Dados
+                            (LGPD). Todos os dados sensíveis de saúde são criptografados e armazenados em servidores de
+                            alta segurança com controle de acesso auditável.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Quais protocolos clínicos são suportados?
+                        <i data-lucide="chevron-down" class="faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Atualmente suportamos nativamente os protocolos ABA (Análise do Comportamento Aplicada),
+                            Denver (Modelo Precoce de Denver), ESDM e prontuário estruturado para Fonoaudiologia e
+                            Terapia Ocupacional.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Há fidelidade nos planos mensais?
+                        <i data-lucide="chevron-down" class="faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Não. Acreditamos na qualidade do nosso produto. Se você não estiver satisfeito, pode cancelar
+                            sua assinatura mensal a qualquer momento sem multas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="processo" style="padding: 100px 0; background: white;">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Implementação</span>
+                <h2>Sua Jornada para uma Gestão Digital</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; text-align: center;">
+                <div>
+                    <div style="font-size: 3rem; font-weight: 700; color: var(--slate-100); margin-bottom: -1.5rem;">01
+                    </div>
+                    <h3 style="margin-bottom: 1rem;">Diagnóstico</h3>
+                    <p>Entendemos os fluxos da sua clínica para configurar a plataforma de acordo com sua necessidade.
+                    </p>
+                </div>
+                <div>
+                    <div style="font-size: 3rem; font-weight: 700; color: var(--slate-100); margin-bottom: -1.5rem;">02
+                    </div>
+                    <h3 style="margin-bottom: 1rem;">Onboarding</h3>
+                    <p>Treinamento especializado para sua equipe administrativa e corpo clínico para máxima adesão.</p>
+                </div>
+                <div>
+                    <div style="font-size: 3rem; font-weight: 700; color: var(--slate-100); margin-bottom: -1.5rem;">03
+                    </div>
+                    <h3 style="margin-bottom: 1rem;">Sucesso</h3>
+                    <p>Acompanhamento contínuo para garantir que os dados gerem inteligência e melhores resultados
+                        clínicos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compliance Section -->
+    <section id="compliance" class="compliance">
+        <div class="container">
+            <div class="compliance-grid">
+                <div>
+                    <h2>Segurança Nível Enterprise</h2>
+                    <p>A proteção dos dados sensíveis de saúde é nossa prioridade absoluta. Nossa infraestrutura atende
+                        aos mais rigorosos padrões globais de segurança.</p>
+                    <div class="compliance-logos">
+                        <div class="compliance-badge">
+                            <strong>LGPD</strong>
+                            <small>Full Compliance</small>
+                        </div>
+                        <div class="compliance-badge">
+                            <strong>ISO 27001</strong>
+                            <small>Data Security</small>
+                        </div>
+                        <div class="compliance-badge">
+                            <strong>SSL/TLS</strong>
+                            <small>Encrypted Access</small>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    style="background: rgba(255,255,255,0.05); padding: 3rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <i data-lucide="lock" style="color: var(--accent-main); width: 32px; height: 32px;"></i>
+                        <h3 style="color: white; margin: 0;">Soberania de Dados</h3>
+                    </div>
+                    <ul style="color: rgba(255,255,255,0.8); display: flex; flex-direction: column; gap: 1rem;">
+                        <li style="display: flex; gap: 0.5rem;"><i data-lucide="check"
+                                style="color: var(--success); width: 20px;"></i> Backups diários e redundantes</li>
+                        <li style="display: flex; gap: 0.5rem;"><i data-lucide="check"
+                                style="color: var(--success); width: 20px;"></i> Logs de acesso auditáveis</li>
+                        <li style="display: flex; gap: 0.5rem;"><i data-lucide="check"
+                                style="color: var(--success); width: 20px;"></i> Hospedagem em servidores seguros (AWS)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Call to Action -->
+    <section id="contato" style="padding: 120px 0; text-align: center; background: var(--slate-50);">
+        <div class="container">
+            <h2 style="margin-bottom: 1.5rem;">Pronto para transformar sua gestão?</h2>
+            <p style="margin: 0 auto 3rem;">Agende uma conversa estratégica com nossos consultores e descubra como o
+                VínculoTEA pode escalar sua clínica.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="#" class="btn btn-primary btn-lg">Agendar Minha Demo</a>
+                <a href="mailto:contato@vinculotea.com.br" class="btn btn-outline btn-lg">Falar com Especialista</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" style="grid-column: span 1;">
+                    <img src="dark.svg" alt="VínculoTEA" style="height: 32px; margin-bottom: 1.5rem;">
+                    <p style="font-size: 0.875rem;">A plataforma pioneira em gestão inteligente para o TEA no Brasil.
+                        Unindo tecnologia e propósito.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Plataforma</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Recursos</a></li>
+                        <li><a href="#">Segurança</a></li>
+                        <li><a href="#">API / Integrações</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Empresa</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Sobre nós</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Vagas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Suporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Central de Ajuda</a></li>
+                        <li><a href="#">Status do Sistema</a></li>
+                        <li><a href="#">Privacidade</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 VínculoTEA Tecnologia. Todos os direitos reservados.</p>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="#" style="color: inherit; text-decoration: none;"><i data-lucide="linkedin"></i></a>
+                    <a href="#" style="color: inherit; text-decoration: none;"><i data-lucide="instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Accessibility Button -->
+    <div class="a11y-widget-btn" aria-label="Acessibilidade">
+        <i data-lucide="accessibility" style="width: 24px; height: 24px;"></i>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
