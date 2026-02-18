@@ -21,11 +21,43 @@
                         ]
                     },
                     {
-                        "group": "Guias de Onboarding",
+                        "group": "Para Recrutadores (Technical)",
+                        "pages": [
+                            "recruiters/technical-stack"
+                        ]
+                    },
+                    {
+                        "group": "Guias por Perfil",
+                        "pages": [
+                            "guides/teacher-guide",
+                            "guides/family-guide",
+                            "guides/professional-guide",
+                            "guides/first-30-days"
+                        ]
+                    },
+                    {
+                        "group": "Recursos Premium",
+                        "pages": [
+                            "features/accessibility",
+                            "features/pei",
+                            "features/students",
+                            "features/admin"
+                        ]
+                    },
+                    {
+                        "group": "Configuração do Sistema",
                         "pages": [
                             "guides/network-manager",
-                            "guides/first-30-days",
-                            "guides/deploy"
+                            "guides/deploy",
+                            "development"
+                        ]
+                    },
+                    {
+                        "group": "Arquitetura e Segurança",
+                        "pages": [
+                            "architecture",
+                            "security",
+                            "api-reference/database"
                         ]
                     },
                     {
@@ -37,33 +69,11 @@
                         ]
                     },
                     {
-                        "group": "Recursos da Plataforma",
-                        "pages": [
-                            "features/students",
-                            "features/pei",
-                            "features/admin"
-                        ]
-                    },
-                    {
-                        "group": "Arquitetura e API",
-                        "pages": [
-                            "architecture",
-                            "security",
-                            "api-reference/database"
-                        ]
-                    },
-                    {
-                        "group": "Legal",
+                        "group": "Legal e Comunidade",
                         "pages": [
                             "legal/terms",
-                            "legal/privacy"
-                        ]
-                    },
-                    {
-                        "group": "Comunidade",
-                        "pages": [
+                            "legal/privacy",
                             "troubleshooting",
-                            "references",
                             "changelog"
                         ]
                     }

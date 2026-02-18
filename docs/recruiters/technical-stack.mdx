@@ -1,0 +1,47 @@
+---
+title: Stack Técnica para Recrutadores
+description: 'Uma visão profunda sobre as escolhas tecnológicas e excelência de código do VínculoTEA.'
+---
+
+## 🚀 Visão Geral
+O VínculoTEA foi construído focando em três pilares técnicos: **Escalabilidade**, **Acessibilidade Inclusiva** e **Segurança de Dados Sensíveis**. Esta página detalha por que este projeto é um exemplo de engenharia de software moderna.
+
+## 🛠 Core Stack
+
+| Tecnologia | Finalidade | Raciocínio |
+| :--- | :--- | :--- |
+| **React 18 + TS** | Frontend | Tipagem estrita para reduzir bugs em lógica complexa de PEI. |
+| **Supabase** | Backend/Auth | PostgreSQL robusto com Real-time nativo para notificações instantâneas. |
+| **Vanilla CSS** | Styling | Máxima performance e controle total sobre temas de acessibilidade (Alto Contraste, ADHD Friendly). |
+| **Lucide React** | Icons | Conjunto de ícones leves e consistentes. |
+| **Vite** | Build Tool | Feedback instantâneo no desenvolvimento e builds otimizados. |
+
+## 📐 Padrões de Arquitetura
+
+### 1. Context API para Gestão de Estado Global
+Utilizamos o `useContext` para gerenciar dois estados críticos:
+- **AccessibilityContext**: Controla dinamicamente classes CSS no `<html>`, permitindo que o site se adapte em tempo real às necessidades sensoriais do usuário.
+- **NotificationContext**: Centraliza assinaturas do Supabase Real-time para disparar alertas globais e toasts.
+
+### 2. Service Layer Pattern
+Toda a lógica de comunicação com o Supabase está isolada em `src/lib/*Service.ts`. Isso facilita:
+- Testabilidade.
+- Substituição de provedores de dados no futuro.
+- Reutilização de lógica entre componentes.
+
+### 3. Design System Sustentável
+Embora não utilize frameworks de UI pesados, o projeto segue um design library rigoroso com variáveis CSS (Tokens), garantindo que a troca para Modo Escuro ou ajustes de cores para Autismo sejam feitos alterando apenas um valor na raiz.
+
+## 🧠 Desafios Técnicos Superados
+
+### Persistência de Onboarding Wizard
+Implementamos um sistema de persistência híbrido:
+1. **Local**: Para feedback imediato.
+2. **Database (Supabase JSONB)**: Para persistência cross-device, com lógica de debounce para evitar excesso de writes durante a configuração.
+
+### Real-time Sync
+O sistema detecta automaticamente alterações em tabelas críticas (PEIs, Anotações) e notifica o usuário via Toasts, mantendo a equipe multidisciplinar em sincronia sem a necessidade de refresh.
+
+## 🛡 Segurança e Qualidade
+- **Row Level Security (RLS)**: Garantimos que um professor só veja dados dos seus alunos e da sua escola.
+- **Clean Code**: Funções curtas, nomes expressivos e separação clara de responsabilidades (SOLID).
