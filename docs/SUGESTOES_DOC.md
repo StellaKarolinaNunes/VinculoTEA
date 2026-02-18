@@ -9,7 +9,7 @@ Para elevar a documentação do **VínculoTEA** a um patamar ainda mais alto, aq
 *   **Primeiros 30 dias na Escola**: Um checklist para diretores escolares garantirem que o VínculoTEA está sendo bem utilizado.
 *   **Treinamento para Professores**: Um guia rápido "Comece em 5 minutos" focado apenas no lançamento de relatos diários.
 
-## 2. 🧩 Seção de Casos de Uso (Templates)
+## 2. Seção de Casos de Uso (Templates)
 *   **Exemplos de PEI Realistas**: Documentar 3 exemplos de PEIs preenchidos (Nível 1, 2 e 3 de suporte), servindo como benchmark para os professores.
 *   **Gestão de Crises**: Como utilizar a aba de "Execução" para documentar antecedentes e consequências de comportamentos desafiadores.
 
