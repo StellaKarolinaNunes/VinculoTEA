@@ -1,33 +1,34 @@
 import { useState } from 'react';
-import { Settings as SystemIcon, Shield } from 'lucide-react';
-import { SystemTab } from './SystemTab';
-import { SecurityTab } from './SecurityTab';
+import { Users, TrendingUp, Settings as SettingsIcon, Shield } from 'lucide-react';
+import { UsersTab } from '@/components/Dashboard/SuperAdmin/tabs/UsersTab';
+import { StatsTab } from '@/components/Dashboard/SuperAdmin/tabs/StatsTab';
+import { GlobalSettingsTab } from '@/components/Dashboard/SuperAdmin/tabs/GlobalSettingsTab';
 
+type Tab = 'users' | 'stats' | 'settings';
 
-type Tab = 'system' | 'security';
-
-export const SettingsView = () => {
-    const [activeTab, setActiveTab] = useState<Tab>('system');
+export const SuperAdminView = () => {
+    const [activeTab, setActiveTab] = useState<Tab>('users');
 
     return (
         <div className="animate-in fade-in duration-700 space-y-8 pb-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                        Ajustes do <span className="text-primary italic">Sistema</span>
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight italic">
+                        Painel <span className="text-primary">Administrativo</span>
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-                        <div className="size-2 bg-amber-500 rounded-full animate-pulse" />
-                        Gerencie as configurações globais e preferências
+                        <Shield size={16} className="text-primary" />
+                        Gestão Global do Ecossistema VínculoTEA
                     </p>
                 </div>
             </div>
 
-            { }
+            {/* Tabs Navigation */}
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
-                    { id: 'system', icon: SystemIcon, label: 'Sistema' },
-                    { id: 'security', icon: Shield, label: 'Segurança' },
+                    { id: 'users' as const, label: 'Contas de Usuários', icon: Users },
+                    { id: 'stats' as const, label: 'Estatísticas SaaS', icon: TrendingUp },
+                    { id: 'settings' as const, label: 'Configurações Globais', icon: SettingsIcon },
                 ].map((tab) => {
                     const isActive = activeTab === tab.id;
                     return (
@@ -46,11 +47,12 @@ export const SettingsView = () => {
                 })}
             </div>
 
-            { }
-            <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm min-h-[500px]">
-                <div className="p-8 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    {activeTab === 'system' && <SystemTab />}
-                    {activeTab === 'security' && <SecurityTab />}
+            {/* Tab Content */}
+            <div className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-sm min-h-[600px] overflow-hidden">
+                <div className="p-8 md:p-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    {activeTab === 'users' && <UsersTab />}
+                    {activeTab === 'stats' && <StatsTab />}
+                    {activeTab === 'settings' && <GlobalSettingsTab />}
                 </div>
             </div>
         </div>

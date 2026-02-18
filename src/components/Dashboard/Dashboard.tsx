@@ -18,6 +18,7 @@ import { ManagementView } from './Management/ManagementView';
 import { DisciplineView } from './Discipline/DisciplineView';
 import { SettingsView } from './Settings/SettingsView';
 import { ReportsView } from './Reports/ReportsView';
+import { SuperAdminView } from './SuperAdmin/SuperAdminView';
 import { SearchModal } from './SearchModal';
 import { HelpCenter } from './HelpCenter';
 import { syncOfflineActions } from '@/lib/offlineService';
@@ -59,7 +60,7 @@ interface Notification {
   time: string;
 }
 
-type ViewState = 'dashboard' | 'students' | 'management' | 'discipline' | 'reports' | 'settings' | 'help';
+type ViewState = 'dashboard' | 'students' | 'management' | 'discipline' | 'reports' | 'settings' | 'help' | 'system_admin';
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
@@ -260,6 +261,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         setActiveView('reports');
       } else if (command.includes('ajuste') || command.includes('configuração')) {
         setActiveView('settings');
+      } else if (command.includes('admin') || command.includes('painel')) {
+        setActiveView('system_admin');
       }
     };
 
@@ -346,6 +349,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       case 'Escolas':
         setActiveView('management');
         break;
+      case 'Usuarios':
+        setActiveView('system_admin');
+        break;
       default:
         break;
     }
@@ -368,6 +374,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       case 'settings': return <SettingsView />;
       case 'reports': return <ReportsView />;
       case 'help': return <HelpCenter />;
+      case 'system_admin': return <SuperAdminView />;
       case 'dashboard':
       default:
         return (
@@ -669,6 +676,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             <nav className="space-y-1">
               {[
                 { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', requiresPermission: null },
+                { id: 'system_admin', icon: Briefcase, label: 'Painel Adm', requiresPermission: 'canManageUsers' },
                 { id: 'students', icon: Users, label: 'Alunos', requiresPermission: 'canViewStudents' },
                 { id: 'management', icon: Briefcase, label: 'Gerenciamento', requiresPermission: 'canViewManagement' },
                 { id: 'discipline', icon: BookOpen, label: 'Disciplinas', requiresPermission: 'canViewDisciplines' },

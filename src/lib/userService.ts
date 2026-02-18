@@ -50,9 +50,9 @@ export const userService = {
         const cleanEmail = userData.email.trim().toLowerCase();
 
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(cleanEmail)) {
-            throw new Error(`Formato de e-mail inválido. Use o formato: nome@dominio.com`);
+            throw new Error(`O e-mail "${cleanEmail}" não segue o padrão aceito pelo sistema (ex: usuario@dominio.com).`);
         }
 
 
@@ -92,7 +92,7 @@ export const userService = {
                     Foto: userData.avatar,
                     Status: 'Ativo',
                     Plataforma_ID: userData.plataforma_id,
-                    auth_uid: null 
+                    auth_uid: null
                 }])
                 .select()
                 .single();
@@ -196,17 +196,22 @@ export const userService = {
     },
 
     async delete(id: string) {
+        // 1. Get user details to see if we have an auth_uid
+        const { data: userProfile } = await supabase
+            .from('Usuarios')
+            .select('auth_uid, Nome')
+            .eq('Usuario_ID', id)
+            .single();
 
+        // 2. Handle linked teacher role and sub-data
         const { data: teacher } = await supabase
             .from('Professores')
             .select('Professor_ID')
             .eq('Usuario_ID', id)
-            .single();
+            .maybeSingle();
 
         if (teacher) {
             const profId = teacher.Professor_ID;
-
-
 
             await supabase.from('Disponibilidade').delete().eq('Professor_ID', profId);
             await supabase.from('Turmas').update({ Professor_ID: null }).eq('Professor_ID', profId);
@@ -214,14 +219,29 @@ export const userService = {
             await supabase.from('Relatorios_PEI').update({ Professor_ID: null }).eq('Professor_ID', profId);
             await supabase.from('Avaliacoes').update({ Professor_ID: null }).eq('Professor_ID', profId);
 
-
             await supabase.from('Professores').delete().eq('Professor_ID', profId);
         }
 
-
         await supabase.from('Anotacoes').delete().eq('Usuario_ID', id);
 
+        // 3. Delete from Supabase Auth if linked
+        if (userProfile?.auth_uid) {
+            console.log(`🌐 Chamando Edge Function para apagar ${userProfile.Nome} do Auth...`);
+            try {
+                const { error: functionError } = await supabase.functions.invoke('delete-user', {
+                    body: { user_id: userProfile.auth_uid }
+                });
 
+                if (functionError) {
+                    console.warn('⚠️ Falha ao apagar do Auth (pode ser necessário implantar a Edge Function):', functionError);
+                    // We continue anyway to at least clean up the DB
+                }
+            } catch (err) {
+                console.error('❌ Erro na Edge Function:', err);
+            }
+        }
+
+        // 4. Finally delete from Usuarios table
         const { error } = await supabase
             .from('Usuarios')
             .delete()

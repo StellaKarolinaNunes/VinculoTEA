@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
 import {
     Eye, BookOpen, Hand, Volume2,
-    ChevronRight, ChevronLeft, Check, X
+    ChevronRight, ChevronLeft, Check, X,
+    Wind, Type, Target, AppWindow
 } from 'lucide-react';
 import styles from './OnboardingWizard.module.css';
 
@@ -11,54 +12,61 @@ const steps = [
         id: 'welcome',
         title: 'Olá! Vamos configurar sua experiência?',
         description: 'Queremos que o VinculoTEA seja perfeito para você. Este guia rápido (1 min) vai adaptar o site às suas preferências.',
-        icon: null
+        icon: <Wind className="size-10" />
     },
     {
-        id: 'visual',
-        title: 'Visual',
-        description: 'Como você prefere ver o conteúdo?',
-        icon: <Eye className="size-6" />,
+        id: 'profile',
+        title: 'Escolha seu Perfil',
+        description: 'Selecione uma base para começarmos. Você poderá ajustar tudo depois.',
+        icon: <Target className="size-8" />,
         options: [
-            { id: 'none', label: 'Padrão', profile: 'none' },
-            { id: 'autismo', label: 'Perfil Autismo (Cores Suaves)', profile: 'autismo' },
-            { id: 'visual', label: 'Baixa Visão (Alto Contraste)', profile: 'baixa_visao' },
+            { id: 'autismo', label: 'Autismo (Cores Suaves)', profile: 'autismo' },
+            { id: 'tdah', label: 'TDAH (Foco Máximo)', profile: 'tdah' },
+            { id: 'visual', label: 'Baixa Visão (Contraste)', profile: 'baixa_visao' },
+            { id: 'idoso', label: 'Idoso (Simplicidade)', profile: 'idoso' },
+            { id: 'dislexia', label: 'Leitura (Dislexia)', profile: 'leitura' },
+            { id: 'none', label: 'Padrão / Nenhum', profile: 'none' },
         ]
     },
     {
-        id: 'reading',
-        title: 'Leitura & Foco',
-        description: 'Ferramentas para facilitar a leitura.',
-        icon: <BookOpen className="size-6" />,
+        id: 'visual-options',
+        title: 'Visual & Leitura',
+        description: 'Como você prefere ler e ver o conteúdo?',
+        icon: <Type className="size-8" />,
         toggles: [
-            { id: 'lineFocus', label: 'Guia de Leitura' },
-            { id: 'readableFont', label: 'Fonte Amigável' }
+            { id: 'darkMode', label: 'Modo Escuro (Dark Mode)' },
+            { id: 'readableFont', label: 'Fonte para Dislexia' },
+            { id: 'underlineLinks', label: 'Sublinhar Links' },
+            { id: 'highlightHeaders', label: 'Destacar Títulos' },
         ]
     },
     {
-        id: 'motor',
-        title: 'Motor',
-        description: 'Facilite a navegação e cliques.',
-        icon: <Hand className="size-6" />,
+        id: 'environment',
+        title: 'Foco & Ambiente',
+        description: 'Reduza distrações para uma navegação tranquila.',
+        icon: <AppWindow className="size-8" />,
+        toggles: [
+            { id: 'pauseAnimations', label: 'Pausar Animações' },
+            { id: 'distractionFree', label: 'Modo Sem Distração' },
+            { id: 'lineFocus', label: 'Guia de Leitura' }
+        ]
+    },
+    {
+        id: 'motor-audio',
+        title: 'Navegação & Som',
+        description: 'Facilite o uso do mouse e teclado.',
+        icon: <Hand className="size-8" />,
         toggles: [
             { id: 'giantButtons', label: 'Botões Grandes' },
-            { id: 'keyboardFocus', label: 'Foco de Teclado' }
-        ]
-    },
-    {
-        id: 'audio',
-        title: 'Auditivo',
-        description: 'Suporte para comunicação e alertas.',
-        icon: <Volume2 className="size-6" />,
-        toggles: [
-            { id: 'vlibras', label: 'Widget Libras' },
-            { id: 'visualNotifications', label: 'Alertas Visuais' }
+            { id: 'keyboardFocus', label: 'Realce de Teclado' },
+            { id: 'vlibras', label: 'Widget de Libras' }
         ]
     },
     {
         id: 'conclusion',
         title: 'Tudo pronto!',
-        description: 'Suas preferências foram salvas e serão aplicadas em todos os seus dispositivos.',
-        icon: <Check className="size-8 text-success" />
+        description: 'Suas preferências foram salvas e serão aplicadas automaticamente sempre que você entrar.',
+        icon: <Check className="size-12 text-success" />
     }
 ];
 
@@ -79,6 +87,23 @@ export const OnboardingWizard: React.FC = () => {
             setCurrentStep(prev => prev - 1);
         }
     };
+
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+    const toggleDarkMode = () => {
+        const root = document.documentElement;
+        if (root.classList.contains('dark')) {
+            root.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            setTheme('light');
+        } else {
+            root.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            setTheme('dark');
+        }
+    };
+
+    const isDarkMode = theme === 'dark';
 
     const step = steps[currentStep];
 
@@ -131,18 +156,24 @@ export const OnboardingWizard: React.FC = () => {
 
                         {step.toggles && (
                             <div className={styles.togglesList}>
-                                {step.toggles.map(t => (
-                                    <button
-                                        key={t.id}
-                                        onClick={() => toggleMode(t.id as any)}
-                                        className={`${styles.toggleItem} ${config[t.id as keyof typeof config] ? styles.activeToggle : ''}`}
-                                    >
-                                        <div className={styles.switch}>
-                                            <div className={styles.switchKnob} />
-                                        </div>
-                                        <span>{t.label}</span>
-                                    </button>
-                                ))}
+                                {step.toggles.map(t => {
+                                    const isActive = t.id === 'darkMode'
+                                        ? isDarkMode
+                                        : config[t.id as keyof typeof config];
+
+                                    return (
+                                        <button
+                                            key={t.id}
+                                            onClick={() => t.id === 'darkMode' ? toggleDarkMode() : toggleMode(t.id as any)}
+                                            className={`${styles.toggleItem} ${isActive ? styles.activeToggle : ''}`}
+                                        >
+                                            <span>{t.label}</span>
+                                            <div className={styles.switch}>
+                                                <div className={styles.switchKnob} />
+                                            </div>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
@@ -161,7 +192,7 @@ export const OnboardingWizard: React.FC = () => {
                         onClick={handleNext}
                         className={styles.primaryBtn}
                     >
-                        {currentStep === 0 ? 'Começar' : currentStep === steps.length - 1 ? 'Concluir' : 'Continuar'}
+                        {currentStep === 0 ? 'Começar' : currentStep === steps.length - 1 ? 'Concluir' : 'Próximo'}
                         <ChevronRight size={20} />
                     </button>
                 </div>
