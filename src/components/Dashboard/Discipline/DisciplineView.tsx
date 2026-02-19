@@ -9,16 +9,24 @@ export const DisciplineView = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [editingDiscipline, setEditingDiscipline] = useState<Discipline | null>(null);
     const [search, setSearch] = useState('');
+    const [students, setStudents] = useState<any[]>([]);
     const [disciplines, setDisciplines] = useState<Discipline[]>([]);
     const [teachers, setTeachers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showTeachersModal, setShowTeachersModal] = useState<Discipline | null>(null);
     const [selectedTeachersIds, setSelectedTeachersIds] = useState<string[]>([]);
+
+    const [isLinkingMode, setIsLinkingMode] = useState(false);
     const [formData, setFormData] = useState({
         nome: '',
         descricao: '',
         status: 'Ativo'
+    });
+    const [linkForm, setLinkForm] = useState({
+        professor_id: '',
+        student_ids: [] as string[],
+        searchStudent: ''
     });
 
     const fetchData = async () => {
@@ -31,15 +39,18 @@ export const DisciplineView = () => {
             if (!queryPlataforma) {
                 setDisciplines([]);
                 setTeachers([]);
+                setStudents([]);
                 return;
             }
 
-            const [discsData, teachersData] = await Promise.all([
+            const [discsData, teachersData, studentsData] = await Promise.all([
                 disciplinesService.getAll(queryPlataforma),
-                studentService.getAllProfessionals(queryPlataforma, filterEscolaId)
+                studentService.getAllProfessionals(queryPlataforma, filterEscolaId),
+                studentService.getAll(queryPlataforma, filterEscolaId)
             ]);
             setDisciplines(discsData || []);
             setTeachers(teachersData || []);
+            setStudents(studentsData || []);
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
         } finally {
@@ -130,6 +141,49 @@ export const DisciplineView = () => {
             t.Especialidades?.toLowerCase().includes(disc.nome.toLowerCase())
         );
     };
+
+    const handleBulkLink = async () => {
+        if (!showTeachersModal) return;
+        if (linkForm.student_ids.length === 0) {
+            alert('Selecione pelo menos um aluno.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // Process links in parallel
+            await Promise.all(linkForm.student_ids.map(studentId =>
+                studentService.linkStudentDiscipline(
+                    studentId,
+                    showTeachersModal.id,
+                    linkForm.professor_id || undefined,
+                    user?.plataforma_id
+                )
+            ));
+
+            alert(`${linkForm.student_ids.length} alunos vinculados com sucesso!`);
+            setIsLinkingMode(false);
+            setLinkForm({ professor_id: '', student_ids: [], searchStudent: '' });
+        } catch (error) {
+            console.error('Erro ao vincular alunos:', error);
+            alert('Erro ao realizar o vínculo em massa.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const toggleStudentSelection = (id: string) => {
+        setLinkForm(prev => ({
+            ...prev,
+            student_ids: prev.student_ids.includes(id)
+                ? prev.student_ids.filter(sid => sid !== id)
+                : [...prev.student_ids, id]
+        }));
+    };
+
+    const filteredStudents = students.filter(s =>
+        s.Nome.toLowerCase().includes(linkForm.searchStudent.toLowerCase())
+    );
 
     if (isCreating) {
         return (
@@ -362,65 +416,161 @@ export const DisciplineView = () => {
             { }
             {showTeachersModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">
-                        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                    <div className="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+                        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
                             <div>
-                                <h3 className="text-xl font-black text-slate-900 dark:text-white">Docentes de <span className="text-primary italic">{showTeachersModal.nome}</span></h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Lista de especialistas vinculados a esta área</p>
+                                <h3 className="text-xl font-black text-slate-900 dark:text-white">Gerenciar <span className="text-primary italic">{showTeachersModal.nome}</span></h3>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Docentes e Alunos Vinculados</p>
                             </div>
                             <button onClick={() => setShowTeachersModal(null)} className="p-3 rounded-2xl hover:bg-red-50 hover:text-red-500 transition-all">
                                 <X size={20} />
                             </button>
                         </div>
-                        <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            <div className="space-y-4">
-                                {getTeachersForDiscipline(showTeachersModal).length > 0 ? (
-                                    getTeachersForDiscipline(showTeachersModal).map((teacher, i) => (
-                                        <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-primary/20 transition-all group">
-                                            <div className="flex items-center gap-4">
-                                                <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-xs overflow-hidden">
-                                                    {teacher.Usuarios?.Foto ? (
-                                                        <img src={teacher.Usuarios.Foto} className="size-full object-cover" />
-                                                    ) : teacher.Nome.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors">{teacher.Nome}</p>
-                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight flex items-center gap-1">
-                                                        <GraduationCap size={10} /> {teacher.Especialidade || teacher.Especialidades}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                {teacher.Telefone && (
-                                                    <a href={`tel:${teacher.Telefone}`} title="Ligar" className="p-2 rounded-xl bg-white dark:bg-slate-700 text-slate-400 hover:text-primary transition-all shadow-sm">
-                                                        <Phone size={14} />
-                                                    </a>
-                                                )}
-                                                <a href={`mailto:${teacher.Email}`} title="E-mail" className="p-2 rounded-xl bg-white dark:bg-slate-700 text-slate-400 hover:text-primary transition-all shadow-sm">
-                                                    <Mail size={14} />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="text-center py-10">
-                                        <Users className="mx-auto text-slate-200 mb-4" size={40} />
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nenhum docente vinculado a esta especialidade</p>
-                                        <p className="text-xs font-medium text-slate-400 mt-2">Os docentes são vinculados automaticamente baseados em suas áreas de atuação.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className="p-8 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+
+                        {/* Tabs */}
+                        <div className="px-8 pt-6 pb-2 flex gap-4 shrink-0">
                             <button
-                                onClick={() => {
-                                    setShowTeachersModal(null);
-                                    alert('Para adicionar ou editar docentes, utilize a aba "Gestão Administrativa > Professores"');
-                                }}
-                                className="px-8 py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all"
+                                onClick={() => setIsLinkingMode(false)}
+                                className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${!isLinkingMode ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                             >
-                                Gerenciar na Central Administrativa
+                                Lista de Docentes
                             </button>
+                            <button
+                                onClick={() => setIsLinkingMode(true)}
+                                className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${isLinkingMode ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                            >
+                                Vincular Alunos
+                            </button>
+                        </div>
+
+                        <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
+                            {!isLinkingMode ? (
+                                <div className="space-y-4">
+                                    {getTeachersForDiscipline(showTeachersModal).length > 0 ? (
+                                        getTeachersForDiscipline(showTeachersModal).map((teacher, i) => (
+                                            <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-primary/20 transition-all group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-xs overflow-hidden">
+                                                        {teacher.Usuarios?.Foto ? (
+                                                            <img src={teacher.Usuarios.Foto} className="size-full object-cover" />
+                                                        ) : teacher.Nome.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors">{teacher.Nome}</p>
+                                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight flex items-center gap-1">
+                                                            <GraduationCap size={10} /> {teacher.Especialidade || teacher.Especialidades}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    {teacher.Telefone && (
+                                                        <a href={`tel:${teacher.Telefone}`} title="Ligar" className="p-2 rounded-xl bg-white dark:bg-slate-700 text-slate-400 hover:text-primary transition-all shadow-sm">
+                                                            <Phone size={14} />
+                                                        </a>
+                                                    )}
+                                                    <a href={`mailto:${teacher.Email}`} title="E-mail" className="p-2 rounded-xl bg-white dark:bg-slate-700 text-slate-400 hover:text-primary transition-all shadow-sm">
+                                                        <Mail size={14} />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-10">
+                                            <Users className="mx-auto text-slate-200 mb-4" size={40} />
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nenhum docente vinculado a esta especialidade</p>
+                                            <p className="text-xs font-medium text-slate-400 mt-2">Os docentes são vinculados automaticamente baseados em suas áreas de atuação.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Selecione o Professor Responsável</label>
+                                        <select
+                                            value={linkForm.professor_id}
+                                            onChange={e => setLinkForm({ ...linkForm, professor_id: e.target.value })}
+                                            className="w-full bg-slate-50 dark:bg-slate-900 px-6 py-4 rounded-2xl font-bold border-2 border-transparent focus:border-primary/20 outline-none transition-all text-sm appearance-none"
+                                        >
+                                            <option value="">-- Padrão da Disciplina (Todos) --</option>
+                                            {teachers.map(t => (
+                                                <option key={t.id} value={t.id}>{t.Nome} - {t.Especialidade}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-end">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Selecione os Alunos ({linkForm.student_ids.length})</label>
+                                            <span className="text-xs text-primary font-bold cursor-pointer hover:underline" onClick={() => setLinkForm(prev => ({ ...prev, student_ids: [] }))}>Limpar seleção</span>
+                                        </div>
+
+                                        <div className="relative mb-2">
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar aluno..."
+                                                value={linkForm.searchStudent}
+                                                onChange={e => setLinkForm({ ...linkForm, searchStudent: e.target.value })}
+                                                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 rounded-xl text-xs font-bold outline-none focus:ring-2 ring-primary/20"
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                            {filteredStudents.length > 0 ? filteredStudents.map(student => (
+                                                <button
+                                                    key={student.Aluno_ID}
+                                                    onClick={() => toggleStudentSelection(student.Aluno_ID.toString())}
+                                                    className={`flex items-center justify-between p-3 rounded-xl border-2 transition-all text-left ${linkForm.student_ids.includes(student.Aluno_ID.toString()) ? 'bg-primary/5 border-primary/30' : 'bg-slate-50 dark:bg-slate-900 border-transparent hover:border-slate-200'}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="size-8 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-black text-xs text-slate-500 overflow-hidden">
+                                                            {student.Foto ? <img src={student.Foto} className="size-full object-cover" /> : student.Nome.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs font-bold text-slate-800 dark:text-white leading-none mb-1">{student.Nome}</p>
+                                                            <p className="text-[8px] font-black uppercase text-slate-400">{student.Serie || 'Série não informada'}</p>
+                                                        </div>
+                                                    </div>
+                                                    {linkForm.student_ids.includes(student.Aluno_ID.toString()) && <Check size={16} className="text-primary" />}
+                                                </button>
+                                            )) : (
+                                                <p className="text-center py-4 text-xs text-slate-400">Nenhum aluno encontrado.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="p-8 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-center gap-4 shrink-0">
+                            {!isLinkingMode ? (
+                                <button
+                                    onClick={() => {
+                                        setShowTeachersModal(null);
+                                        // alert('Para adicionar ou editar docentes, utilize a aba "Gestão Administrativa > Professores"');
+                                    }}
+                                    className="px-8 py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all"
+                                >
+                                    Fechar
+                                </button>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => setIsLinkingMode(false)}
+                                        className="flex-1 py-4 rounded-2xl text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-600 transition-all"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={handleBulkLink}
+                                        disabled={isSubmitting || linkForm.student_ids.length === 0}
+                                        className="flex-[2] py-4 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+                                    >
+                                        {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} strokeWidth={3} />}
+                                        Confirmar Vínculos
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

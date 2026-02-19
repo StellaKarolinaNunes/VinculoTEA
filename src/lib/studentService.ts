@@ -325,5 +325,57 @@ export const studentService = {
 
         if (error) throw error;
         return true;
+    },
+
+    async getStudentDisciplines(studentId: string) {
+        const { data, error } = await supabase
+            .from('Alunos_Disciplinas')
+            .select(`
+                *,
+                Disciplinas (*),
+                Professores (Nome, Especialidade)
+            `)
+            .eq('Aluno_ID', studentId);
+
+        if (error) {
+            console.error('Error fetching student disciplines:', error);
+            throw error;
+        }
+
+        return data.map((item: any) => ({
+            id: item.Disciplina_ID.toString(),
+            nome: item.Disciplinas?.Nome,
+            descricao: item.Disciplinas?.Descricao,
+            ativa: item.Disciplinas?.Status === 'Ativo',
+            professor_nome: item.Professores?.Nome,
+            professor_especialidade: item.Professores?.Especialidade,
+            professor_id: item.Professor_ID,
+            // Fallback to fetch teachers via disciplinesService if needed, but for now we rely on the specific link
+        }));
+    },
+
+    async linkStudentDiscipline(studentId: string, disciplineId: string, professorId?: string, plataforma_id?: number) {
+        const { error } = await supabase
+            .from('Alunos_Disciplinas')
+            .insert({
+                Aluno_ID: parseInt(studentId),
+                Disciplina_ID: parseInt(disciplineId),
+                Professor_ID: professorId ? parseInt(professorId) : null,
+                Plataforma_ID: plataforma_id
+            });
+
+        if (error) {
+            if (error.code === '23505') return; // Already linked
+            throw error;
+        }
+    },
+
+    async unlinkStudentDiscipline(studentId: string, disciplineId: string) {
+        const { error } = await supabase
+            .from('Alunos_Disciplinas')
+            .delete()
+            .match({ Aluno_ID: studentId, Disciplina_ID: disciplineId });
+
+        if (error) throw error;
     }
 };
