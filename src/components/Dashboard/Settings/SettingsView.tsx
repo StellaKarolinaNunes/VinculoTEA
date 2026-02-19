@@ -31,7 +31,7 @@ export const SettingsView = () => {
             { }
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
-                    { id: 'institution', icon: Building2, label: 'Instituição', hidden: !user?.escola_id && user?.tipo !== 'Administrador' },
+                    { id: 'institution', icon: Building2, label: 'Instituição' }, // Always visible
                     { id: 'users', icon: UsersIcon, label: 'Usuários', hidden: user?.tipo !== 'Administrador' && user?.tipo !== 'GESTOR' },
                     { id: 'system', icon: SystemIcon, label: 'Sistema' },
                     { id: 'security', icon: Shield, label: 'Segurança' },

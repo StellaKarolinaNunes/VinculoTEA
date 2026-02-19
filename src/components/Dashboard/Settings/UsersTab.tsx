@@ -237,8 +237,20 @@ export const UsersTab = () => {
                     />
                 </div>
                 <button
-                    onClick={() => setIsCreating(true)}
-                    className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black text-xs uppercase tracking-widest hover:scale-[1.05] active:scale-[0.95] transition-all shadow-xl shadow-black/10"
+                    onClick={() => {
+                        const isSuperAdmin = authUser?.tipo === 'Administrador';
+                        const USER_LIMIT = isSuperAdmin ? 9999 : (authUser?.limite_usuarios || 5);
+
+                        if (!isSuperAdmin && users.length >= USER_LIMIT) {
+                            alert(`Seu plano permite apenas ${USER_LIMIT} usuários cadastrados. Para adicionar mais membros à equipe, entre em contato para upgrade.`);
+                            return;
+                        }
+                        setIsCreating(true);
+                    }}
+                    className={`w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-black/10 ${(authUser?.tipo !== 'Administrador' && users.length >= (authUser?.limite_usuarios || 5))
+                            ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                            : 'bg-slate-900 dark:bg-white dark:text-slate-900 text-white hover:scale-[1.05] active:scale-[0.95]'
+                        }`}
                 >
                     <Plus size={18} strokeWidth={3} />
                     Novo Usuário

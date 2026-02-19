@@ -12,6 +12,7 @@ export interface UserProfile {
     plataforma_id?: number;
     limite_alunos?: number;
     limite_unidades?: number;
+    limite_usuarios?: number;
     foto?: string;
 }
 
@@ -173,6 +174,7 @@ export const useAuth = () => {
 
                 if (profileData) {
                     let familiaId: number | undefined;
+                    let escolaId: number | undefined = profileData.Professores?.[0]?.Escola_ID;
 
                     if (profileData.Tipo === 'Família' || profileData.Tipo === 'Tutor') {
                         const { data: familyData } = await supabase
@@ -181,19 +183,39 @@ export const useAuth = () => {
                             .eq('Email', profileData.Email)
                             .maybeSingle();
                         familiaId = familyData?.Familia_ID;
+
+                        if (familiaId) {
+                            const { data: studentData } = await supabase
+                                .from('Alunos')
+                                .select('Escola_ID')
+                                .eq('Familia_ID', familiaId)
+                                .limit(1)
+                                .maybeSingle();
+                            if (studentData) {
+                                escolaId = studentData.Escola_ID;
+                            }
+                        }
+                    } else if (profileData.Tipo === 'GESTOR' || profileData.Tipo === 'Profissional') {
+                        // Ensure we get the school name if not joined
+                        if (escolaId && !profileData.Professores?.[0]?.Escolas?.Nome) {
+                            const { data: school } = await supabase.from('Escolas').select('Nome').eq('Escola_ID', escolaId).single();
+                            if (school) profileData.Professores[0].Escolas = { Nome: school.Nome };
+                        }
                     }
+
                     const config = (profileData as any).Plataformas?.Configuracoes || {};
                     const userProfile: UserProfile = {
                         id: profileData.Usuario_ID,
                         nome: profileData.Nome,
                         email: profileData.Email,
                         tipo: profileData.Tipo,
-                        escola_id: profileData.Professores?.[0]?.Escola_ID,
+                        escola_id: escolaId,
                         escola_nome: profileData.Professores?.[0]?.Escolas?.Nome,
                         familia_id: familiaId,
                         plataforma_id: profileData.Plataforma_ID,
                         limite_alunos: config.limite_alunos || 100,
                         limite_unidades: config.limite_unidades || 1,
+                        limite_usuarios: config.limite_usuarios || 5,
                         foto: profileData.Foto
                     };
 
