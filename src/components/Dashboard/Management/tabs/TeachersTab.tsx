@@ -5,7 +5,7 @@ import { schoolsService } from '@/lib/schoolsService';
 import { useAuth } from '@/lib/useAuth';
 
 export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; category?: 'Professor' | 'Profissional de Saúde' }) => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth();
     const [isCreating, setIsCreating] = useState(false);
     const [editingTeacher, setEditingTeacher] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +33,17 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
             setLoadingData(true);
             const isSuperAdmin = authUser?.tipo === 'Administrador';
             const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+            const queryPlataforma = authUser?.plataforma_id;
+
+            if (!queryPlataforma) {
+                setTeachers([]);
+                setSchools([]);
+                return;
+            }
 
             const [teachersData, schoolsData] = await Promise.all([
-                studentService.getAllProfessionals(authUser?.plataforma_id, filterEscolaId),
-                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId)
+                studentService.getAllProfessionals(queryPlataforma, filterEscolaId),
+                schoolsService.getAll(queryPlataforma, filterEscolaId)
             ]);
             setTeachers(teachersData || []);
             setSchools(schoolsData || []);
@@ -48,10 +55,10 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
     };
 
     useEffect(() => {
-        if (authUser?.plataforma_id) {
+        if (!authLoading) {
             fetchData();
         }
-    }, [authUser?.plataforma_id]);
+    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target as any;

@@ -27,7 +27,7 @@ interface Student {
 }
 
 export const StudentsView = () => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth();
     const [isRegistering, setIsRegistering] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
     const [students, setStudents] = useState<Student[]>([]);
@@ -46,12 +46,18 @@ export const StudentsView = () => {
 
     const fetchInitialData = async () => {
         try {
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+            const queryPlataforma = authUser?.plataforma_id;
+
+            if (!queryPlataforma) return;
+
             const [schoolsData, classesData] = await Promise.all([
-                schoolsService.getAll(authUser?.plataforma_id),
-                classesService.getAll(authUser?.plataforma_id)
+                schoolsService.getAll(queryPlataforma, filterEscolaId),
+                classesService.getAll(queryPlataforma, filterEscolaId)
             ]);
-            setSchools(schoolsData);
-            setAllClasses(classesData);
+            setSchools(schoolsData || []);
+            setAllClasses(classesData || []);
         } catch (error) {
             console.error('Erro ao buscar dados iniciais:', error);
         }
@@ -61,12 +67,19 @@ export const StudentsView = () => {
         setLoading(true);
         try {
             const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const queryPlataforma = authUser?.plataforma_id;
+
+            if (!queryPlataforma) {
+                setStudents([]);
+                return;
+            }
+
             const data = await studentService.getAll(
-                authUser?.plataforma_id,
+                queryPlataforma,
                 isSuperAdmin ? undefined : authUser?.escola_id,
                 (authUser?.tipo === 'Família' || authUser?.tipo === 'FAMILIA') ? authUser?.familia_id : undefined
             );
-            const mappedStudents: Student[] = data.map((s: any) => ({
+            const mappedStudents: Student[] = data?.map((s: any) => ({
                 id: s.Aluno_ID,
                 nome: s.Nome,
                 escola: s.Escolas?.Nome || 'Não atribuída',
@@ -81,7 +94,7 @@ export const StudentsView = () => {
                 detalhes: s.Detalhes,
                 escola_id: s.Escola_ID,
                 familia_id: s.Familia_ID
-            }));
+            })) || [];
             setStudents(mappedStudents);
         } catch (error) {
             console.error('Erro ao buscar alunos:', error);
@@ -91,11 +104,11 @@ export const StudentsView = () => {
     };
 
     useEffect(() => {
-        if (authUser?.plataforma_id) {
+        if (!authLoading) {
             fetchStudents();
             fetchInitialData();
         }
-    }, [authUser?.plataforma_id]);
+    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
 
     const filteredStudents = students.filter(s => {
         const matchesSearch = s.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -273,8 +286,8 @@ export const StudentsView = () => {
     };
 
     const handleOpenWizard = () => {
-        // Obter limite do plano (Poderia vir de authUser?.plataforma?.limite_alunos)
-        const ALUNO_LIMIT = authUser?.tipo === 'Administrador' ? 99999 : 100;
+        // Obter limite do plano
+        const ALUNO_LIMIT = authUser?.tipo === 'Administrador' ? 99999 : (authUser?.limite_alunos || 100);
 
         if (students.length >= ALUNO_LIMIT) {
             alert(`⚠️ Limite do Plano Atingido: Seu plano atual permite até ${ALUNO_LIMIT} alunos. Para cadastrar mais, por favor realize o upgrade da sua conta.`);
@@ -315,7 +328,7 @@ export const StudentsView = () => {
                     <div className="flex items-center gap-2 mt-2">
                         <span className="flex items-center gap-1.5 px-2.5 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/10">
                             <Users size={12} strokeWidth={3} />
-                            {students.length} / 100 Registros
+                            {students.length} / {authUser?.tipo === 'Administrador' ? '∞' : (authUser?.limite_alunos || 100)} Registros
                         </span>
                         <p className="text-slate-400 text-xs font-medium italic">Base de dados sincronizada em tempo real</p>
                     </div>

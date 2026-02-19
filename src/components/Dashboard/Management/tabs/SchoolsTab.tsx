@@ -4,7 +4,7 @@ import { schoolsService } from '@/lib/schoolsService';
 import { useAuth } from '@/lib/useAuth';
 
 export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth();
     const [isCreating, setIsCreating] = useState(false);
     const [editingSchool, setEditingSchool] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -27,8 +27,15 @@ export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
         try {
             setLoadingData(true);
             const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const queryPlataforma = authUser?.plataforma_id;
+
+            if (!queryPlataforma) {
+                setSchools([]);
+                return;
+            }
+
             const data = await schoolsService.getAll(
-                authUser?.plataforma_id,
+                queryPlataforma,
                 isSuperAdmin ? undefined : authUser?.escola_id
             );
             setSchools(data || []);
@@ -40,10 +47,10 @@ export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
     };
 
     useEffect(() => {
-        if (authUser?.plataforma_id) {
+        if (!authLoading) {
             fetchSchools();
         }
-    }, [authUser?.plataforma_id]);
+    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -291,13 +298,14 @@ export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                 <button
                     onClick={() => {
                         const isSuperAdmin = authUser?.tipo === 'Administrador';
-                        if (!isSuperAdmin && schools.length >= 1) {
-                            alert("Seu plano permite apenas 1 unidade escolar cadastrada. Para gerenciar múltiplas unidades, entre em contato com o suporte para upgrade de plano.");
+                        const UNIDADE_LIMIT = isSuperAdmin ? 999 : (authUser?.limite_unidades || 1);
+                        if (!isSuperAdmin && schools.length >= UNIDADE_LIMIT) {
+                            alert(`Seu plano permite apenas ${UNIDADE_LIMIT} unidade(s) escolar(es) cadastrada(s). Para gerenciar múltiplas unidades, entre em contato com o suporte para upgrade de plano.`);
                             return;
                         }
                         setIsCreating(true);
                     }}
-                    className={`w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-black/10 ${(authUser?.tipo !== 'Administrador' && schools.length >= 1)
+                    className={`w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-black/10 ${(authUser?.tipo !== 'Administrador' && schools.length >= (authUser?.limite_unidades || 1))
                         ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                         : 'bg-slate-900 dark:bg-white dark:text-slate-900 text-white hover:scale-[1.05] active:scale-[0.95]'
                         }`}

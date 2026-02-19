@@ -5,7 +5,7 @@ import { schoolsService } from '@/lib/schoolsService';
 import { useAuth } from '@/lib/useAuth';
 
 export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth();
     const [isCreating, setIsCreating] = useState(false);
     const [editingClass, setEditingClass] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -27,10 +27,17 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
             setLoadingData(true);
             const isSuperAdmin = authUser?.tipo === 'Administrador';
             const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+            const queryPlataforma = authUser?.plataforma_id;
+
+            if (!queryPlataforma) {
+                setClasses([]);
+                setSchools([]);
+                return;
+            }
 
             const [classesData, schoolsData] = await Promise.all([
-                classesService.getAll(authUser?.plataforma_id, filterEscolaId),
-                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId)
+                classesService.getAll(queryPlataforma, filterEscolaId),
+                schoolsService.getAll(queryPlataforma, filterEscolaId)
             ]);
             setClasses(classesData || []);
             setSchools(schoolsData || []);
@@ -42,10 +49,10 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
     };
 
     useEffect(() => {
-        if (authUser?.plataforma_id) {
+        if (!authLoading) {
             fetchData();
         }
-    }, [authUser?.plataforma_id]);
+    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));

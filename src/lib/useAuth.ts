@@ -10,6 +10,8 @@ export interface UserProfile {
     escola_nome?: string;
     familia_id?: number;
     plataforma_id?: number;
+    limite_alunos?: number;
+    limite_unidades?: number;
     foto?: string;
 }
 
@@ -51,7 +53,7 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canViewStudents: true,
         canEditStudents: true,
         canDeleteStudents: true,
-        canViewManagement: false,
+        canViewManagement: true,
         canEditSchools: true,
         canEditTeachers: true,
         canEditClasses: true,
@@ -165,7 +167,7 @@ export const useAuth = () => {
 
                 const { data: profileData } = await supabase
                     .from('Usuarios')
-                    .select('*, Professores(Escola_ID, Escolas(Nome))')
+                    .select('*, Professores(Escola_ID, Escolas(Nome)), Plataformas(Configuracoes)')
                     .eq('auth_uid', authUser.id)
                     .single();
 
@@ -180,6 +182,7 @@ export const useAuth = () => {
                             .maybeSingle();
                         familiaId = familyData?.Familia_ID;
                     }
+                    const config = (profileData as any).Plataformas?.Configuracoes || {};
                     const userProfile: UserProfile = {
                         id: profileData.Usuario_ID,
                         nome: profileData.Nome,
@@ -189,6 +192,8 @@ export const useAuth = () => {
                         escola_nome: profileData.Professores?.[0]?.Escolas?.Nome,
                         familia_id: familiaId,
                         plataforma_id: profileData.Plataforma_ID,
+                        limite_alunos: config.limite_alunos || 100,
+                        limite_unidades: config.limite_unidades || 1,
                         foto: profileData.Foto
                     };
 

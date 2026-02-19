@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/useAuth';
 type Tab = 'escolas' | 'professores' | 'profissionais' | 'turmas';
 
 export const ManagementView = () => {
-    const { user: authUser } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState<Tab>('escolas');
     const [schoolCount, setSchoolCount] = useState(0);
     const [teacherCount, setTeacherCount] = useState(0);
@@ -23,32 +23,34 @@ export const ManagementView = () => {
         try {
             const isSuperAdmin = authUser?.tipo === 'Administrador';
             const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+            const queryPlataforma = authUser?.plataforma_id;
+
+            if (!queryPlataforma) return;
 
             const [schools, allProfessionals, classes] = await Promise.all([
-                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId),
-                studentService.getAllProfessionals(authUser?.plataforma_id, filterEscolaId),
-                classesService.getAll(authUser?.plataforma_id, filterEscolaId)
+                schoolsService.getAll(queryPlataforma, filterEscolaId),
+                studentService.getAllProfessionals(queryPlataforma, filterEscolaId),
+                classesService.getAll(queryPlataforma, filterEscolaId)
             ]);
 
-            setSchoolCount(schools.length);
+            setSchoolCount(schools?.length || 0);
 
-
-            const teachers = allProfessionals.filter((p: any) => p.Categoria === 'Professor');
-            const specialists = allProfessionals.filter((p: any) => p.Categoria === 'Profissional de Saúde');
+            const teachers = allProfessionals?.filter((p: any) => p.Categoria === 'Professor') || [];
+            const specialists = allProfessionals?.filter((p: any) => p.Categoria === 'Profissional de Saúde') || [];
 
             setTeacherCount(teachers.length);
             setSpecialistCount(specialists.length);
-            setClassCount(classes.length);
+            setClassCount(classes?.length || 0);
         } catch (error) {
             console.error('Error fetching counts:', error);
         }
     };
 
     useEffect(() => {
-        if (authUser?.plataforma_id) {
+        if (!authLoading) {
             fetchCounts();
         }
-    }, [authUser?.plataforma_id]);
+    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
 
     const handleUpdate = () => {
         fetchCounts();

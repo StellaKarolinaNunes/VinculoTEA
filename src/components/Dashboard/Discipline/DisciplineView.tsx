@@ -5,7 +5,7 @@ import { studentService } from '@/lib/studentService';
 import { useAuth } from '@/lib/useAuth';
 
 export const DisciplineView = () => {
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const [isCreating, setIsCreating] = useState(false);
     const [editingDiscipline, setEditingDiscipline] = useState<Discipline | null>(null);
     const [search, setSearch] = useState('');
@@ -24,9 +24,19 @@ export const DisciplineView = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
+            const isSuperAdmin = user?.tipo === 'Administrador';
+            const filterEscolaId = isSuperAdmin ? undefined : user?.escola_id;
+            const queryPlataforma = user?.plataforma_id;
+
+            if (!queryPlataforma) {
+                setDisciplines([]);
+                setTeachers([]);
+                return;
+            }
+
             const [discsData, teachersData] = await Promise.all([
-                disciplinesService.getAll(user?.plataforma_id),
-                studentService.getAllProfessionals(user?.plataforma_id)
+                disciplinesService.getAll(queryPlataforma),
+                studentService.getAllProfessionals(queryPlataforma, filterEscolaId)
             ]);
             setDisciplines(discsData || []);
             setTeachers(teachersData || []);
@@ -38,10 +48,10 @@ export const DisciplineView = () => {
     };
 
     useEffect(() => {
-        if (user?.plataforma_id) {
+        if (!authLoading) {
             fetchData();
         }
-    }, [user?.plataforma_id]);
+    }, [authLoading, user?.plataforma_id, user?.escola_id]);
 
     const filteredDisciplines = useMemo(() => {
         const query = search.toLowerCase();
@@ -349,7 +359,7 @@ export const DisciplineView = () => {
                 </div>
             )}
 
-            {}
+            { }
             {showTeachersModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">
