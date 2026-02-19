@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Users, TrendingUp, Settings as SettingsIcon, Shield } from 'lucide-react';
-import { UsersTab } from '@/components/Dashboard/SuperAdmin/tabs/UsersTab';
-import { StatsTab } from '@/components/Dashboard/SuperAdmin/tabs/StatsTab';
-import { GlobalSettingsTab } from '@/components/Dashboard/SuperAdmin/tabs/GlobalSettingsTab';
+
+const UsersTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/UsersTab').then(m => ({ default: m.UsersTab })));
+const StatsTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/StatsTab').then(m => ({ default: m.StatsTab })));
+const GlobalSettingsTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/GlobalSettingsTab').then(m => ({ default: m.GlobalSettingsTab })));
 
 type Tab = 'users' | 'stats' | 'settings';
 
@@ -50,9 +51,15 @@ export const SuperAdminView = () => {
             {/* Tab Content */}
             <div className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-sm min-h-[600px] overflow-hidden">
                 <div className="p-8 md:p-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    {activeTab === 'users' && <UsersTab />}
-                    {activeTab === 'stats' && <StatsTab />}
-                    {activeTab === 'settings' && <GlobalSettingsTab />}
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center p-20">
+                            <div className="animate-spin size-8 border-4 border-primary/20 border-t-primary rounded-full" />
+                        </div>
+                    }>
+                        {activeTab === 'users' && <UsersTab />}
+                        {activeTab === 'stats' && <StatsTab />}
+                        {activeTab === 'settings' && <GlobalSettingsTab />}
+                    </Suspense>
                 </div>
             </div>
         </div>

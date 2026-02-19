@@ -35,43 +35,54 @@ export const HelpCenter: React.FC = () => {
             bg: 'bg-blue-50',
             articles: [
                 {
-                    title: 'Como navegar no sistema',
-                    content: (
-                        <div className="space-y-6">
-                            <p className="text-lg">O VínculoTEA foi desenhado para ser intuitivo. No lado esquerdo, você encontrará o menu principal:</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <div className="flex items-center gap-3 mb-2 font-black text-slate-800 uppercase text-[10px] tracking-widest text-primary">
-                                        <Users size={16} /> Alunos
-                                    </div>
-                                    <p className="text-sm">Gestão completa dos seus pacientes/alunos, fichas técnicas e histórico.</p>
-                                </div>
-                                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <div className="flex items-center gap-3 mb-2 font-black text-slate-800 uppercase text-[10px] tracking-widest text-violet-500">
-                                        <FileText size={16} /> Relatórios
-                                    </div>
-                                    <p className="text-sm">Central de documentos onde você gera o PEI e outros relatórios clínicos.</p>
-                                </div>
-                            </div>
-                            <div className="p-6 bg-blue-50 rounded-[2rem] border border-blue-100">
-                                <h4 className="font-black text-blue-900 mb-3 flex items-center gap-2">
-                                    <CheckCircle2 size={18} /> Dica de Ouro
-                                </h4>
-                                <p className="text-blue-800 text-sm">Sempre comece cadastrando os dados básicos da sua Instituição nos <strong>Ajustes</strong>. Isso fará com que seu logotipo apareça automaticamente nos PDFs gerados.</p>
-                            </div>
-                        </div>
-                    )
-                },
-                {
                     title: 'Fluxo de Trabalho Ideal',
                     content: (
-                        <div className="space-y-4">
-                            <ol className="list-decimal pl-5 space-y-4 text-slate-600 font-medium">
-                                <li><strong>Cadastro do Aluno:</strong> Preencha o perfil, anexe o CID e os contatos dos pais.</li>
-                                <li><strong>Criação do PEI:</strong> Defina as barreiras e metas pedagógicas/terapêuticas.</li>
-                                <li><strong>Acompanhamento Diário:</strong> Registre as atividades realizadas em cada sessão.</li>
-                                <li><strong>Geração de Relatório:</strong> Compile tudo em um clique para a devolutiva.</li>
-                            </ol>
+                        <div className="space-y-12">
+                            <div className="p-8 bg-amber-50 dark:bg-amber-900/10 rounded-[2.5rem] border border-amber-100 dark:border-amber-900/20 flex gap-6 shadow-sm mb-10">
+                                <div className="size-14 rounded-3xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200">
+                                    <Zap size={28} className="fill-current" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h5 className="font-black text-amber-900 dark:text-amber-500 tracking-tight uppercase text-[10px] tracking-[0.2em]">Dica de Ouro</h5>
+                                    <p className="text-sm text-amber-800 dark:text-amber-600/80 font-bold leading-relaxed">
+                                        Sempre comece cadastrando os dados básicos da sua Instituição nos <span className="underline decoration-2 underline-offset-4">Ajustes</span>. Isso fará com que seu logotipo apareça automaticamente nos PDFs gerados, garantindo autoridade em seus documentos.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
+
+                                {[
+                                    { step: '01', title: 'Configurar Instituição', desc: 'Acesse Ajustes e carregue seu logo. É o alicerce para profissionalizar seus documentos.' },
+                                    { step: '02', title: 'Unidades / Escolas', desc: 'Cadastre suas sedes ou escolas parceiras para vincular alunos e turmas corretamente.' },
+                                    { step: '03', title: 'Corpo Docente', desc: 'Registre os professores e sua equipe de apoio que atuarão no dia a dia.' },
+                                    { step: '04', title: 'Especialistas', desc: 'Adicione fonoaudiólogos, psicólogos e outros profissionais multidisciplinares.' },
+                                    { step: '05', title: 'Turmas / Classes', desc: 'Organize seus espaços de ensino por ano letivo, turno e série.' },
+                                    { step: '06', title: 'Alunos', desc: 'O coração do sistema. Cadastre perfis completos com CID e contatos familiares.' },
+                                    { step: '07', title: 'Disciplinas', desc: 'Defina as áreas de conhecimento ou intervenção que serão trabalhadas.' },
+                                    { step: '08', title: 'Estruturar o PEI', desc: 'Elabore o Plano de Ensino Individualizado com metas e barreiras mapeadas.' },
+                                    { step: '09', title: 'Alimentar a Evolução', desc: 'Registre anotações diárias após cada atendimento para gerar relatórios precisos.' }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                                        <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-100 group-hover:bg-primary group-hover:text-white transition-colors duration-500 z-10 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                                            <span className="text-xs font-black">{item.step}</span>
+                                        </div>
+                                        <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all">
+                                            <h4 className="font-black text-slate-800 dark:text-white mb-2">{item.title}</h4>
+                                            <p className="text-sm text-slate-500 font-medium">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+
+                            </div>
+
+                            <div className="text-center p-12 bg-slate-900 rounded-[3rem] text-white overflow-hidden relative">
+                                <div className="absolute top-0 right-0 p-12 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10" />
+                                <h5 className="text-2xl font-black mb-4 relative z-10">Tudo pronto!</h5>
+                                <p className="text-slate-400 font-medium mb-0 leading-relaxed max-w-xl mx-auto italic relative z-10">
+                                    "Seguir este fluxo garante que cada relatório gerado pelo VínculoTEA seja uma evidência científica e profissional do progresso do aluno."
+                                </p>
+                            </div>
                         </div>
                     )
                 }
@@ -277,7 +288,7 @@ export const HelpCenter: React.FC = () => {
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {}
+            { }
             <div className="bg-slate-900 dark:bg-slate-800 rounded-[3rem] p-12 mb-12 relative overflow-hidden group">
                 <div className="relative z-10 max-w-2xl">
                     <h1 className="text-4xl font-black text-white mb-4 tracking-tight">Central de Ajuda</h1>
@@ -301,7 +312,7 @@ export const HelpCenter: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                 <div className="lg:col-span-2 space-y-8">
-                    {}
+                    { }
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {filteredCategories.map((cat) => (
                             <button
@@ -321,7 +332,7 @@ export const HelpCenter: React.FC = () => {
                         ))}
                     </div>
 
-                    {}
+                    { }
                     <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-700 shadow-sm">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="size-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
@@ -353,7 +364,7 @@ export const HelpCenter: React.FC = () => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="space-y-8">
                     <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden relative group">
                         <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 relative z-10">Suporte Direto</h3>

@@ -8,6 +8,7 @@ export interface UserProfile {
     tipo: 'Administrador' | 'Profissional' | 'Tutor' | 'Família' | 'GESTOR' | 'PROFISSIONAL' | 'FAMILIA';
     escola_id?: number;
     escola_nome?: string;
+    familia_id?: number;
     plataforma_id?: number;
     foto?: string;
 }
@@ -26,7 +27,7 @@ export interface Permissions {
     canManageUsers: boolean;
     canViewDisciplines: boolean;
     canEditDisciplines: boolean;
-    canViewAllSchools: boolean; 
+    canViewAllSchools: boolean;
 }
 
 const ROLE_PERMISSIONS: Record<string, Permissions> = {
@@ -50,7 +51,7 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canViewStudents: true,
         canEditStudents: true,
         canDeleteStudents: true,
-        canViewManagement: true,
+        canViewManagement: false,
         canEditSchools: true,
         canEditTeachers: true,
         canEditClasses: true,
@@ -58,9 +59,9 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canExportReports: true,
         canViewSettings: true,
         canManageUsers: true,
+        canViewAllSchools: false,
         canViewDisciplines: true,
-        canEditDisciplines: true,
-        canViewAllSchools: true
+        canEditDisciplines: true
     },
     'Profissional': {
         canViewStudents: true,
@@ -106,7 +107,7 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canExportReports: false,
         canViewSettings: false,
         canManageUsers: false,
-        canViewDisciplines: true,
+        canViewDisciplines: false,
         canEditDisciplines: false,
         canViewAllSchools: false
     },
@@ -169,6 +170,16 @@ export const useAuth = () => {
                     .single();
 
                 if (profileData) {
+                    let familiaId: number | undefined;
+
+                    if (profileData.Tipo === 'Família' || profileData.Tipo === 'Tutor') {
+                        const { data: familyData } = await supabase
+                            .from('Familias')
+                            .select('Familia_ID')
+                            .eq('Email', profileData.Email)
+                            .maybeSingle();
+                        familiaId = familyData?.Familia_ID;
+                    }
                     const userProfile: UserProfile = {
                         id: profileData.Usuario_ID,
                         nome: profileData.Nome,
@@ -176,6 +187,7 @@ export const useAuth = () => {
                         tipo: profileData.Tipo,
                         escola_id: profileData.Professores?.[0]?.Escola_ID,
                         escola_nome: profileData.Professores?.[0]?.Escolas?.Nome,
+                        familia_id: familiaId,
                         plataforma_id: profileData.Plataforma_ID,
                         foto: profileData.Foto
                     };

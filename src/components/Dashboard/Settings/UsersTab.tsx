@@ -27,9 +27,12 @@ export const UsersTab = () => {
     const fetchData = async () => {
         try {
             setLoadingData(true);
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+
             const [usersData, schoolsData] = await Promise.all([
-                userService.getAll(),
-                schoolsService.getAll(authUser?.plataforma_id)
+                userService.getAll(authUser?.plataforma_id, filterEscolaId),
+                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId)
             ]);
             setUsers(usersData || []);
             setSchools(schoolsData || []);
@@ -56,7 +59,7 @@ export const UsersTab = () => {
         setFormData({
             nome: user.Nome,
             email: user.Email,
-            senha: '', 
+            senha: '',
             role: user.Tipo_Acesso || 'Profissional',
             escola_id: user.Escola_ID?.toString() || '',
             avatar: user.Foto || ''
@@ -167,9 +170,9 @@ export const UsersTab = () => {
                             required
                             className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
                         >
-                            <option value="Profissional">Profissional</option>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Tutor">Tutor</option>
+                            <option value="Profissional">Profissional / Professor</option>
+                            <option value="GESTOR">Diretor / Gestor Escolar</option>
+                            <option value="Tutor">Tutor / Família</option>
                         </select>
                     </div>
 
@@ -192,13 +195,17 @@ export const UsersTab = () => {
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Unidade Escolar</label>
                         <select
                             name="escola_id"
-                            value={formData.escola_id}
+                            value={formData.escola_id || authUser?.escola_id || ''}
                             onChange={handleChange}
-                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
+                            disabled={authUser?.tipo !== 'Administrador'}
+                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             <option value="">Selecione uma escola...</option>
                             {schools.map(s => <option key={s.id} value={s.id}>{s.nome || s.Nome}</option>)}
                         </select>
+                        <p className="text-[10px] text-slate-400 font-medium ml-1">
+                            {authUser?.tipo !== 'Administrador' ? 'Vinculado automaticamente à sua unidade.' : 'Selecione a unidade escolar.'}
+                        </p>
                     </div>
                 </form>
 
@@ -303,7 +310,7 @@ export const UsersTab = () => {
                 </div>
             )}
 
-            {}
+            { }
             {userToDelete && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

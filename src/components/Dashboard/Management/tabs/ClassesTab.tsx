@@ -25,9 +25,12 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
     const fetchData = async () => {
         try {
             setLoadingData(true);
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+
             const [classesData, schoolsData] = await Promise.all([
-                classesService.getAll(authUser?.plataforma_id),
-                schoolsService.getAll(authUser?.plataforma_id)
+                classesService.getAll(authUser?.plataforma_id, filterEscolaId),
+                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId)
             ]);
             setClasses(classesData || []);
             setSchools(schoolsData || []);
@@ -80,11 +83,15 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
         setIsLoading(true);
         try {
             const finalName = formData.serie ? `${formData.nome} - ${formData.serie}` : formData.nome;
+            const finalEscolaId = authUser?.tipo === 'Administrador'
+                ? (formData.escola_id ? parseInt(formData.escola_id) : null)
+                : authUser?.escola_id;
+
             const classData = {
                 nome: finalName,
                 turno: formData.turno,
                 ano_letivo: new Date().getFullYear().toString(),
-                escola_id: formData.escola_id ? parseInt(formData.escola_id) : null,
+                escola_id: finalEscolaId,
                 plataforma_id: authUser?.plataforma_id
             };
 
@@ -178,15 +185,18 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Escola *</label>
                         <select
                             name="escola_id"
-                            value={formData.escola_id}
+                            value={formData.escola_id || authUser?.escola_id?.toString() || ''}
                             onChange={handleChange}
+                            disabled={authUser?.tipo !== 'Administrador'}
                             required
-                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
+                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none disabled:opacity-75"
                         >
                             <option value="">Selecione uma escola</option>
                             {schools.map(s => <option key={s.id} value={s.id}>{s.nome || s.Nome}</option>)}
                         </select>
-                        <p className="text-[10px] text-slate-400 font-medium ml-1">Escola Municipal Monteiro Lobato</p>
+                        <p className="text-[10px] text-slate-400 font-medium ml-1">
+                            {authUser?.tipo !== 'Administrador' ? 'Vinculado automaticamente à sua unidade.' : 'Selecione a unidade escolar.'}
+                        </p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-6 md:col-span-2 border-t border-slate-50 dark:border-slate-800">
@@ -281,7 +291,7 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                 </div>
             )}
 
-            {}
+            { }
             {classToDelete && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

@@ -26,7 +26,11 @@ export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
     const fetchSchools = async () => {
         try {
             setLoadingData(true);
-            const data = await schoolsService.getAll(authUser?.plataforma_id);
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const data = await schoolsService.getAll(
+                authUser?.plataforma_id,
+                isSuperAdmin ? undefined : authUser?.escola_id
+            );
             setSchools(data || []);
         } catch (error) {
             console.error('Erro ao buscar escolas:', error);
@@ -285,8 +289,18 @@ export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                     />
                 </div>
                 <button
-                    onClick={() => setIsCreating(true)}
-                    className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black text-xs uppercase tracking-widest hover:scale-[1.05] active:scale-[0.95] transition-all shadow-xl shadow-black/10"
+                    onClick={() => {
+                        const isSuperAdmin = authUser?.tipo === 'Administrador';
+                        if (!isSuperAdmin && schools.length >= 1) {
+                            alert("Seu plano permite apenas 1 unidade escolar cadastrada. Para gerenciar múltiplas unidades, entre em contato com o suporte para upgrade de plano.");
+                            return;
+                        }
+                        setIsCreating(true);
+                    }}
+                    className={`w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-black/10 ${(authUser?.tipo !== 'Administrador' && schools.length >= 1)
+                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        : 'bg-slate-900 dark:bg-white dark:text-slate-900 text-white hover:scale-[1.05] active:scale-[0.95]'
+                        }`}
                 >
                     <Plus size={18} strokeWidth={3} />
                     Adicionar Escola
@@ -359,7 +373,7 @@ export const SchoolsTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                 </div>
             )}
 
-            {}
+            { }
             {schoolToDelete && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

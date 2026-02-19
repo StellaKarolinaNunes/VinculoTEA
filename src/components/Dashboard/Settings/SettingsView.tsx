@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import { Settings as SystemIcon, Shield } from 'lucide-react';
+import { Settings as SystemIcon, Shield, Building2 } from 'lucide-react';
 import { SystemTab } from './SystemTab';
 import { SecurityTab } from './SecurityTab';
+import { InstitutionTab } from './InstitutionTab';
+import { UsersTab } from './UsersTab';
+import { useAuth } from '../../../lib/useAuth';
+import { Users as UsersIcon } from 'lucide-react';
 
 
-type Tab = 'system' | 'security';
+type Tab = 'institution' | 'system' | 'security' | 'users';
 
 export const SettingsView = () => {
-    const [activeTab, setActiveTab] = useState<Tab>('system');
+    const { user } = useAuth();
+    const [activeTab, setActiveTab] = useState<Tab>(user?.escola_id ? 'institution' : 'system');
 
     return (
         <div className="animate-in fade-in duration-700 space-y-8 pb-12">
@@ -18,7 +23,7 @@ export const SettingsView = () => {
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
                         <div className="size-2 bg-amber-500 rounded-full animate-pulse" />
-                        Gerencie as configurações globais e preferências
+                        Gerencie as configurações da sua instituição e preferências
                     </p>
                 </div>
             </div>
@@ -26,9 +31,11 @@ export const SettingsView = () => {
             { }
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
+                    { id: 'institution', icon: Building2, label: 'Instituição', hidden: !user?.escola_id && user?.tipo !== 'Administrador' },
+                    { id: 'users', icon: UsersIcon, label: 'Usuários', hidden: user?.tipo !== 'Administrador' && user?.tipo !== 'GESTOR' },
                     { id: 'system', icon: SystemIcon, label: 'Sistema' },
                     { id: 'security', icon: Shield, label: 'Segurança' },
-                ].map((tab) => {
+                ].filter(t => !t.hidden).map((tab) => {
                     const isActive = activeTab === tab.id;
                     return (
                         <button
@@ -49,6 +56,8 @@ export const SettingsView = () => {
             { }
             <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm min-h-[500px]">
                 <div className="p-8 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    {activeTab === 'institution' && <InstitutionTab />}
+                    {activeTab === 'users' && <UsersTab />}
                     {activeTab === 'system' && <SystemTab />}
                     {activeTab === 'security' && <SecurityTab />}
                 </div>

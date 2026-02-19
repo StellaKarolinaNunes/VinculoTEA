@@ -10,12 +10,16 @@ import {
 import { supabase } from '@/lib/supabase';
 import { studentService } from '@/lib/studentService';
 import { useAuth } from '@/lib/useAuth';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import logoUrl from '@/assets/images/logotipo_Horizontal.svg';
+import { fetchSchoolPDFData, renderModernFooter, renderModernHeader } from '@/lib/pdfUtils';
 
 interface ReportData {
     totalStudents: number;
+    activeStudents: number;
+    inactiveStudents: number;
+    genderStats: { M: number; F: number };
+    ageGroups: { [key: string]: number };
+    fullAlunos: any[];
     totalServices: number;
     totalHours: number;
     professionalStats: { name: string; services: number; hours: number }[];
@@ -62,29 +66,98 @@ export const ReportsView = () => {
     const [schoolNotes, setSchoolNotes] = useState<any[]>([]);
     const [peis, setPeis] = useState<any[]>([]);
     const [selectedPeiId, setSelectedPeiId] = useState<string>('');
+    const [schoolInfo, setSchoolInfo] = useState<{ logo?: string; nome?: string; cnpj?: string; telefone?: string } | null>(null);
 
     const fetchGeneralData = async () => {
         setLoading(true);
         try {
             const plataformaId = authUser?.plataforma_id;
 
-
-            let alunosQuery = supabase
+            // 1. Fetch Alunos with full details
+            let fullAlunosQuery = supabase
                 .from('Alunos')
-                .select('Aluno_ID, Nome, Escola_ID, Escolas (Nome)');
-            if (plataformaId) alunosQuery = alunosQuery.eq('Plataforma_ID', plataformaId);
-            const { data: alunos, error: alunosError } = await alunosQuery;
-            if (alunosError) throw alunosError;
+                .select(`
+                    Aluno_ID, 
+                    Nome, 
+                    Data_nascimento, 
+                    Genero, 
+                    Status, 
+                    Serie, 
+                    CID, 
+                    Escola_ID, 
+                    Escolas (Nome, Logo),
+                    Familias (Nome_responsavel)
+                `)
+                .eq('Plataforma_ID', plataformaId || authUser?.plataforma_id);
 
+            if (authUser?.tipo !== 'Administrador' && authUser?.escola_id) {
+                fullAlunosQuery = fullAlunosQuery.eq('Escola_ID', authUser.escola_id);
+            }
 
+            if ((authUser?.tipo === 'Família' || authUser?.tipo === 'FAMILIA') && authUser?.familia_id) {
+                fullAlunosQuery = fullAlunosQuery.eq('Familia_ID', authUser.familia_id);
+            }
+
+            const { data: fullAlunos, error: fullAlunosError } = await fullAlunosQuery;
+
+            // Stats and Demographics
+            const activeStudents = fullAlunos.filter(a => a.Status === 'Ativo').length;
+            const inactiveStudents = fullAlunos.filter(a => a.Status !== 'Ativo').length;
+
+            const genderStats = {
+                M: fullAlunos.filter(a => a.Genero === 'M' || a.Genero === 'Masculino').length,
+                F: fullAlunos.filter(a => a.Genero === 'F' || a.Genero === 'Feminino').length
+            };
+
+            const calculateAge = (birthDate: string) => {
+                if (!birthDate) return 0;
+                const today = new Date();
+                const birth = new Date(birthDate);
+                let age = today.getFullYear() - birth.getFullYear();
+                const m = today.getMonth() - birth.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+                return age;
+            };
+
+            const ageGroups = {
+                '6-10': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 6 && age <= 10; }).length,
+                '11-14': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 11 && age <= 14; }).length,
+                '15-17': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 15 && age <= 17; }).length,
+                '18-24': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 18 && age <= 24; }).length,
+                '25-34': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 25 && age <= 34; }).length,
+                '35-44': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 35 && age <= 44; }).length,
+                '45+': fullAlunos.filter(a => { const age = calculateAge(a.Data_nascimento); return age >= 45; }).length
+            };
+
+            // 2. School Info
+            if (authUser?.escola_id) {
+                const { data: schoolData } = await supabase
+                    .from('Escolas')
+                    .select('Nome, Logo, CNPJ, Telefone')
+                    .eq('Escola_ID', authUser.escola_id)
+                    .single();
+                if (schoolData) {
+                    setSchoolInfo({
+                        logo: schoolData.Logo,
+                        nome: schoolData.Nome,
+                        cnpj: schoolData.CNPJ,
+                        telefone: schoolData.Telefone
+                    });
+                }
+            }
+
+            // 3. Productivity Data (Professors)
             let profsQuery = supabase
                 .from('Professores')
                 .select('Professor_ID, Nome, Categoria, Especialidade');
             if (plataformaId) profsQuery = profsQuery.eq('Plataforma_ID', plataformaId);
+            if (authUser?.tipo !== 'Administrador' && authUser?.escola_id) {
+                profsQuery = profsQuery.eq('Escola_ID', authUser.escola_id);
+            }
             const { data: professores, error: profsError } = await profsQuery;
             if (profsError) throw profsError;
 
-
+            // 4. Agenda Events
             let agendaQuery = supabase
                 .from('Agenda')
                 .select('Evento_ID, Titulo, Data, Horario, Professor_ID, Aluno_ID, Status, Tipo_Evento')
@@ -94,7 +167,7 @@ export const ReportsView = () => {
             const { data: agendaEvents, error: agendaError } = await agendaQuery;
             if (agendaError) throw agendaError;
 
-
+            // 5. Acompanhamentos
             let acompQuery = supabase
                 .from('Acompanhamentos')
                 .select('Acompanhamento_ID, Aluno_ID, Data, Atividade, Status');
@@ -102,7 +175,7 @@ export const ReportsView = () => {
             const { data: acompanhamentos, error: acompError } = await acompQuery;
             if (acompError) throw acompError;
 
-
+            // 6. Aulas (Classes)
             const { data: aulas, error: aulasError } = await supabase
                 .from('Aulas')
                 .select(`
@@ -120,12 +193,10 @@ export const ReportsView = () => {
                 .lte('Data_hora_inicio', `${endDate}T23:59:59`);
             if (aulasError) throw aulasError;
 
-
             const profsMap: Record<string, { name: string; services: number; hours: number }> = {};
             const studentsMap: Record<string, { name: string; services: number; hours: number }> = {};
             let totalHours = 0;
             let totalServices = 0;
-
 
             (professores || []).forEach(prof => {
                 const profId = prof.Professor_ID.toString();
@@ -134,21 +205,19 @@ export const ReportsView = () => {
                 }
             });
 
-
-            (alunos || []).forEach(aluno => {
+            (fullAlunos || []).forEach(aluno => {
                 const studentId = aluno.Aluno_ID.toString();
                 if (!studentsMap[studentId]) {
                     studentsMap[studentId] = { name: aluno.Nome || 'Sem Nome', services: 0, hours: 0 };
                 }
             });
 
-
             (agendaEvents || []).forEach(event => {
                 totalServices++;
                 const profId = event.Professor_ID?.toString();
                 if (profId && profsMap[profId]) {
                     profsMap[profId].services++;
-                    profsMap[profId].hours += 1; 
+                    profsMap[profId].hours += 1;
                     totalHours += 1;
                 }
                 const studentId = event.Aluno_ID?.toString();
@@ -158,7 +227,6 @@ export const ReportsView = () => {
                 }
             });
 
-
             (acompanhamentos || []).forEach(acomp => {
                 totalServices++;
                 const studentId = acomp.Aluno_ID?.toString();
@@ -166,7 +234,6 @@ export const ReportsView = () => {
                     studentsMap[studentId].services++;
                 }
             });
-
 
             (aulas || []).forEach(aula => {
                 const start = new Date(aula.Data_hora_inicio);
@@ -194,7 +261,12 @@ export const ReportsView = () => {
             });
 
             setReportData({
-                totalStudents: (alunos || []).length,
+                totalStudents: (fullAlunos || []).length,
+                activeStudents,
+                inactiveStudents,
+                genderStats,
+                ageGroups,
+                fullAlunos,
                 totalServices,
                 totalHours: parseFloat(totalHours.toFixed(2)),
                 professionalStats: Object.values(profsMap)
@@ -265,7 +337,7 @@ export const ReportsView = () => {
 
 
             const metas = d.metasCurtoPrazo || "Nenhuma observação registrada";
-            const objetivosPti = d.pontosFortes || "Nenhuma observação registrada"; 
+            const objetivosPti = d.pontosFortes || "Nenhuma observação registrada";
 
 
             const metasPorArea = d.metasCurtoPrazo ? [{ area: 'Geral', meta: d.metasCurtoPrazo, status: 'Em progresso' }] : [];
@@ -320,13 +392,18 @@ export const ReportsView = () => {
 
     useEffect(() => {
         const loadStudents = async () => {
-            const data = await studentService.getAll(authUser?.plataforma_id);
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const data = await studentService.getAll(
+                authUser?.plataforma_id,
+                isSuperAdmin ? undefined : authUser?.escola_id,
+                (authUser?.tipo === 'Família' || authUser?.tipo === 'FAMILIA') ? authUser?.familia_id : undefined
+            );
             setStudents(data);
         };
         if (authUser?.plataforma_id) {
             loadStudents();
         }
-    }, [authUser?.plataforma_id]);
+    }, [authUser?.plataforma_id, authUser?.escola_id, authUser?.tipo]);
 
     useEffect(() => {
         if (!authUser?.plataforma_id) return;
@@ -337,366 +414,301 @@ export const ReportsView = () => {
         }
     }, [startDate, endDate, activeTab, selectedStudentId, selectedPeiId, authUser?.plataforma_id]);
 
-    const handleExportGeneralPDF = () => {
+
+    const handleExportGeneralPDF = async () => {
         if (!reportData) return;
+
+        const [jsPDFModule, autoTableModule] = await Promise.all([
+            import('jspdf'),
+            import('jspdf-autotable')
+        ]);
+        const jsPDF = jsPDFModule.default;
+        const autoTable = autoTableModule.default;
+
         const doc = new jsPDF();
-        const primaryColor: [number, number, number] = [37, 99, 235];
-        const secondaryColor: [number, number, number] = [30, 41, 59];
+        const width = doc.internal.pageSize.width;
+        const height = doc.internal.pageSize.height;
 
-        renderPDFHeader(doc, "RELATÓRIO GERAL DE ATIVIDADES", startDate, endDate);
+        // --- COLORS & STYLE (Total White) ---
+        const colors = {
+            primary: [15, 23, 42] as [number, number, number],
+            textSlate: [51, 65, 85] as [number, number, number],
+            border: [226, 232, 240] as [number, number, number]
+        };
 
+        const targetSchoolId = authUser?.escola_id;
+        const schoolData = targetSchoolId ? await fetchSchoolPDFData(targetSchoolId) : null;
 
-        const cardWidth = 58;
-        const cardHeight = 30;
-        const startX = 15;
-        const spacing = 3;
+        let cursorY = 10;
+        if (schoolData) {
+            cursorY = await renderModernHeader(doc, schoolData);
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+            doc.text("VÍNCULOTEA", 14, 25);
+            cursorY = 40;
+        }
 
-        const cards = [
-            { label: "TOTAL DE ALUNOS", value: reportData.totalStudents.toString(), color: [37, 99, 235] as [number, number, number] },
-            { label: "ATENDIMENTOS", value: reportData.totalServices.toString(), color: [16, 185, 129] as [number, number, number] },
-            { label: "HORAS CLÍNICAS", value: reportData.totalHours.toString(), color: [249, 115, 22] as [number, number, number] }
+        // Title
+        doc.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.rect(14, cursorY, 4, 10, 'F');
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text("Relatório Geral de Atividades", 22, cursorY + 7);
+        cursorY += 20;
+
+        // Summary Cards
+        const cardW = (width - 36) / 3;
+        const stats = [
+            { label: "ALUNOS ATIVOS", value: reportData.totalStudents.toString() },
+            { label: "ATENDIMENTOS", value: reportData.totalServices.toString() },
+            { label: "CARGA HORÁRIA", value: `${reportData.totalHours}h` }
         ];
 
-        cards.forEach((card, i) => {
-            const x = startX + (i * (cardWidth + spacing));
-
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(x, 45, cardWidth, cardHeight, 4, 4, 'F');
-
-
-            doc.setFillColor(card.color[0], card.color[1], card.color[2]);
-            doc.setDrawColor(card.color[0], card.color[1], card.color[2]);
-            doc.rect(x, 45, 1.5, cardHeight, 'F');
-
-
+        stats.forEach((s, i) => {
+            const x = 14 + (i * (cardW + 4));
+            doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
+            doc.roundedRect(x, cursorY, cardW, 20, 2, 2, 'D');
             doc.setFontSize(7);
             doc.setTextColor(100, 116, 139);
-            doc.setFont("helvetica", "bold");
-            doc.text(card.label, x + 5, 53);
-
-
-            doc.setFontSize(14);
-            doc.setTextColor(30, 41, 59);
-            doc.setFont("helvetica", "bold");
-            doc.text(card.value, x + 5, 65);
-
-
-            doc.setDrawColor(card.color[0], card.color[1], card.color[2]);
-            doc.circle(x + cardWidth - 8, 55, 1.5, 'S');
+            doc.text(s.label, x + 4, cursorY + 6);
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+            doc.text(s.value, x + 4, cursorY + 15);
         });
 
-        renderPDFSection(doc, "DOCENTES & ESPECIALISTAS", 85);
+        cursorY += 30;
+
+        // Table 1
         autoTable(doc, {
-            startY: 92,
-            head: [['Profissional', 'Atendimentos', 'Horas Realizadas']],
+            startY: cursorY,
+            head: [['PROFISSIONAL', 'SERVIÇOS', 'CARGA HORÁRIA']],
             body: reportData.professionalStats.map(p => [p.name, p.services, `${p.hours.toFixed(1)}h`]),
             theme: 'striped',
-            headStyles: {
-                fillColor: primaryColor,
-                fontSize: 9,
-                fontStyle: 'bold',
-                halign: 'left'
-            },
-            columnStyles: {
-                0: { cellWidth: 100 },
-                1: { halign: 'center' },
-                2: { halign: 'right' }
-            },
-            styles: {
-                fontSize: 8,
-                cellPadding: 4,
-                textColor: [51, 65, 85]
-            },
-            alternateRowStyles: { fillColor: [249, 250, 251] },
-            margin: { left: 15, right: 15 }
+            headStyles: { fillColor: [248, 250, 252], textColor: colors.primary, fontStyle: 'bold' },
+            margin: { left: 14, right: 14 }
         });
 
-        const finalY = (doc as any).lastAutoTable.finalY + 15;
-        renderPDFSection(doc, "ENGAJAMENTO DE ALUNOS", finalY);
-        autoTable(doc, {
-            startY: finalY + 7,
-            head: [['Aluno', 'Atendimentos', 'Tempo Estimado']],
-            body: reportData.studentStats.map(s => [s.name, s.services, `${s.hours.toFixed(1)}h`]),
-            theme: 'striped',
-            headStyles: {
-                fillColor: [16, 185, 129], 
-                fontSize: 9,
-                fontStyle: 'bold'
-            },
-            columnStyles: {
-                0: { cellWidth: 100 },
-                1: { halign: 'center' },
-                2: { halign: 'right' }
-            },
-            styles: { fontSize: 8, cellPadding: 4 },
-            alternateRowStyles: { fillColor: [249, 250, 251] },
-            margin: { left: 15, right: 15 }
-        });
-
-        renderPDFFooter(doc);
-        doc.save(`Relatorio_Geral_${startDate}_${endDate}.pdf`);
-    };
-
-    const handleExportIndividualPDF = () => {
-        if (!selectedStudent) return;
-        const doc = new jsPDF();
-        const primaryColor: [number, number, number] = [37, 99, 235];
-        const studentInfoColor: [number, number, number] = [248, 250, 252];
-
-        if (individualTab === 'attendance') {
-            renderPDFHeader(doc, "RELATÓRIO DE ACOMPANHAMENTO", startDate, endDate);
-
-
-            doc.setFillColor(studentInfoColor[0], studentInfoColor[1], studentInfoColor[2]);
-            doc.roundedRect(15, 45, 180, 25, 4, 4, 'F');
-            doc.setDrawColor(37, 99, 235);
-            doc.rect(15, 45, 1.5, 25, 'F');
-
-            doc.setFontSize(7);
-            doc.setTextColor(100, 116, 139);
-            doc.setFont("helvetica", "bold");
-            doc.text("PACIENTE", 22, 52);
-            doc.text("DATA DE NASCIMENTO", 140, 52);
-
-            doc.setFontSize(11);
-            doc.setTextColor(15, 23, 42);
-            doc.text(selectedStudent.Nome, 22, 62);
-            doc.text(new Date(selectedStudent.Data_nascimento).toLocaleDateString('pt-BR'), 140, 62);
-
-            renderPDFSection(doc, "ASSIDUIDADE E FALTAS", 80);
-
-            autoTable(doc, {
-                startY: 88,
-                body: [
-                    ['Total de Sessões Agendadas', attendanceData?.totalScheduled || 0],
-                    ['Sessões Realizadas / Concluídas', attendanceData?.completed || 0],
-                    ['Faltas / Ausências Registradas', attendanceData?.missed || 0],
-                    ['Taxa de Assiduidade no Período', `${attendanceData?.rate || 0}%`]
-                ],
-                theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 6 },
-                columnStyles: {
-                    0: { fontStyle: 'bold', fillColor: [248, 250, 252], cellWidth: 120 },
-                    1: { halign: 'center', fontStyle: 'bold' }
-                },
-                margin: { left: 15, right: 15 }
-            });
-
-            const currentY = (doc as any).lastAutoTable.finalY + 20;
-            doc.setFontSize(8);
-            doc.setTextColor(100, 116, 139);
-            doc.setFont("helvetica", "italic");
-            doc.text("Observação: Este relatório reflete os registros presentes no sistema até a data de emissão.", 15, currentY);
-
-            renderPDFFooter(doc);
-            doc.save(`Relatorio_Acompanhamento_${selectedStudent.Nome}.pdf`);
-        } else if (individualTab === 'evolution') {
-            renderPDFHeader(doc, "RELATÓRIO SEMESTRAL DE EVOLUÇÃO", startDate, endDate);
-
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(15, 45, 180, 20, 2, 2, 'F');
-            doc.setFontSize(9);
-            doc.setTextColor(30, 41, 59);
-            doc.setFont("helvetica", "bold");
-            doc.text(`Paciente: ${selectedStudent.Nome}`, 20, 53);
-            doc.text(`ID: ${selectedStudent.Aluno_ID}`, 20, 59);
-            doc.text(`Nasc: ${new Date(selectedStudent.Data_nascimento).toLocaleDateString('pt-BR')}`, 150, 53);
-
-            renderPDFSection(doc, "OBJETIVOS INICIAIS DO PTI", 75);
-            doc.setFontSize(9);
-            doc.setTextColor(71, 85, 105);
-            doc.setFont("helvetica", "italic");
-            const splitObj = doc.splitTextToSize(evolutionData?.objetivosPti || "Não registrado", 175);
-            doc.text(splitObj, 15, 85);
-
-            renderPDFSection(doc, "EVOLUÇÃO POR ÁREA Terapêutica", 110);
-            if (evolutionData?.metasPorArea.length) {
-                autoTable(doc, {
-                    startY: 118,
-                    head: [['Área de Intervenção', 'Meta / Objetivo Trabalhado', 'Status']],
-                    body: evolutionData.metasPorArea.map(m => [m.area, m.meta, m.status]),
-                    theme: 'striped',
-                    headStyles: { fillColor: primaryColor, fontSize: 9 },
-                    styles: { fontSize: 8, cellPadding: 4 },
-                    margin: { left: 15, right: 15 }
-                });
-            } else {
-                doc.setFont("helvetica", "italic");
-                doc.text("Nenhum registro de evolução encontrado no prontuário.", 15, 122);
-            }
-
-            const currentY = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 15 : 140;
-            renderPDFSection(doc, "ANÁLISE DE RESULTADOS", currentY);
-            autoTable(doc, {
-                startY: currentY + 7,
-                body: [
-                    ['Total de Metas Monitoradas', evolutionData?.totalMetas],
-                    ['Metas Concluídas / Alcançadas', evolutionData?.metasConcluidas],
-                    ['Índice de Progresso Médio', `${evolutionData?.progressoMedio}%`]
-                ],
-                theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 5 },
-                columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252] } },
-                margin: { left: 15, right: 15 }
-            });
-
-            const nextY = (doc as any).lastAutoTable.finalY + 20;
-            renderPDFSection(doc, "PRÓXIMAS METAS E RECOMENDAÇÕES", nextY);
-            doc.setFontSize(9);
-            doc.setTextColor(30, 41, 59);
-            doc.setFont("helvetica", "bold");
-            doc.text("Plano de Ação para o Próximo Ciclo:", 15, nextY + 12);
-
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(71, 85, 105);
-            const splitNext = doc.splitTextToSize(evolutionData?.metasProximoSemestre || "", 175);
-            doc.text(splitNext, 15, nextY + 20);
-
-            renderPDFFooter(doc);
-            doc.save(`Relatorio_Evolucao_${selectedStudent.Nome}.pdf`);
-        } else if (individualTab === 'home_activities') {
-            renderPDFHeader(doc, "RELATÓRIO DE ATIVIDADES DOMICILIARES", startDate, endDate);
-
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "bold");
-            doc.text(`Paciente: ${selectedStudent.Nome}`, 15, 48);
-
-            renderPDFSection(doc, "ATIVIDADES E ORIENTAÇÕES À FAMÍLIA", 55);
-
-            if (homeActivities.length > 0) {
-                autoTable(doc, {
-                    startY: 63,
-                    head: [['Data', 'Atividade / Orientação Enviada']],
-                    body: homeActivities.map(n => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
-                    theme: 'striped',
-                    headStyles: { fillColor: [79, 70, 229] }, 
-                    styles: { fontSize: 8, cellPadding: 5 },
-                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 } },
-                    margin: { left: 15, right: 15 }
-                });
-            } else {
-                doc.setFont("helvetica", "italic");
-                doc.text("Nenhuma atividade registrada no período selecionado.", 15, 70);
-            }
-
-            renderPDFFooter(doc);
-            doc.save(`Atividades_Casa_${selectedStudent.Nome}.pdf`);
-        } else if (individualTab === 'school_guidance') {
-            renderPDFHeader(doc, "RELATÓRIO DE INCLUSÃO ESCOLAR", startDate, endDate);
-
-
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(15, 45, 180, 25, 4, 4, 'F');
-            doc.setDrawColor(16, 185, 129); 
-            doc.rect(15, 45, 1.5, 25, 'F');
-
-            doc.setFontSize(10);
-            doc.setTextColor(30, 41, 59);
-            doc.setFont("helvetica", "bold");
-            doc.text(`Paciente: ${selectedStudent.Nome}`, 22, 53);
-            doc.text(`Escolaridade: ${selectedStudent.Serie || 'Não informada'}`, 22, 60);
-            doc.text(`Status: ${selectedStudent.Status || 'Ativo'}`, 140, 53);
-
-            renderPDFSection(doc, "ORIENTAÇÕES E SUPORTE PEDAGÓGICO", 85);
-            if (schoolNotes.length > 0) {
-                autoTable(doc, {
-                    startY: 93,
-                    head: [['Data', 'Orientação / Feedback Pedagógico']],
-                    body: schoolNotes.map(n => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
-                    theme: 'striped',
-                    headStyles: { fillColor: [16, 185, 129] }, 
-                    styles: { fontSize: 8, cellPadding: 5 },
-                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 } },
-                    margin: { left: 15, right: 15 }
-                });
-            } else {
-                doc.setFont("helvetica", "italic");
-                doc.text("Nenhuma orientação escolar registrada no prontuário.", 15, 100);
-            }
-
-            renderPDFFooter(doc);
-            doc.save(`Relatorio_Escolar_${selectedStudent.Nome}.pdf`);
-        }
-    };
-
-    const renderPDFHeader = (doc: jsPDF, title: string, start: string, end: string) => {
-
-        doc.setFillColor(30, 41, 59); 
-        doc.rect(0, 0, 210, 38, 'F');
-
-
-        doc.setFillColor(37, 99, 235); 
-        doc.rect(0, 38, 210, 1.5, 'F');
-
-        try {
-            const img = new Image();
-            img.src = logoUrl;
-
-            doc.addImage(img, 'SVG', 15, 8, 48, 20);
-        } catch (e) {
-            doc.setFontSize(22);
-            doc.setTextColor(255, 255, 255);
-            doc.setFont("helvetica", "bold");
-            doc.text("VINCULO TEA", 15, 22);
-        }
-
-
-        doc.setFontSize(12);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont("helvetica", "bold");
-        doc.text(title, 195, 18, { align: "right" });
-
-        doc.setFontSize(7);
-        doc.setTextColor(148, 163, 184); 
-        doc.setFont("helvetica", "normal");
-        doc.text(`PERÍODO: ${new Date(start).toLocaleDateString('pt-BR')} — ${new Date(end).toLocaleDateString('pt-BR')}`, 195, 25, { align: "right" });
-        doc.text(`EMISSÃO: ${new Date().toLocaleString('pt-BR')}`, 195, 29, { align: "right" });
-    };
-
-    const renderPDFSection = (doc: jsPDF, title: string, y: number) => {
-
-        doc.setFillColor(37, 99, 235); 
-        doc.rect(15, y, 2.5, 6, 'F');
-
-        doc.setFontSize(8);
-        doc.setTextColor(100, 116, 139); 
-        doc.setFont("helvetica", "bold");
-        doc.text(title, 21, y + 4.5);
-
-        doc.setDrawColor(241, 245, 249); 
-        doc.setLineWidth(0.5);
-        doc.line(15, y + 8, 195, y + 8);
-    };
-
-    const renderPDFFooter = (doc: jsPDF) => {
         const pageCount = (doc as any).internal.getNumberOfPages();
-        const pageWidth = (doc as any).internal.pageSize.width;
-        const pageHeight = (doc as any).internal.pageSize.height;
-
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
-
-
-            doc.setDrawColor(241, 245, 249);
-            doc.line(15, pageHeight - 15, pageWidth - 15, pageHeight - 15);
-
-            doc.setFontSize(7);
-            doc.setTextColor(148, 163, 184);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Vinculo TEA — Sistema de Gestão Inteligente`, 15, pageHeight - 10);
-            doc.text(`Página ${i} de ${pageCount}`, pageWidth - 15, pageHeight - 10, { align: "right" });
-
-
-            doc.setFontSize(6);
-            doc.text("ESTE DOCUMENTO É CONFIDENCIAL E DE USO RESTRITO CLÍNICO.", pageWidth / 2, pageHeight - 7, { align: "center" });
+            if (schoolData) {
+                renderModernFooter(doc, schoolData);
+            } else {
+                doc.setFontSize(7);
+                doc.text(`VínculoTEA - Página ${i} de ${pageCount}`, width / 2, height - 10, { align: 'center' });
+            }
         }
+
+        doc.save(`Relatorio_Atividades_${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    const handleExportGeneralStudentsPDF = async () => {
+        if (!reportData) return;
+
+        const jspdf = await import('jspdf');
+        const jsPDF = jspdf.jsPDF || (jspdf as any).default;
+        const autoTable = (await import('jspdf-autotable')).default;
+
+        const doc = new jsPDF();
+        const width = doc.internal.pageSize.width;
+        const height = doc.internal.pageSize.height;
+
+        const schoolData = authUser?.escola_id ? await fetchSchoolPDFData(authUser.escola_id) : null;
+        const colors = {
+            primary: [15, 23, 42] as [number, number, number],
+            textMuted: [100, 116, 139] as [number, number, number],
+            border: [226, 232, 240] as [number, number, number]
+        };
+
+        let cursorY = 10;
+        if (schoolData) {
+            cursorY = await renderModernHeader(doc, schoolData);
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+            doc.text("VÍNCULOTEA", 14, 25);
+            cursorY = 40;
+        }
+
+        // Title Bar
+        doc.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.rect(14, cursorY, 4, 10, 'F');
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text("Relatório Geral de Alunos", 22, cursorY + 7);
+        cursorY += 25;
+
+        // KPI Summary
+        doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
+        doc.roundedRect(14, cursorY, width - 28, 25, 2, 2, 'D');
+        doc.setFontSize(9);
+        doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+        doc.text("TOTAL DE ALUNOS", 24, cursorY + 8);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text(reportData.totalStudents.toString(), 24, cursorY + 18);
+        cursorY += 35;
+
+        // Table
+        autoTable(doc, {
+            startY: cursorY,
+            head: [['NOME COMPLETO', 'INSTITUIÇÃO', 'SÉRIE', 'RESPONSÁVEL', 'CID']],
+            body: reportData.fullAlunos.slice(0, 100).map(a => [
+                a.Nome || '-',
+                a.Escolas?.Nome || '-',
+                a.Serie || '-',
+                a.Familias?.Nome_responsavel || '-',
+                a.CID || '-'
+            ]),
+            theme: 'striped',
+            headStyles: { fillColor: [248, 250, 252], textColor: colors.primary, fontStyle: 'bold' },
+            margin: { left: 14, right: 14 }
+        });
+
+        const pageCount = (doc as any).internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            if (schoolData) {
+                renderModernFooter(doc, schoolData);
+            } else {
+                doc.setFontSize(7);
+                doc.text(`Página ${i} de ${pageCount}`, width - 14, height - 10, { align: 'right' });
+            }
+        }
+
+        doc.save(`Analise_Geral_Alunos_${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    const handleExportIndividualPDF = async () => {
+        if (!selectedStudent) return;
+
+        const [jsPDFModule, autoTableModule] = await Promise.all([
+            import('jspdf'),
+            import('jspdf-autotable')
+        ]);
+        const jsPDF = jsPDFModule.default;
+        const autoTable = autoTableModule.default;
+
+        const doc = new jsPDF();
+        const width = doc.internal.pageSize.width;
+        const height = doc.internal.pageSize.height;
+
+        const colors = {
+            primary: [15, 23, 42] as [number, number, number],
+            textMuted: [100, 116, 139] as [number, number, number],
+            border: [226, 232, 240] as [number, number, number]
+        };
+
+        // Determine correct school ID: Logged User -> Student's School -> Null
+        const targetSchoolId = authUser?.escola_id || selectedStudent.Escola_ID;
+        const schoolData = targetSchoolId ? await fetchSchoolPDFData(targetSchoolId) : null;
+
+        let cursorY = 10;
+        if (schoolData) {
+            cursorY = await renderModernHeader(doc, schoolData);
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+            doc.text("VÍNCULOTEA", 14, 25);
+            cursorY = 40;
+        }
+
+        // Title Bar
+        doc.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.rect(14, cursorY, 4, 10, 'F');
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text(`Relatório Individual: ${individualTab.toUpperCase()}`, 22, cursorY + 7);
+        cursorY += 25;
+
+        // Identification Card
+        doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
+        doc.roundedRect(14, cursorY, width - 28, 25, 2, 2, 'D');
+        doc.setFontSize(9);
+        doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+        doc.text("ALUNO / IDENTIFICAÇÃO", 24, cursorY + 8);
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text(selectedStudent.Nome, 24, cursorY + 18);
+        cursorY += 35;
+
+        // Content
+        if (individualTab === 'attendance' && attendanceData) {
+            autoTable(doc, {
+                startY: cursorY,
+                head: [['MÉTRICA', 'VALOR']],
+                body: [
+                    ['Sessões Agendadas', attendanceData.totalScheduled],
+                    ['Sessões Realizadas', attendanceData.completed],
+                    ['Faltas / Ausências', attendanceData.missed],
+                    ['Taxa de Assiduidade', `${attendanceData.rate}%`]
+                ],
+                theme: 'striped',
+                headStyles: { fillColor: [248, 250, 252], textColor: colors.primary, fontStyle: 'bold' },
+                margin: { left: 14, right: 14 }
+            });
+        }
+
+        if (individualTab === 'home_activities') {
+            autoTable(doc, {
+                startY: cursorY,
+                head: [['DATA', 'CONTEÚDO / FEEDBACK FAMILIAR']],
+                body: homeActivities.map((n: any) => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
+                theme: 'striped',
+                headStyles: { fillColor: [248, 250, 252], textColor: colors.primary, fontStyle: 'bold' },
+                margin: { left: 14, right: 14 }
+            });
+        }
+
+        if (individualTab === 'school_guidance') {
+            autoTable(doc, {
+                startY: cursorY,
+                head: [['DATA', 'ORIENTAÇÃO / FEEDBACK PEDAGÓGICO']],
+                body: schoolNotes.map((n: any) => [new Date(n.Data).toLocaleDateString('pt-BR'), n.Conteudo]),
+                theme: 'striped',
+                headStyles: { fillColor: [248, 250, 252], textColor: colors.primary, fontStyle: 'bold' },
+                margin: { left: 14, right: 14 }
+            });
+        }
+
+        if (individualTab === 'evolution' && evolutionData) {
+            autoTable(doc, {
+                startY: cursorY,
+                head: [['ÁREA', 'META', 'STATUS']],
+                body: evolutionData.metasPorArea.map((m: any) => [m.area, m.meta, m.status]),
+                theme: 'striped',
+                headStyles: { fillColor: [248, 250, 252], textColor: colors.primary, fontStyle: 'bold' },
+                margin: { left: 14, right: 14 }
+            });
+        }
+
+        // Footer
+        const pageCount = (doc as any).internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            if (schoolData) {
+                renderModernFooter(doc, schoolData);
+            } else {
+                doc.setFontSize(7);
+                doc.text(`Página ${i} de ${pageCount}`, width - 14, height - 10, { align: 'right' });
+            }
+        }
+
+        doc.save(`Relatorio_${individualTab}_${selectedStudent.Nome}.pdf`);
     };
 
     return (
         <div className="animate-in fade-in duration-700 space-y-8 pb-10">
-            {}
             <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -747,7 +759,7 @@ export const ReportsView = () => {
                         className="flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100"
                     >
                         <Download size={18} strokeWidth={3} />
-                        Exportar PDF
+                        {activeTab === 'general' ? 'Exportar Atividades' : 'Exportar PDF'}
                     </button>
                 </div>
             </div>
@@ -854,7 +866,6 @@ const IndividualReportView = ({
 }: any) => {
     return (
         <div className="space-y-8 animate-in slide-in-from-bottom duration-500">
-            {}
             <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
                     <Sliders size={80} className="text-primary" />
@@ -876,7 +887,6 @@ const IndividualReportView = ({
                     ))}
                 </div>
 
-                {}
                 {selectedStudentId && (
                     <div className="flex gap-2 mt-6 border-t border-slate-50 dark:border-slate-700 pt-6">
                         <button
@@ -911,7 +921,6 @@ const IndividualReportView = ({
                 )}
             </div>
 
-            {}
             {selectedStudent && individualTab === 'evolution' && peis.length > 0 && (
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm animate-in slide-in-from-top-4 duration-500">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 block mb-4">Selecione o PEI para Análise</label>
@@ -966,7 +975,7 @@ const AttendanceReport = ({ student, data }: any) => {
     if (!data) return null;
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-700 slide-in-from-bottom-4">
-            {}
+            { }
             <div className="lg:col-span-4 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/5 transition-all">
                 <div className="p-8 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20 relative">
                     <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3 relative z-10">
@@ -995,7 +1004,7 @@ const AttendanceReport = ({ student, data }: any) => {
                 </div>
             </div>
 
-            {}
+            { }
             <div className="lg:col-span-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-emerald-500/5 transition-all">
                 <div className="p-8 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20 relative">
                     <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3 relative z-10">
@@ -1041,7 +1050,7 @@ const EvolutionReport = ({ student, data }: any) => {
     return (
         <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-bottom-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {}
+                { }
                 <div className="lg:col-span-12 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden p-10 flex flex-col md:flex-row justify-between items-center gap-10 relative group">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 group-hover:scale-110 transition-transform duration-[2000ms]" />
                     <div className="flex items-center gap-10 relative z-10 w-full md:w-auto">
@@ -1063,7 +1072,7 @@ const EvolutionReport = ({ student, data }: any) => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="lg:col-span-6">
                     <section className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden h-full group hover:shadow-2xl hover:shadow-primary/5 transition-all">
                         <div className="p-8 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">
@@ -1112,7 +1121,7 @@ const EvolutionReport = ({ student, data }: any) => {
                     </section>
                 </div>
 
-                {}
+                { }
                 <div className="lg:col-span-12">
                     <section className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden group hover:shadow-2xl hover:shadow-emerald-500/5 transition-all">
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">
@@ -1193,7 +1202,7 @@ const SchoolInclusionReport = ({ student, notes }: any) => {
     return (
         <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-bottom-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {}
+                { }
                 <div className="lg:col-span-12 bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden p-12 flex flex-col md:flex-row justify-between items-center gap-10 relative group">
                     <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full -mr-40 -mt-40 group-hover:scale-110 transition-transform duration-[2500ms]" />
                     <div className="flex items-center gap-8 relative z-10">
@@ -1217,7 +1226,7 @@ const SchoolInclusionReport = ({ student, notes }: any) => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="lg:col-span-12">
                     <section className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden group hover:shadow-2xl hover:shadow-orange-500/5 transition-all">
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">
@@ -1246,7 +1255,7 @@ const SchoolInclusionReport = ({ student, notes }: any) => {
                     </section>
                 </div>
 
-                {}
+                { }
                 <div className="lg:col-span-12">
                     <section className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden group hover:shadow-2xl hover:shadow-primary/5 transition-all">
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20">

@@ -10,7 +10,7 @@ export interface ClassData {
 }
 
 export const classesService = {
-    async getAll(plataforma_id?: number) {
+    async getAll(plataforma_id?: number, escola_id?: number) {
         let query = supabase
             .from('Turmas')
             .select(`
@@ -20,6 +20,10 @@ export const classesService = {
 
         if (plataforma_id) {
             query = query.eq('Plataforma_ID', plataforma_id);
+        }
+
+        if (escola_id) {
+            query = query.eq('Escola_ID', escola_id);
         }
 
         const { data, error } = await query.order('Nome', { ascending: true });

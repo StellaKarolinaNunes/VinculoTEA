@@ -36,7 +36,7 @@ export interface ProfessionalData {
 
 export const studentService = {
 
-    async getAll(plataforma_id?: number) {
+    async getAll(plataforma_id?: number, escola_id?: number, familia_id?: number) {
         let query = supabase
             .from('Alunos')
             .select(`
@@ -47,6 +47,14 @@ export const studentService = {
 
         if (plataforma_id) {
             query = query.eq('Plataforma_ID', plataforma_id);
+        }
+
+        if (escola_id) {
+            query = query.eq('Escola_ID', escola_id);
+        }
+
+        if (familia_id) {
+            query = query.eq('Familia_ID', familia_id);
         }
 
         const { data, error } = await query.order('Nome', { ascending: true });
@@ -68,7 +76,7 @@ export const studentService = {
                 Genero: updates.genero,
                 Detalhes: updates.detalhes,
                 Familia_ID: updates.familia_id,
-                Escola_ID: updates.escola_id || null, 
+                Escola_ID: updates.escola_id || null,
                 Plataforma_ID: updates.plataforma_id
             })
             .eq('Aluno_ID', id)
@@ -91,7 +99,7 @@ export const studentService = {
                 CID: student.cid,
                 Detalhes: student.detalhes,
                 Familia_ID: student.familia_id,
-                Escola_ID: student.escola_id || null, 
+                Escola_ID: student.escola_id || null,
                 Plataforma_ID: student.plataforma_id
             }])
             .select();
@@ -230,7 +238,7 @@ export const studentService = {
     },
 
 
-    async getAllProfessionals(plataforma_id?: number) {
+    async getAllProfessionals(plataforma_id?: number, escola_id?: number) {
         let query = supabase
             .from('Professores')
             .select(`
@@ -241,6 +249,10 @@ export const studentService = {
 
         if (plataforma_id) {
             query = query.eq('Plataforma_ID', plataforma_id);
+        }
+
+        if (escola_id) {
+            query = query.eq('Escola_ID', escola_id);
         }
 
         const { data, error } = await query;
@@ -266,7 +278,7 @@ export const studentService = {
                 Especialidade: professional.especialidade,
                 Registro_Profissional: professional.registro,
                 Telefone: professional.telefone,
-                Escola_ID: professional.escola_id || null, 
+                Escola_ID: professional.escola_id || null,
                 CID: professional.cid,
                 Plataforma_ID: professional.plataforma_id,
                 Categoria: professional.categoria || 'Professor'
@@ -286,7 +298,7 @@ export const studentService = {
                 Especialidade: updates.especialidade,
                 Registro_Profissional: updates.registro,
                 Telefone: updates.telefone,
-                Escola_ID: updates.escola_id || null, 
+                Escola_ID: updates.escola_id || null,
                 CID: updates.cid,
                 Plataforma_ID: updates.plataforma_id,
                 Categoria: updates.categoria

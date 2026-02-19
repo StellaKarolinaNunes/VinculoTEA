@@ -6,8 +6,9 @@ import {
 } from 'lucide-react';
 import { peisService, PEI } from '@/lib/peisService';
 import { PEIWizard } from '../wizards/PEIWizard';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { useAuth } from '@/lib/useAuth';
+import { supabase } from '@/lib/supabase';
+import { fetchSchoolPDFData, renderModernHeader, renderModernFooter } from '@/lib/pdfUtils';
 import logoUrl from '@/assets/images/logotipo_Horizontal.svg';
 
 interface PEIsTabProps {
@@ -26,6 +27,8 @@ export const PEIsTab = ({ studentId, studentName, studentData, onOpenWizard }: P
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<'Ativo' | 'Arquivado' | 'Todos'>('Ativo');
     const [sortBy, setSortBy] = useState<'recent' | 'oldest'>('recent');
+    const { user: authUser } = useAuth();
+    const [schoolInfo, setSchoolInfo] = useState<{ logo?: string; nome?: string; cnpj?: string; telefone?: string } | null>(null);
 
     const fetchPEIs = async () => {
         setLoading(true);
@@ -41,7 +44,26 @@ export const PEIsTab = ({ studentId, studentName, studentData, onOpenWizard }: P
 
     useEffect(() => {
         fetchPEIs();
-    }, [studentId]);
+
+        const fetchSchoolInfo = async () => {
+            if (authUser?.escola_id) {
+                const { data: schoolData } = await supabase
+                    .from('Escolas')
+                    .select('Nome, Logo, CNPJ, Telefone')
+                    .eq('Escola_ID', authUser.escola_id)
+                    .single();
+                if (schoolData) {
+                    setSchoolInfo({
+                        logo: schoolData.Logo,
+                        nome: schoolData.Nome,
+                        cnpj: schoolData.CNPJ,
+                        telefone: schoolData.Telefone
+                    });
+                }
+            }
+        };
+        fetchSchoolInfo();
+    }, [studentId, authUser?.escola_id]);
 
     const handleArchive = async (id: string, currentStatus: string) => {
         const action = currentStatus === 'Arquivado' ? 'desarquivar' : 'arquivar';
@@ -98,40 +120,73 @@ CID: ${d.cid}
     };
 
     const generatePDF = async (pei: PEI) => {
+        // Lazy load PDF libraries
+        const [jsPDFModule, autoTableModule] = await Promise.all([
+            import('jspdf'),
+            import('jspdf-autotable')
+        ]);
+        const jsPDF = jsPDFModule.default;
+        const autoTable = autoTableModule.default;
+
         const doc = new jsPDF();
         const d = pei.dados;
 
+        const schoolData = authUser?.escola_id ? await fetchSchoolPDFData(authUser.escola_id) : null;
 
-        const primaryColor = [37, 99, 235]; 
-        const secondaryColor = [30, 41, 59]; 
-        const lightBg = [248, 250, 252]; 
+        let currentY = 55;
 
+        if (schoolData) {
+            currentY = await renderModernHeader(doc, schoolData);
+        } else {
+            // Fallback Header
+            const primaryColor = [37, 99, 235];
+            const secondaryColor = [30, 41, 59];
+            const lightBg = [248, 250, 252];
 
+            doc.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
+            doc.rect(0, 0, 210, 45, 'F');
 
-        doc.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
-        doc.rect(0, 0, 210, 45, 'F');
+            try {
+                const img = new Image();
+                img.src = schoolInfo?.logo || logoUrl;
+                const ext = (schoolInfo?.logo?.split('.').pop()?.toUpperCase() || 'SVG') as any;
+                doc.addImage(img, ext === 'SVG' ? 'SVG' : ext, 15, 12, 45, 15);
+            } catch (e) {
+                doc.setFontSize(16);
+                doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+                doc.text("VINCULO TEA", 15, 22);
+            }
 
+            doc.setFontSize(18);
+            doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+            doc.setFont("helvetica", "bold");
+            doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO", 200, 22, { align: "right" });
 
-        try {
-            const img = new Image();
-            img.src = logoUrl;
-            doc.addImage(img, 'SVG', 15, 12, 45, 15);
-        } catch (e) {
-            doc.setFontSize(16);
-            doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-            doc.text("VINCULO TEA", 15, 22);
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Documento emitido em: ${new Date().toLocaleDateString('pt-BR')}`, 200, 30, { align: "right" });
+            doc.text(`Aluno: ${d.nomeCompleto} | Ano Letivo: ${d.anoLetivo}`, 200, 35, { align: "right" });
+            currentY = 55;
         }
 
-        doc.setFontSize(18);
-        doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
-        doc.setFont("helvetica", "bold");
-        doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO", 200, 22, { align: "right" });
+        // Ensure some spacing
+        currentY += 10;
 
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(100, 116, 139);
-        doc.text(`Documento emitido em: ${new Date().toLocaleDateString('pt-BR')}`, 200, 30, { align: "right" });
-        doc.text(`Aluno: ${d.nomeCompleto} | Ano Letivo: ${d.anoLetivo}`, 200, 35, { align: "right" });
+        // If modern header is used, we might want to add the PEI title explicitly if it wasn't in the fallback
+        if (schoolData) {
+            doc.setFontSize(18);
+            doc.setTextColor(30, 41, 59);
+            doc.setFont("helvetica", "bold");
+            doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO", 105, currentY, { align: "center" });
+
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Aluno: ${d.nomeCompleto} • Ano Letivo: ${d.anoLetivo}`, 105, currentY + 6, { align: "center" });
+
+            currentY += 20;
+        }
 
         const sections = [
             {
@@ -162,7 +217,7 @@ CID: ${d.cid}
             }
         ];
 
-        let currentY = 55;
+        const primaryColor = [37, 99, 235];
 
         sections.forEach((section, index) => {
 
@@ -201,17 +256,32 @@ CID: ${d.cid}
         });
 
 
-        const pageCount = (doc as any).internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(148, 163, 184);
-            doc.text("Este documento é confidencial e destinado exclusivamente ao acompanhamento pedagógico do aluno.", 105, 285, { align: "center" });
-            doc.text(`Página ${i} de ${pageCount}`, 105, 290, { align: "center" });
+        if (schoolData) {
+            renderModernFooter(doc, schoolData);
+        } else {
+            const pageCount = (doc as any).internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(148, 163, 184);
 
+                // Institutional Data
+                const footerInfo = [
+                    schoolInfo?.nome,
+                    schoolInfo?.telefone,
+                    schoolInfo?.cnpj ? `CNPJ: ${schoolInfo.cnpj}` : null
+                ].filter(Boolean).join('  •  ');
 
-            doc.setDrawColor(226, 232, 240);
-            doc.line(14, 280, 196, 280);
+                if (footerInfo) {
+                    doc.text(footerInfo, 105, 278, { align: "center" });
+                }
+
+                doc.text("Este documento é confidencial e destinado exclusivamente ao acompanhamento pedagógico do aluno.", 105, 285, { align: "center" });
+                doc.text(`Página ${i} de ${pageCount} — VínculoTEA`, 105, 290, { align: "center" });
+
+                doc.setDrawColor(226, 232, 240);
+                doc.line(14, 280, 196, 280);
+            }
         }
 
         return doc;
@@ -245,7 +315,7 @@ CID: ${d.cid}
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {}
+            { }
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="space-y-1">
                     <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight italic">Histórico de <span className="text-primary italic">PEIs</span></h3>
@@ -260,7 +330,7 @@ CID: ${d.cid}
                 </button>
             </div>
 
-            {}
+            { }
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-2 relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -357,7 +427,7 @@ CID: ${d.cid}
                 </div>
             )}
 
-            {}
+            { }
             {viewingPEI && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/70 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-800 w-full max-w-5xl max-h-[95vh] rounded-[3.5rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">

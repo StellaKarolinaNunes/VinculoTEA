@@ -21,10 +21,13 @@ export const ManagementView = () => {
 
     const fetchCounts = async () => {
         try {
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+
             const [schools, allProfessionals, classes] = await Promise.all([
-                schoolsService.getAll(authUser?.plataforma_id),
-                studentService.getAllProfessionals(authUser?.plataforma_id),
-                classesService.getAll(authUser?.plataforma_id)
+                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId),
+                studentService.getAllProfessionals(authUser?.plataforma_id, filterEscolaId),
+                classesService.getAll(authUser?.plataforma_id, filterEscolaId)
             ]);
 
             setSchoolCount(schools.length);
@@ -79,7 +82,7 @@ export const ManagementView = () => {
                 </div>
             </div>
 
-            {}
+            { }
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
                     { id: 'escolas' as const, label: 'Unidades / Escolas', icon: Building2 },
@@ -104,7 +107,7 @@ export const ManagementView = () => {
                 })}
             </div>
 
-            {}
+            { }
             <div className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-sm min-h-[600px] overflow-hidden">
                 <div className="p-8 md:p-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="mb-10">

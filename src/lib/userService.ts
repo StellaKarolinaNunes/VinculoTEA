@@ -23,13 +23,17 @@ export interface UserProfile {
 }
 
 export const userService = {
-    async getAll(plataforma_id?: number) {
+    async getAll(plataforma_id?: number, escola_id?: number) {
         let query = supabase
             .from('Usuarios')
             .select('*');
 
         if (plataforma_id) {
             query = query.eq('Plataforma_ID', plataforma_id);
+        }
+
+        if (escola_id) {
+            query = query.eq('escola_id', escola_id);
         }
 
         const { data, error } = await query.order('Nome', { ascending: true });
@@ -76,8 +80,10 @@ export const userService = {
             let mappedRole = 'Profissional';
             const roleInput = userData.role || userData.tipo;
 
-            if (roleInput === 'Administrador' || roleInput === 'GESTOR' || roleInput === 'admin') mappedRole = 'Administrador';
-            else if (roleInput === 'Tutor' || roleInput === 'FAMILIA' || roleInput === 'familia') mappedRole = 'Tutor';
+            if (roleInput === 'Administrador' || roleInput === 'admin') mappedRole = 'Administrador';
+            else if (roleInput === 'GESTOR' || roleInput === 'escola') mappedRole = 'GESTOR';
+            else if (roleInput === 'Tutor') mappedRole = 'Tutor';
+            else if (roleInput === 'FAMILIA' || roleInput === 'familia' || roleInput === 'Família') mappedRole = 'Família';
             else mappedRole = 'Profissional';
 
 
@@ -142,8 +148,8 @@ export const userService = {
                     .eq('Usuario_ID', newUserProfile.Usuario_ID);
 
 
-                if (mappedRole === 'Profissional' && userData.escola_id) {
-                    console.log('🏫 Criando vínculo com escola...');
+                if ((mappedRole === 'Profissional' || mappedRole === 'GESTOR') && userData.escola_id) {
+                    console.log(`🏫 Criando vínculo com escola para role ${mappedRole}...`);
                     await supabase
                         .from('Professores')
                         .insert([{
@@ -151,8 +157,9 @@ export const userService = {
                             Nome: userData.nome,
                             Email: cleanEmail,
                             Escola_ID: userData.escola_id ? parseInt(userData.escola_id) : null,
-                            Especialidade: 'Educação Regular',
-                            Plataforma_ID: userData.plataforma_id
+                            Especialidade: mappedRole === 'GESTOR' ? 'Administração Escolar' : 'Educação Regular',
+                            Plataforma_ID: userData.plataforma_id,
+                            Categoria: mappedRole === 'GESTOR' ? 'Profissional de Saúde' : 'Professor'
                         }]);
                 }
             }
@@ -185,7 +192,7 @@ export const userService = {
         if (error) throw error;
 
 
-        if (updates.role === 'Profissional' && updates.escola_id) {
+        if ((updates.role === 'Profissional' || updates.role === 'GESTOR') && updates.escola_id) {
             await supabase
                 .from('Professores')
                 .update({ Escola_ID: updates.escola_id })

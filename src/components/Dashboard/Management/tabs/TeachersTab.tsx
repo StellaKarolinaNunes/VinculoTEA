@@ -31,9 +31,12 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
     const fetchData = async () => {
         try {
             setLoadingData(true);
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+
             const [teachersData, schoolsData] = await Promise.all([
-                studentService.getAllProfessionals(authUser?.plataforma_id),
-                schoolsService.getAll(authUser?.plataforma_id)
+                studentService.getAllProfessionals(authUser?.plataforma_id, filterEscolaId),
+                schoolsService.getAll(authUser?.plataforma_id, filterEscolaId)
             ]);
             setTeachers(teachersData || []);
             setSchools(schoolsData || []);
@@ -63,7 +66,7 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
         setFormData({
             nome: teacher.Nome,
             email: teacher.Email,
-            senha: '', 
+            senha: '',
             escola_id: teacher.Escola_ID?.toString() || '',
             avatar: teacher.Usuarios?.Foto || '',
             isAEE: teacher.Especialidade === 'AEE',
@@ -181,6 +184,7 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
                         >
                             <option value="Professor">Docente (Professor)</option>
                             <option value="Profissional de Saúde">Especialista (Saúde/Terapia)</option>
+                            <option value="Tutor">Tutor / Assistente</option>
                         </select>
                     </div>
 
@@ -255,15 +259,18 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Escola *</label>
                         <select
                             name="escola_id"
-                            value={formData.escola_id}
+                            value={formData.escola_id || (authUser?.tipo !== 'Administrador' ? authUser?.escola_id : '')}
                             onChange={handleChange}
                             required
-                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
+                            disabled={authUser?.tipo !== 'Administrador'}
+                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             <option value="">Selecione uma escola</option>
                             {schools.map(s => <option key={s.id} value={s.id}>{s.nome || s.Nome}</option>)}
                         </select>
-                        <p className="text-[10px] text-slate-400 font-medium ml-1">Escola do professor.</p>
+                        <p className="text-[10px] text-slate-400 font-medium ml-1">
+                            {authUser?.tipo !== 'Administrador' ? 'Vinculado automaticamente à sua unidade.' : 'Selecione a unidade para vincular o profissional.'}
+                        </p>
                     </div>
 
                     <div className="space-y-2">
@@ -431,7 +438,7 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
                 </div>
             )}
 
-            {}
+            { }
             {teacherToDelete && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

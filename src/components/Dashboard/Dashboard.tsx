@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC, useState, useEffect, lazy, Suspense } from 'react'
 import {
   LogOut, LayoutDashboard, Users, BookOpen,
   Calendar, Bell, Search, Settings, CheckCircle2,
@@ -13,14 +13,15 @@ import { cleanOrphanAuthUsers, checkEmailConflict } from '@/lib/cleanOrphanUsers
 import '@/lib/criarPrimeiroAdmin';
 import logotipoHorizontal from '@/assets/images/logotipo_Horizontal.svg';
 import darkLogo from '@/assets/images/dark.svg';
-import { StudentsView } from './Students/StudentsView';
-import { ManagementView } from './Management/ManagementView';
-import { DisciplineView } from './Discipline/DisciplineView';
-import { SettingsView } from './Settings/SettingsView';
-import { ReportsView } from './Reports/ReportsView';
-import { SuperAdminView } from './SuperAdmin/SuperAdminView';
-import { SearchModal } from './SearchModal';
-import { HelpCenter } from './HelpCenter';
+
+const StudentsView = lazy(() => import('./Students/StudentsView').then(m => ({ default: m.StudentsView })));
+const ManagementView = lazy(() => import('./Management/ManagementView').then(m => ({ default: m.ManagementView })));
+const DisciplineView = lazy(() => import('./Discipline/DisciplineView').then(m => ({ default: m.DisciplineView })));
+const SettingsView = lazy(() => import('./Settings/SettingsView').then(m => ({ default: m.SettingsView })));
+const ReportsView = lazy(() => import('./Reports/ReportsView').then(m => ({ default: m.ReportsView })));
+const SuperAdminView = lazy(() => import('./SuperAdmin/SuperAdminView').then(m => ({ default: m.SuperAdminView })));
+const SearchModal = lazy(() => import('./SearchModal').then(m => ({ default: m.SearchModal })));
+const HelpCenter = lazy(() => import('./HelpCenter').then(m => ({ default: m.HelpCenter })));
 import { syncOfflineActions } from '@/lib/offlineService';
 import { exportProntuarioPDF } from '@/lib/exportService';
 
@@ -382,7 +383,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             <header className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-12 gap-8">
               <div>
                 <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                  Seja bem vindo(a) ao Vinculo Pei <span className="text-4xl">👋</span>
+                  Seja bem vindo(a) ao VinculoTEA
                 </h1>
                 <div className="flex items-center gap-3 mt-2">
                   <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">
@@ -676,7 +677,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             <nav className="space-y-1">
               {[
                 { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', requiresPermission: null },
-                { id: 'system_admin', icon: Briefcase, label: 'Painel Adm', requiresPermission: 'canManageUsers' },
+                { id: 'system_admin', icon: Briefcase, label: 'Painel SaaS', requiresPermission: 'canViewAllSchools' },
                 { id: 'students', icon: Users, label: 'Alunos', requiresPermission: 'canViewStudents' },
                 { id: 'management', icon: Briefcase, label: 'Gerenciamento', requiresPermission: 'canViewManagement' },
                 { id: 'discipline', icon: BookOpen, label: 'Disciplinas', requiresPermission: 'canViewDisciplines' },
@@ -753,7 +754,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
       { }
       <main className={styles.mainContent}>
-        {renderContent()}
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex flex-col items-center gap-4">
+              <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+              <p className="text-xs font-black text-slate-400 uppercase tracking-widest animate-pulse">Carregando módulo...</p>
+            </div>
+          </div>
+        }>
+          {renderContent()}
+        </Suspense>
       </main>
 
       <SearchModal

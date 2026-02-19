@@ -206,6 +206,24 @@ Plataformas ──┬── Escolas ──┬── Turmas
 
 ---
 
+## Planos e Precificação (SaaS)
+
+O **VínculoTEA** opera sob um modelo de assinatura escalável, garantindo lucratividade e controle de recursos.
+
+| Plano | Limite de Escolas | Limite de Alunos | Valor Sugerido (Mensal) | Lucro Estimado |
+| :--- | :--- | :--- | :--- | :--- |
+| **Bronze (Essencial)** | 1 Unidade | Até 50 Alunos | **R$ 149,90** | ~85% |
+| **Prata (Crescimento)** | 1 Unidade | Até 150 Alunos | **R$ 299,90** | ~90% |
+| **Ouro (Profissional)** | 1 Unidade | Até 300 Alunos | **R$ 499,90** | ~92% |
+| **Elite (Personalizado)** | Sob consulta | Ilimitado | **R$ 899,00+** | Altíssimo |
+
+### Níveis de Acesso e Gestão
+
+- **Administrador (Diretor da Escola)**: Perfil exclusivo para gestão da unidade. Possui autoridade para criar contas de Professores, Tutores e Famílias. É limitado a **1 unidade escolar** e ao teto de alunos definido pelo seu plano contratado.
+- **Super Administrador (Desenvolvedor/Suporte)**: Acesso global, ilimitado e irrestrito. Pode visualizar e gerenciar todas as escolas, alunos e usuários vinculados em qualquer plataforma, sem limitações de quota.
+
+---
+
 ## Instalação e Configuração
 
 ### Pré-requisitos

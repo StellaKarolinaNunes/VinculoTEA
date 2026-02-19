@@ -10,6 +10,8 @@ import { AccessibilityMenu } from './src/components/AccessibilityMenu/Accessibil
 import { ErrorBoundary } from './src/components/Erro/ErrorBoundary'
 import { NotificationProvider } from './src/contexts/NotificationContext';
 
+import { BrowserRouter } from 'react-router-dom';
+
 const rootElement = document.getElementById('root')
 
 if (!rootElement) {
@@ -18,14 +20,16 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <AccessibilityProvider>
-      <NotificationProvider>
-        <ErrorBoundary>
-          <App />
-          <AccessibilityMenu />
-        </ErrorBoundary>
-      </NotificationProvider>
-      <SpeedInsights />
-    </AccessibilityProvider>
+    <BrowserRouter>
+      <AccessibilityProvider>
+        <NotificationProvider>
+          <ErrorBoundary>
+            <App />
+            <AccessibilityMenu />
+          </ErrorBoundary>
+        </NotificationProvider>
+        <SpeedInsights />
+      </AccessibilityProvider>
+    </BrowserRouter>
   </StrictMode>
 )

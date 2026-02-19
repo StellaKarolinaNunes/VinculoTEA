@@ -171,8 +171,9 @@ export const UsersTab = () => {
                             className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
                         >
                             <option value="Profissional">Profissional</option>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Tutor">Tutor</option>
+                            <option value="GESTOR">Diretor / Gestor Escolar</option>
+                            <option value="Administrador">Super Administrador (SaaS)</option>
+                            <option value="Tutor">Tutor / Família</option>
                         </select>
                     </div>
 

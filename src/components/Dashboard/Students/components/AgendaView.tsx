@@ -5,7 +5,7 @@ import { ptBR } from 'date-fns/locale';
 import { studentService } from '@/lib/studentService';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/useAuth';
-import { jsPDF } from 'jspdf';
+import { fetchSchoolPDFData, renderModernHeader, renderModernFooter } from '@/lib/pdfUtils';
 
 interface Event {
     id: number;
@@ -30,6 +30,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+    const [schoolInfo, setSchoolInfo] = useState<{ logo?: string, nome?: string, cnpj?: string, telefone?: string } | null>(null);
 
 
 
@@ -97,7 +98,26 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
     useEffect(() => {
         fetchEvents();
         fetchProfessionals();
-    }, [studentId]);
+
+        const fetchSchoolInfo = async () => {
+            if (authUser?.escola_id) {
+                const { data: schoolData, error } = await supabase
+                    .from('Escolas')
+                    .select('Nome, Logo, CNPJ, Telefone')
+                    .eq('Escola_ID', authUser.escola_id)
+                    .single();
+                if (schoolData) {
+                    setSchoolInfo({
+                        logo: schoolData.Logo,
+                        nome: schoolData.Nome,
+                        cnpj: schoolData.CNPJ,
+                        telefone: schoolData.Telefone
+                    });
+                }
+            }
+        };
+        fetchSchoolInfo();
+    }, [studentId, authUser?.escola_id]);
 
     useEffect(() => {
 
@@ -131,46 +151,100 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
         return () => clearInterval(interval);
     }, [events]);
 
-    const handleExportWeeklyPDF = () => {
+    const handleExportWeeklyPDF = async () => {
+        const jsPDFModule = await import('jspdf');
+        const jsPDF = jsPDFModule.default;
+
         const doc = new jsPDF({ orientation: 'landscape' });
         const start = startOfWeek(currentMonth, { locale: ptBR });
         const end = endOfWeek(currentMonth, { locale: ptBR });
         const weekDays = eachDayOfInterval({ start, end });
 
+        const schoolData = authUser?.escola_id ? await fetchSchoolPDFData(authUser.escola_id) : null;
 
-        doc.setFillColor(20, 57, 109);
-        doc.rect(0, 0, 297, 30, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(20);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`CRONOGRAMA SEMANAL - ${format(start, 'dd/MM')} a ${format(end, 'dd/MM')}`, 14, 20);
+        let contentStartY = 45;
+
+        // Render Header
+        if (schoolData) {
+            contentStartY = await renderModernHeader(doc, schoolData);
+        } else {
+            // Fallback Header
+            doc.setFillColor(20, 57, 109);
+            doc.rect(0, 0, 297, 30, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`CRONOGRAMA SEMANAL - ${format(start, 'dd/MM')} a ${format(end, 'dd/MM')}`, 14, 20);
+            contentStartY = 45;
+        }
+
+        // Title if using modern header
+        if (schoolData) {
+            contentStartY += 5;
+            doc.setFontSize(16);
+            doc.setTextColor(30, 41, 59);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`CRONOGRAMA SEMANAL - ${format(start, 'dd/MM')} a ${format(end, 'dd/MM')}`, 14, contentStartY);
+            contentStartY += 10;
+        }
 
         let x = 14;
+        const gridStartY = contentStartY + 5;
+
         weekDays.forEach(day => {
             const dayEvents = getDayEvents(day);
             const gray = isActiveDay(day) ? 240 : 255;
+
+            // Background for day column
             doc.setFillColor(gray, gray, gray);
-            doc.rect(x, 40, 38, 150);
+            doc.rect(x, gridStartY, 38, 130, 'F');
+            doc.setDrawColor(200, 200, 200);
+            doc.rect(x, gridStartY, 38, 130, 'S'); // Border
 
             doc.setTextColor(60, 60, 60);
             doc.setFontSize(10);
-            doc.text(format(day, 'EEEE', { locale: ptBR }).toUpperCase(), x + 2, 45);
-            doc.setFontSize(8);
-            doc.text(format(day, 'dd/MM'), x + 2, 50);
+            doc.setFont('helvetica', 'bold');
+            doc.text(format(day, 'EEEE', { locale: ptBR }).toUpperCase(), x + 2, gridStartY + 6);
 
-            let y = 60;
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text(format(day, 'dd/MM'), x + 2, gridStartY + 11);
+
+            let y = gridStartY + 15;
             dayEvents.forEach(e => {
-                const bgColor = e.tipo_evento === 'Importante' ? [255, 240, 240] : [240, 240, 240];
+                const bgColor = e.tipo_evento === 'Importante' ? [254, 226, 226] : [255, 255, 255]; // Red-50 or White
+                const borderColor = e.tipo_evento === 'Importante' ? [239, 68, 68] : [203, 213, 225];
+
                 doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-                doc.rect(x + 1, y, 36, 15, 'F');
+                doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
+                doc.rect(x + 1, y, 36, 18, 'FD'); // Fill and Draw
+
                 doc.setTextColor(0);
                 doc.setFontSize(7);
-                doc.text(`${e.horario.slice(0, 5)} - ${e.titulo.substring(0, 20)}`, x + 2, y + 5);
-                doc.text(e.professor_nome?.substring(0, 20) || '', x + 2, y + 10);
-                y += 18;
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${e.horario.slice(0, 5)} - ${e.titulo.substring(0, 18)}...`, x + 3, y + 5);
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(6);
+                doc.text(e.professor_nome?.substring(0, 25) || '', x + 3, y + 12);
+
+                y += 20;
             });
             x += 40;
         });
+
+        if (schoolData) {
+            renderModernFooter(doc, schoolData);
+        } else {
+            // Fallback footer
+            const footerText = schoolInfo?.nome
+                ? `© ${new Date().getFullYear()} ${schoolInfo.nome} - Agenda Oficial`
+                : '© Vinculo PEI - Documento Oficial Reservado';
+
+            doc.setFontSize(8);
+            doc.setTextColor(128, 128, 128);
+            doc.text(footerText, 14, 200);
+        }
 
         doc.save(`agenda_semanal_${format(new Date(), 'yyyyMMdd')}.pdf`);
     };
@@ -287,9 +361,9 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
         <div className="animate-in fade-in duration-700 space-y-8 pb-12">
             <div className="flex flex-col xl:flex-row gap-10">
 
-                {}
+                { }
                 <div className="w-full xl:w-80 space-y-8">
-                    {}
+                    { }
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest px-2">{format(currentMonth, 'MMMM', { locale: ptBR })}</h3>
@@ -326,7 +400,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
                         </div>
                     </div>
 
-                    {}
+                    { }
                     <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-8">
                         <div>
                             <h4 className="flex items-center gap-2 text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] mb-4">
@@ -360,7 +434,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="flex-1 bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden flex flex-col">
                     <div className="p-8 border-b border-slate-50 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-6">
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
@@ -451,7 +525,7 @@ export const AgendaView = ({ studentId }: { studentId?: string | number }) => {
                 </div>
             </div>
 
-            {}
+            { }
             {isCreating && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden max-w-xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">

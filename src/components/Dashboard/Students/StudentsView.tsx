@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Search, Plus, Filter, Users, MoreHorizontal, Eye, Edit3, Trash2, CheckCircle2, XCircle, ArrowUpDown, Loader2 } from 'lucide-react';
+import { Search, Plus, Filter, Users, ArrowUpDown, Loader2, Download, X } from 'lucide-react';
 import { StudentRegistrationWizard } from './wizards/StudentRegistrationWizard';
 import { StudentDetailView } from './StudentDetailView';
 import { studentService } from '@/lib/studentService';
 import { schoolsService } from '@/lib/schoolsService';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { X, Calendar as CalendarIcon } from 'lucide-react';
-import { AgendaView } from './components/AgendaView';
 import { classesService } from '@/lib/classesService';
 import { useAuth } from '@/lib/useAuth';
+import { supabase } from '@/lib/supabase';
+import { fetchSchoolPDFData, renderModernHeader, renderModernFooter } from '@/lib/pdfUtils';
 
 interface Student {
     id: string;
@@ -36,8 +34,6 @@ export const StudentsView = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<'Todos' | 'Ativo' | 'Inativo'>('Todos');
-
-
     const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
     const [schools, setSchools] = useState<any[]>([]);
     const [filterSchool, setFilterSchool] = useState('');
@@ -64,7 +60,12 @@ export const StudentsView = () => {
     const fetchStudents = async () => {
         setLoading(true);
         try {
-            const data = await studentService.getAll(authUser?.plataforma_id);
+            const isSuperAdmin = authUser?.tipo === 'Administrador';
+            const data = await studentService.getAll(
+                authUser?.plataforma_id,
+                isSuperAdmin ? undefined : authUser?.escola_id,
+                (authUser?.tipo === 'Família' || authUser?.tipo === 'FAMILIA') ? authUser?.familia_id : undefined
+            );
             const mappedStudents: Student[] = data.map((s: any) => ({
                 id: s.Aluno_ID,
                 nome: s.Nome,
@@ -104,88 +105,182 @@ export const StudentsView = () => {
         const matchesSchool = !filterSchool || s.escola === filterSchool;
         const matchesSerie = !filterSerie || s.serie === filterSerie;
         const matchesGender = !filterGender || s.genero === filterGender;
-
-
         const matchesModulo = !filterModulo || s.detalhes?.modulo === filterModulo;
         const matchesPeriodo = !filterPeriodo || s.detalhes?.periodo === filterPeriodo;
-        const matchesTurma = !filterTurma || s.serie === filterTurma; 
+        const matchesTurma = !filterTurma || s.serie === filterTurma;
 
         return matchesSearch && matchesStatus && matchesSchool && matchesSerie && matchesGender && matchesModulo && matchesPeriodo && matchesTurma;
     });
 
-    const handleExportPDF = () => {
-        const doc = new jsPDF({ orientation: 'landscape' });
-        const now = new Date().toLocaleString('pt-BR');
+    const handleExportPDF = async () => {
+        if (filteredStudents.length === 0) return;
 
+        // Dynamic Imports
+        const jspdf = await import('jspdf');
+        const jsPDF = jspdf.jsPDF || (jspdf as any).default;
+        const autoTable = (await import('jspdf-autotable')).default;
 
-        doc.setFillColor(20, 57, 109);
-        doc.rect(0, 0, 297, 40, 'F');
+        const doc = new jsPDF();
+        const width = doc.internal.pageSize.width;
+        const height = doc.internal.pageSize.height;
 
+        // --- COLORS & STYLE (Executive Professional - Total White) ---
+        const colors = {
+            primary: [15, 23, 42] as [number, number, number], // Deep Slate (Corporate)
+            accent: [37, 99, 235] as [number, number, number], // Tech Blue
+            textMain: [30, 41, 59] as [number, number, number], // Slate 800
+            textMuted: [100, 116, 139] as [number, number, number], // Slate 500
+            border: [226, 232, 240] as [number, number, number], // Slate 200
+            white: [255, 255, 255] as [number, number, number],
+        };
 
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
+        // --- DATA DETECTION (Institution Settings) ---
+        let targetSchoolId = authUser?.escola_id;
+        if (!targetSchoolId && filterSchool) {
+            const selectedSchool = schools.find(s => (s.nome || s.Nome) === filterSchool);
+            if (selectedSchool) targetSchoolId = selectedSchool.id;
+        }
+
+        if (!targetSchoolId && authUser?.plataforma_id) {
+            const { data: qSchool } = await supabase
+                .from('Escolas')
+                .select('Escola_ID')
+                .eq('Plataforma_ID', authUser.plataforma_id)
+                .limit(1)
+                .maybeSingle();
+            if (qSchool) targetSchoolId = qSchool.Escola_ID;
+        }
+
+        const schoolData = targetSchoolId ? await fetchSchoolPDFData(targetSchoolId) : null;
+
+        // --- RENDER HEADER (Total White) ---
+        let cursorY = 10;
+        if (schoolData) {
+            cursorY = await renderModernHeader(doc, schoolData);
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+            doc.text("VÍNCULOTEA", 14, 25);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+            doc.text("SISTEMA DE GESTÃO MULTIDISCIPLINAR ESPECIALIZADA", 14, 30);
+            cursorY = 40;
+        }
+
+        // --- REPORT TITLE BAR ---
+        doc.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.rect(14, cursorY, 4, 10, 'F'); // Focus Bar
+
+        doc.setFontSize(18);
         doc.setFont('helvetica', 'bold');
-        doc.text('Relatório Geral de Alunos', 14, 25);
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text("Relatório Geral de Alunos", 22, cursorY + 7);
 
-        doc.setFontSize(10);
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Plataforma Vinculo PEI - Gestão Educacional Especializada`, 14, 32);
-        doc.text(`Gerado em: ${now}`, 240, 32);
+        doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+        doc.text(`Documento gerado em: ${new Date().toLocaleString('pt-BR')}`, 22, cursorY + 13);
 
+        cursorY += 25;
 
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(12);
+        // --- KPI SUMMARY GRID ---
+        const totalNum = filteredStudents.length;
+        const activeNum = filteredStudents.filter(s => s.status === 'Ativo').length;
+        const inactiveNum = filteredStudents.filter(s => s.status === 'Inativo').length;
+
+        doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
+        doc.setLineWidth(0.1);
+        doc.roundedRect(14, cursorY, width - 28, 25, 2, 2, 'D');
+
+        // Total
+        doc.setFontSize(9);
+        doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+        doc.text("TOTAL DE ALUNOS", 24, cursorY + 8);
+        doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text('Resumo da Listagem:', 14, 55);
+        doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        doc.text(totalNum.toString(), 24, cursorY + 18);
 
-        doc.setFontSize(10);
+        // Active
+        doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Total de Registros: ${filteredStudents.length}`, 14, 62);
-        doc.text(`Alunos Ativos: ${filteredStudents.filter(s => s.status === 'Ativo').length}`, 60, 62);
-        doc.text(`Alunos Inativos: ${filteredStudents.filter(s => s.status === 'Inativo').length}`, 110, 62);
+        doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+        doc.text("ATIVOS", 80, cursorY + 8);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(34, 197, 94); // Success Green
+        doc.text(activeNum.toString(), 80, cursorY + 18);
 
-        const tableData = filteredStudents.map(s => [
-            s.nome,
-            s.escola,
-            s.serie,
-            s.responsavel,
-            s.dataNascimento,
-            s.genero,
-            s.status,
-            s.cid || 'N/A'
-        ]);
+        // Inactive
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+        doc.text("INATIVOS", 130, cursorY + 8);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(239, 68, 68); // Red
+        doc.text(inactiveNum.toString(), 130, cursorY + 18);
 
+        cursorY += 35;
+
+        // --- STUDENT LIST TABLE ---
         autoTable(doc, {
-            startY: 70,
-            head: [['Nome Completo', 'Instituição', 'Série', 'Responsável', 'Nascimento', 'Gênero', 'Status', 'CID']],
-            body: tableData,
-            theme: 'grid',
+            startY: cursorY,
+            head: [['NOME COMPLETO', 'SÉRIE', 'RESPONSÁVEL', 'NASCIMENTO', 'CID']],
+            body: filteredStudents.map(s => [
+                s.nome || '-',
+                s.serie || '-',
+                s.responsavel || '-',
+                s.dataNascimento ? new Date(s.dataNascimento).toLocaleDateString('pt-BR') : '-',
+                s.cid || '-'
+            ]),
+            theme: 'striped',
             headStyles: {
-                fillColor: [20, 57, 109],
-                textColor: [255, 255, 255],
-                fontSize: 9,
+                fillColor: [248, 250, 252],
+                textColor: [15, 23, 42],
+                fontSize: 8,
                 fontStyle: 'bold',
-                halign: 'center'
+                halign: 'left'
             },
             bodyStyles: {
                 fontSize: 8,
-                textColor: [50, 50, 50]
+                textColor: [51, 65, 85],
+                cellPadding: 4
             },
             alternateRowStyles: {
-                fillColor: [245, 247, 250]
+                fillColor: [252, 253, 255]
             },
-            margin: { top: 70 },
-            didDrawPage: (data) => {
-
-                doc.setFontSize(8);
-                doc.setTextColor(150, 150, 150);
-                const str = `Página ${doc.getNumberOfPages()}`;
-                doc.text(str, 280, 200, { align: 'right' });
-                doc.text('© Vinculo PEI - Documento Oficial Reservado', 14, 200);
-            }
+            margin: { left: 14, right: 14 }
         });
 
-        doc.save(`relatorio_detalhado_alunos_${new Date().getTime()}.pdf`);
+        // --- FOOTER ---
+        const pageCount = (doc as any).internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            if (schoolData) {
+                renderModernFooter(doc, schoolData);
+            } else {
+                doc.setFontSize(7);
+                doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
+                doc.text("© VínculoTEA - Gestão Multidisciplinar Autista", 14, height - 10);
+                doc.text(`Página ${i} de ${pageCount}`, width - 14, height - 10, { align: 'right' });
+            }
+        }
+
+        doc.save(`Relatorio_Alunos_${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    const handleOpenWizard = () => {
+        // Obter limite do plano (Poderia vir de authUser?.plataforma?.limite_alunos)
+        const ALUNO_LIMIT = authUser?.tipo === 'Administrador' ? 99999 : 100;
+
+        if (students.length >= ALUNO_LIMIT) {
+            alert(`⚠️ Limite do Plano Atingido: Seu plano atual permite até ${ALUNO_LIMIT} alunos. Para cadastrar mais, por favor realize o upgrade da sua conta.`);
+            return;
+        }
+        setIsRegistering(true);
     };
 
     if (isRegistering) {
@@ -220,7 +315,7 @@ export const StudentsView = () => {
                     <div className="flex items-center gap-2 mt-2">
                         <span className="flex items-center gap-1.5 px-2.5 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/10">
                             <Users size={12} strokeWidth={3} />
-                            {students.length} Registros
+                            {students.length} / 100 Registros
                         </span>
                         <p className="text-slate-400 text-xs font-medium italic">Base de dados sincronizada em tempo real</p>
                     </div>
@@ -232,10 +327,11 @@ export const StudentsView = () => {
                         disabled={filteredStudents.length === 0}
                         className="flex-1 xl:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-xs font-black text-slate-600 dark:text-slate-300 hover:border-primary transition-all uppercase tracking-widest shadow-sm disabled:opacity-50"
                     >
-                        Relatórios PDF
+                        <Download size={18} className="text-primary" />
+                        Exportar Alunos
                     </button>
                     <button
-                        onClick={() => setIsRegistering(true)}
+                        onClick={handleOpenWizard}
                         className="flex-1 xl:flex-none flex items-center justify-center gap-3 px-8 py-3.5 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] group"
                     >
                         <Plus size={20} strokeWidth={3} className="group-hover:rotate-90 transition-transform" />
@@ -243,8 +339,6 @@ export const StudentsView = () => {
                     </button>
                 </div>
             </header>
-
-            {}
 
             <div className="bg-white dark:bg-slate-800/80 p-6 md:p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm backdrop-blur-sm">
                 <div className="flex flex-col lg:flex-row gap-6 items-end">
@@ -288,7 +382,6 @@ export const StudentsView = () => {
                     </button>
                 </div>
 
-                {}
                 {isAdvancedFiltersOpen && (
                     <div className="absolute top-full left-0 right-0 mt-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
                         <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-2xl p-8 max-w-2xl mx-auto ring-4 ring-black/5">
