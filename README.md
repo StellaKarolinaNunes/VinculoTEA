@@ -1,13 +1,13 @@
-<p align="center">
-  <img src="src/assets/images/dark.svg" alt="VínculoTEA" width="320" />
-</p>
+   <h1 align="center">
+       VinculoTEA
+    <br />
+    <br />
+    <a href="https://github.com/StellaKarolinaNunes/VinculoTEA">
+     <img src="src/assets/images/Banner.png" alt="VínculoTEA Banner " width="100%">
+    </a>
+  </h1>
 
-<h3 align="center">Sistema de Gestão Multidisciplinar para Educação Inclusiva</h3>
-
-<p align="center">
-  <strong>Interface Premium Light Mode focada no bem-estar e acessibilidade</strong><br>
-  Centralizando o acompanhamento pedagógico e clínico de alunos com TEA
-</p>
+</div>
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white" alt="React" />
@@ -20,134 +20,106 @@
 
 ---
 
-## Sobre o Projeto
+> **Documentação de Deploy**: Para configurar e visualizar a documentação do projeto localmente, siga o guia de deploy disponível na seção [Documentação de Deploy](#documentação-de-deploy). Nela você encontrará os passos para instalar o Mintlify, executar o ambiente de documentação e acessar a interface no navegador.
 
-O **VínculoTEA** é uma plataforma SaaS projetada para transformar a gestão educacional inclusiva. O sistema atua como uma ponte digital entre **escolas**, **famílias** e **especialistas** (psicólogos, fonoaudiólogos, terapeutas ocupacionais), centralizando todas as informações do **Plano Educacional Individualizado (PEI)** em um único ambiente seguro e acessível.
-
-### O Problema
-
-O acompanhamento pedagógico de alunos com TEA é frequentemente realizado de forma fragmentada — em papel, planilhas isoladas ou sistemas desconectados. Isso resulta em:
-
-- Perda de dados históricos e dificuldade na análise de evolução
-- Comunicação ineficiente entre profissionais e famílias
-- Falta de visibilidade para gestores educacionais
-- Dificuldade em cumprir requisitos legais de educação inclusiva
-
-### A Solução
-
-| Funcionalidade | Descrição |
-| :--- | :--- |
-| **Prontuário Centralizado** | Histórico clínico e pedagógico unificado por aluno |
-| **PEI Automatizado** | Criação assistida com wizard de múltiplas etapas e validação integrada |
-| **Central de Relatórios** | Dashboards com estatísticas em tempo real por aluno, profissional e escola |
-| **Agenda Integrada** | Agendamento e acompanhamento de atendimentos multidisciplinares |
-| **Gestão Administrativa** | Gerenciamento completo de escolas, turmas e profissionais |
-| **Controle de Acesso** | RBAC granular com isolamento total via Plataforma_ID (Multi-tenancy) |
 
 ---
 
-## Funcionalidades Principais
+##  Introdução
+**VinculoTEA** é uma plataforma de gestão multidisciplinar para educação inclusiva, desenvolvida para facilitar a comunicação e o acompanhamento de alunos com Transtorno do Espectro Autista (TEA). O aplicativo utiliza uma interface multimodal com vídeos em Libras e fluxos intuitivos, garantindo autonomia ao aluno e clareza diagnóstica para os profissionais de saúde. Esta documentação fornece detalhes sobre o funcionamento, instalação e diretrizes do projeto.
 
-### Gestão de Alunos
+
+<br>
+
+## Por que VinculoTEA?
+A educação inclusiva é um direito fundamental, mas para alunos com Transtorno do Espectro Autista (TEA), o ambiente escolar muitas vezes se torna um espaço de exclusão. Na ausência de ferramentas acessíveis durante a triagem, o aluno é forçado a enfrentar o ruído clínico e a perda de sua autonomia. Essa falha de comunicação não apenas gera ansiedade e isolamento, mas escala para riscos reais: diagnósticos imprecisos e atrasos críticos no atendimento que podem comprometer desfechos clínicos.
+
+<br>
+
+## A Solução
+ 
+*  **Prontuário Centralizado** | Histórico clínico e pedagógico unificado por aluno 
+*  **PEI Automatizado** | Criação assistida com wizard de múltiplas etapas e validação integrada 
+*  **Central de Relatórios** | Dashboards com estatísticas em tempo real por aluno, profissional e escola 
+*  **Agenda Integrada** | Agendamento e acompanhamento de atendimentos multidisciplinares 
+*  **Gestão Administrativa** | Gerenciamento completo de escolas, turmas e profissionais 
+*  **Controle de Acesso** | RBAC granular com isolamento total via Plataforma_ID (Multi-tenancy) 
+ 
+ <br>
+ 
+ ## Planos e Precificação (SaaS)
+ 
+ O **VínculoTEA** foi desenhado para escalar de profissionais autônomos a grandes redes de ensino:
+ 
+ *   **Plano Essencial**: Focado em profissionais independentes (psicólogos, fonoaudiólogos).
+ *   **Plano Institucional**: Gestão completa para escolas e clínicas multidisciplinares.
+ *   **Plano Redes (Enterprise)**: Visão consolidada para secretarias de educação e grandes grupos.
+
+ >  **Fluxograma do Projeto**: Caso queira entender a lógica de navegação e processos do aplicativo, acesse o arquivo [fluxograma/FLUXOGRAMA.md](fluxograma/FLUXOGRAMA.md).
+
+ <br>
+
+ ## Funcionalidades Principais
+
+#### * Gestão de Alunos
 - Cadastro completo com dados pessoais, CID, gênero e detalhes clínicos
 - Vinculação com família, escola e turma
 - Upload de foto e documentação
 - Histórico de PEIs e acompanhamentos
 
-### Gestão de Alunos & PEI
+#### * Gestão de Alunos & PEI
 - **Student Registration Wizard**: Processo guiado de múltiplas etapas para novos cadastros (Dados, Família, Escola/Saúde).
 - **Wizard de PEI**: Elaboração assistida do Plano Educacional Individualizado com validação em tempo real.
 - Definição de metas de curto e longo prazo com indicadores de progresso.
 - Registro de pontos fortes, barreiras e estratégias personalizadas.
 - Exportação em PDF com formatação profissional e cabeçalho institucional.
 
-### Central de Relatórios
+#### * Central de Relatórios
 - **Relatório Geral**: Visão consolidada com total de alunos, atendimentos e horas
 - **Relatório Individual**: Frequência, evolução, atividades domiciliares e orientações
 - Estatísticas por profissional e por aluno
 - Exportação em PDF com cabeçalho institucional
 
-### Gestão Administrativa
+#### * Gestão Administrativa
 - Cadastro e gerenciamento de escolas da rede
 - Gestão de turmas com turno e ano letivo
 - Cadastro de professores e profissionais de saúde
 - Gestão dinâmica de disciplinas e especialidades com controle de acesso
 - Dashboard administrativo com indicadores de rede
 
-### Agenda de Atendimentos
+#### * Agenda de Atendimentos
 - Calendário visual com navegação por mês
 - Agendamento vinculado a profissional e aluno
 - Classificação por tipo de evento (Normal, Importante, Agendamento)
 - Acompanhamento de status dos atendimentos
 
-### Segurança e Controle de Acesso
+#### * Segurança e Controle de Acesso
 - Autenticação via Supabase Auth com JWT
 - Row Level Security (RLS) em todas as tabelas
 - Isolamento de dados por plataforma (multi-tenancy)
 - Permissões baseadas em papel com 4 níveis de acesso
 
----
+### Controle de Acesso (RBAC)
+A plataforma utiliza **Role-Based Access Control** para garantir a integridade dos dados sensíveis dos alunos:
+*   **Isolamento de Dados**: Cada instituição opera em um ambiente isolado via `Plataforma_ID`.
+*   **Segurança a nível de linha**: As políticas de RLS garantem que um usuário nunca acesse dados fora de sua permissão.
 
-## Perfis de Acessibilidade (Inclusão Total)
+### Níveis de Acesso e Gestão
+| Permissão | Admin | Profissional | Tutor | Família |
+| :--- | :---: | :---: | :---: | :---: |
+| Visualizar Alunos | ✅ | ✅ | ✅ | ✅* |
+| Editar Alunos | ✅ | ✅ | ❌ | ❌ |
+| Gestão Administrativa | ✅ | ✅** | ❌ | ❌ |
+| Gerenciar Escolas | ✅ | ❌ | ❌ | ❌ |
+| Central de Relatórios | ✅ | ✅ | ✅ | ✅* |
+| Configurações/Usuários | ✅ | ❌ | ❌ | ❌ |
 
-O sistema conta com um conjunto avançado de perfis de acessibilidade, permitindo personalizar a experiência para cada necessidade específica (TEA, TDAH, Deficiências Visuais/Motoras).
 
-### 1. Modo Autismo (TEA)
-- **Interface Simplificada**: Remove distrações visuais e elementos decorativos.
-- **Tons Pastéis**: Paleta de cores calmante para reduzir sobrecarga sensorial.
-- **Baixa Estimulação**: Bloqueio de animações e transições bruscas.
+> **Dica de Inclusão**: É possível ativar múltiplos modos simultaneamente para criar um ambiente híbrido e personalizado.  *\* Apenas dados dos próprios filhos — \*\* Acesso parcial*
 
-### 2. Deficiência Visual / Cego
-- **Leitor de Tela**: Integração nativa para leitura de menus e conteúdo.
-- **Comando de Voz**: Navegação básica por voz.
-- **Feedback Sonoro**: Retorno auditivo para ações importantes.
+ ---
 
-### 3. Surdo / Libras
-- **Widget VLibras**: Intérprete virtual de Libras (Língua Brasileira de Sinais).
-- **Alertas Visuais**: Notificações piscantes para substituir alertas sonoros.
-
-### 4. Dificuldade Auditiva
-- **Legendas Automáticas**: (Em desenvolvimento) para conteúdo de vídeo.
-- **Reforço Visual**: Destaque visual para interações que teriam feedback sonoro.
-
-### 5. Modo Foco (TDAH)
-- **Bloqueio de Distrações**: Oculta menus laterais não essenciais.
-- **Redução de Animações**: Interface estática para manter a atenção.
-- **Régua de Leitura**: Guia visual para foco em linhas de texto.
-
-### 6. Alto Contraste & Cognitivo
-- **Alto Contraste**: Cores vibrantes (Amarelo/Preto) para distinção máxima.
-- **Fonte Dislexia**: Tipografia especial para facilitar a leitura.
-- **Botões Gigantes**: Facilita o clique para quem tem dificuldades motoras.
-
-> **Dica de Inclusão**: É possível ativar múltiplos modos simultaneamente para criar um ambiente híbrido e personalizado.
-
----
-
-## Stack Tecnológica
-
-A arquitetura foi projetada com foco em **segurança**, **performance** e **escalabilidade**.
-
-| Camada | Tecnologia | Versão | Papel |
-| :--- | :--- | :---: | :--- |
-| **Frontend** | React | 18.2 | Interface reativa com componentes modulares |
-| **Build Tool** | Vite | 7.3 | Build ultrarrápido com HMR |
-| **Linguagem** | TypeScript | 5.9 | Tipagem estrita para robustez do código |
-| **Backend (BaaS)** | Supabase | 2.91 | Auth, Database, Storage e Edge Functions |
-| **Banco de Dados** | PostgreSQL | 17 | Banco relacional com RLS e triggers |
-| **Animações** | Framer Motion | 12.x | Micro-animações e transições fluidas |
-| **Ícones** | Lucide React | 0.284 | Sistema de ícones consistente |
-| **PDF** | jsPDF + AutoTable | 5.0 | Geração de relatórios em PDF |
-| **Testes Unitários** | Vitest + Testing Library | 4.0 | Validação de serviços e componentes |
-| **Testes E2E** | Playwright | 1.58 | Testes de fluxo real do usuário |
-
----
-
-## Arquitetura do Sistema
-
-### Padrão: Monolito Modular
-
-Cada funcionalidade é um módulo independente, facilitando manutenção e evolução sem impacto lateral.
+ ##  Estrutura de Pastas
 
 ```
 src/
@@ -191,202 +163,234 @@ Plataformas ──┬── Escolas ──┬── Turmas
               └── Usuarios
 ```
 
-### Controle de Acesso (RBAC)
+<br>
+ 
 
-| Permissão | Admin | Profissional | Tutor | Família |
-| :--- | :---: | :---: | :---: | :---: |
-| Visualizar Alunos | ✅ | ✅ | ✅ | ✅* |
-| Editar Alunos | ✅ | ✅ | ❌ | ❌ |
-| Gestão Administrativa | ✅ | ✅** | ❌ | ❌ |
-| Gerenciar Escolas | ✅ | ❌ | ❌ | ❌ |
-| Central de Relatórios | ✅ | ✅ | ✅ | ✅* |
-| Configurações/Usuários | ✅ | ❌ | ❌ | ❌ |
+##  Instalação
 
-> *\* Apenas dados dos próprios filhos — \*\* Acesso parcial*
+### Pré-requisitos para Rodar VinculoTEA na sua Máquina 
+
+* 1.  **Node.js**: Versão **18.x** ou superior (recomendado **20.x LTS** para estabilidade).
+* 2.  **Gerenciador de Pacotes**: `npm`, `yarn` ou `pnpm` (O projeto utiliza `package.json`).
+* 3.  **Git**: Para clonar o repositório do projeto.
+* 4.  **Conta no Supabase**: Você precisará de um projeto ativo no [Supabase](https://supabase.com/) para as funcionalidades de Banco de Dados e Autenticação.
+
+<br>
+
+### Tecnologias utilizadas
+
+*   **Frontend**: React 18.2
+*   **Build Tool**: Vite 7.3
+*   **Linguagem**: TypeScript 5.9
+*   **Backend (BaaS)**: Supabase 2.91
+*   **Banco de Dados**: PostgreSQL 17
+*   **Animações**: Framer Motion 12.x
+*   **Ícones**: Lucide React 0.284
+*   **PDF**: jsPDF + AutoTable 5.0
+*   **Testes Unitários**: Vitest + Testing Library 4.0
+*   **Testes E2E**: Playwright 1.58
+
+<br>
+
+### Configuração Inicial
+
+Antes de rodar o comando de instalação, você precisará configurar as variáveis de ambiente:
+
+* 1.  Copie o arquivo `.env.example` para um novo arquivo chamado `.env`:
+    ```bash
+    cp .env.example .env
+    ```
+* 2.  Abra o arquivo `.env` e preencha com as suas credenciais do projeto Supabase (`SUPABASE_URL` e `SUPABASE_ANON_KEY`).
 
 ---
 
-## Planos e Precificação (SaaS)
+###  Instalação Rápida
 
-O **VínculoTEA** opera sob um modelo de assinatura escalável, garantindo lucratividade e controle de recursos.
-
-| Plano | Limite de Escolas | Limite de Alunos | Valor Sugerido (Mensal) | Lucro Estimado |
-| :--- | :--- | :--- | :--- | :--- |
-| **Bronze (Essencial)** | 1 Unidade | Até 50 Alunos | **R$ 149,90** | ~85% |
-| **Prata (Crescimento)** | 1 Unidade | Até 150 Alunos | **R$ 299,90** | ~90% |
-| **Ouro (Profissional)** | 1 Unidade | Até 300 Alunos | **R$ 499,90** | ~92% |
-| **Elite (Personalizado)** | Sob consulta | Ilimitado | **R$ 899,00+** | Altíssimo |
-
-### Níveis de Acesso e Gestão
-
-- **Administrador (Diretor da Escola)**: Perfil exclusivo para gestão da unidade. Possui autoridade para criar contas de Professores, Tutores e Famílias. É limitado a **1 unidade escolar** e ao teto de alunos definido pelo seu plano contratado.
-- **Super Administrador (Desenvolvedor/Suporte)**: Acesso global, ilimitado e irrestrito. Pode visualizar e gerenciar todas as escolas, alunos e usuários vinculados em qualquer plataforma, sem limitações de quota.
-
----
-
-## Instalação e Configuração
-
-### Pré-requisitos
-
-- [Node.js](https://nodejs.org/) v18 ou superior
-- [Git](https://git-scm.com/)
-- Conta gratuita no [Supabase](https://supabase.com/)
-
-### Passo a Passo
+####  1. Clone o repositório
 
 ```bash
+
 git clone https://github.com/StellaKarolinaNunes/VinculoTEA.git
+```
+
+####  2. Abra o projeto no seu editor
+
+```bash
+
 cd VinculoTEA
-
-# 2. Instalar dependências
-npm install
-
-# 3. Configurar variáveis de ambiente
-cp .env.example .env
-# Edite o arquivo .env com suas credenciais do Supabase
 ```
 
-Crie o arquivo `.env` na raiz do projeto:
+### 3. Configuração de Ambiente
 
-```env
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_ANON_KEY=sua-chave-publica-aqui
+Para uma experiência de desenvolvimento completa e padronizada, recomendamos a seguinte configuração:
+
+*   **Node.js LTS**: Utilize o [NVM](https://github.com/nvm-sh/nvm) ou [FNM](https://github.com/Schniz/fnm) para gerenciar versões do Node (v18 ou superior).
+*   **VS Code (Recomendado)**: Utilize as seguintes extensões para maior produtividade:
+*   **ES7+ React/Redux/React-Native snippets**: Snippets de código para React.
+*   **Tailwind CSS IntelliSense**: Autoclean de classes Tailwind.
+*   **Prettier**: Padronização automática de formatação.
+*   **ESLint**: Identificação de erros e convenções de código.
+*   **PostCSS Language Support**: Melhor visualização de arquivos CSS.
+*   **Supabase CLI**: Essencial caso você precise sincronizar migrações locais ou gerenciar **Edge Functions** (localizadas em `/supabase/functions`).
+ 
+ > Siga o guia oficial de [instalação do CLI](https://supabase.com/docs/guides/cli).
+
+
+### 4. Adicione as chaves de API
+
+```ini
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
-
-> As credenciais estão disponíveis em: **Supabase Dashboard → Project Settings → API**
+ 
+### 5. Instalação de Dependências
 
 ```bash
-# 4. Iniciar o servidor de desenvolvimento
-npm run dev
+ npm install
 ```
 
-O sistema estará disponível em **http://localhost:5173**
-
-### Scripts Disponíveis
-
-| Comando | Descrição |
-| :--- | :--- |
-| `npm run dev` | Inicia o servidor de desenvolvimento com HMR |
-| `npm run build` | Compila TypeScript e gera o bundle de produção |
-| `npm run test` | Executa a suíte de testes unitários e integração com Vitest |
-| `npx playwright test` | Executa os testes de ponta-a-ponta (E2E) |
-| `npm run preview` | Pré-visualiza o build de produção localmente |
-| `cd docs && npx mintlify dev` | Inicia o servidor de documentação localmente |
-
----
-
-## Documentação
-
-A documentação do projeto é construída com [Mintlify](https://mintlify.com) para proporcionar uma experiência de leitura premium e moderna.
-
-### Pré-requisitos
-
-- **Node.js**: Versão 18.0 ou superior.
-- **Mintlify CLI**: (Opcional) Pode ser instalado globalmente via `npm install -g mintlify`.
-
-### Passo a Passo
-
-1. **Acessar o diretório de documentação**:
-   A configuração (`docs.json`) e o conteúdo da documentação residem na pasta `docs/`.
-   ```bash
-   cd docs
-   ```
-
-2. **Iniciar o servidor local**:
-   Execute o comando abaixo para iniciar o ambiente de desenvolvimento:
-   ```bash
-   npx mintlify dev
-   ```
-
-3. **Visualizar**:
-   A documentação estará disponível em: **http://localhost:3000**
-
-O Mintlify monitora alterações nos arquivos `.mdx` e na configuração `docs.json`, atualizando o navegador automaticamente (Hot Reload).
-
----
-
-## Segurança
-
-### Row Level Security (RLS) & Segurança
-
-Todas as tabelas possuem RLS habilitado com políticas rigorosas que garantem:
-
-- **Autenticação Avançada**: Via Supabase Auth com validação de JWT em cada requisição.
-- **Isolamento por Plataforma**: Cada organização (tenant) acessa apenas seus próprios dados através do filtro obrigatório `Plataforma_ID`.
-- **Triggers de Auditoria**: Funções automáticas para manutenção de integridade e vinculação de perfis.
-- **Security Definer**: Funções de banco protegidas com `search_path` fixo para prevenir ataques de injeção de schema.
-
-### Multi-Tenancy
-
-O sistema opera em modelo multi-tenant, onde cada plataforma (organização) possui seus dados completamente isolados através da coluna `Plataforma_ID` presente em todas as tabelas de domínio.
-
-### Conformidade
-
-- Alinhamento com requisitos da **LGPD** (Lei Geral de Proteção de Dados)
-- Comunicação exclusivamente via **HTTPS**
-- Tokens **JWT** com expiração automática
-
----
-
-## Deploy
-
-### Vercel (Recomendado)
+### 6. Execute o aplicativo
 
 ```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
+npm run dev 
 ```
 
-Configure as variáveis de ambiente `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` no painel da Vercel.
+### 7. Scripts Disponíveis
 
-### Docker
+*  `npm install`: Atualiza pacotes.
+*  `npm run dev`: Executa o aplicativo em modo de desenvolvimento.
+*  `npm run build`: Compila o aplicativo para produção.
+*  `npm run test`: Executa os testes unitários.
+*  `npm run lint`: Verifica o código em busca de erros e problemas de estilo.
+
+> **Saiba mais**: Acesse o site oficial da documentação React para guias completos: [ documentação do React ](https://react.dev/)
+
+<br>
+
+## Documentação de Deploy
+
+O deploy da VinculoTEA segue práticas de entrega contínua:
+
+###  1. Instalar o CLI do Mintlify
+Abra o seu terminal e execute o comando abaixo para instalar o Mintlify globalmente:
 
 ```bash
-docker-compose up --build
+npm i -g mintlify
 ```
 
----
+### 2. Navegar até a pasta e Rodar
+Como você já está na pasta docs-mintlify, basta rodar:
 
-## Contribuindo
+```bash
+mintlify dev
+```
 
-1. Faça um **Fork** do repositório
-2. Crie uma branch para sua feature: `git checkout -b feature/minha-melhoria`
-3. Faça commit das suas alterações: `git commit -m "feat: descrição da melhoria"`
-4. Envie para a branch: `git push origin feature/minha-melhoria`
-5. Abra um **Pull Request** para revisão
+### 3. Acessar no Navegador (local)
 
-### Convenções de Commit
+```bash
+http://localhost:port
+```
 
-| Prefixo | Uso |
-| :--- | :--- |
-| `feat:` | Nova funcionalidade |
-| `fix:` | Correção de bug |
-| `docs:` | Documentação |
-| `style:` | Formatação (sem mudança de lógica) |
-| `refactor:` | Refatoração de código |
-| `test:` | Adição ou correção de testes |
+Dica: Se você não quiser instalar globalmente, pode usar o npx:
 
----
+```bash
+npx mintlify dev
+```
 
-## Equipe de Desenvolvimento
+Nota sobre o arquivo: O seu projeto está usando docs.json. Se o comando mintlify dev reclamar que não encontrou o arquivo de configuração, você pode tentar renomear o docs.json para mint.json, que é o nome padrão esperado por algumas versões do CLI.
 
-| [<img src="https://github.com/StellaKarolinaNunes.png" width="100px;" alt="Stella Karolina Nunes"/><br /><sub><b>Stella Karolina</b></sub>](https://github.com/StellaKarolinaNunes) | [<img src="https://github.com/AlineCely.png" width="100px;" alt="Aline Cely"/><br /><sub><b>Aline Cely</b></sub>](https://github.com/AlineCely) | [<img src="https://github.com/Aydeelauanda.png" width="100px;" alt="Aydee Lauanda"/><br /><sub><b>Aydee Lauanda</b></sub>](https://github.com/Aydeelauanda) |
-| :---: | :---: | :---: |
+> **Saiba mais**: Acesse o site oficial da documentação para guias completos: [ documentação do mintlify ](https://www.mintlify.com/docs)
 
----
+ <br>
 
-## Licença
+##  Roadmap
 
-Este projeto é proprietário e desenvolvido por **Stella Karolina Nunes; Aline Cely; Aydee Lauanda**. Todos os direitos reservados.
+Atualmente estamos trabalhando nas seguintes frentes para tornar o **VínculoTEA** a ferramenta definitiva para educação inclusiva:
 
+###  Em Desenvolvimento (v1.1.0 - Curto Prazo)
+- [ ] **Central de Relatórios**: Geração de PDFs profissionais com cabeçalho institucional e estatísticas.
+- [ ] **Dashboard Analítico**: Visão consolidada para gestores sobre o progresso da rede.
+- [ ] **Sistema de Notificações**: Alertas via e-mail para prazos de entrega e revisões de PEI.
+- [ ] **Agenda Digital**: Calendário integrado para atendimentos multidisciplinares.
 
----
+###  Futuro (Longo Prazo)
+- [ ] **Portal da Família**: Área dedicada para pais acompanharem o progresso e receberem documentos.
+- [ ] **App Mobile Offline**: Aplicativo nativo com suporte a registro de dados sem internet.
+- [ ] **IA de Apoio Pedagógico**: Assistente inteligente para sugestão de estratégias baseadas em perfil clínico.
+- [ ] **Integração WhatsApp**: Notificações automáticas de eventos e documentos finalizados.
 
-<p align="center">
-  <sub>Desenvolvido com dedicação para a educação inclusiva brasileira</sub>
-</p>
+<br>
 
+ ##  Contribuição
+Contribuições são muito bem-vindas! Siga estes passos:
 
+### Como Contribuir
+1. **Fork** este repositório
+2. **Clone** seu fork localmente
+3. **Crie** uma branch para sua feature: `git checkout -b feature/nova-funcionalidade`
+4. **Faça** suas alterações e commits
+5. **Teste** suas modificações
+6. **Abra** um Pull Request detalhado
+
+<br>
+
+###  Diretrizes
+
+- Código limpo e bem comentado
+- Mensagens de commit claras e objetivas
+- Teste todas as funcionalidades
+- Mantenha a documentação atualizada
+- Siga os padrões de código existentes
+
+<br>
+
+##  Licença
+
+Este projeto está licenciado sob a [Licença MIT](LICENSE).
+
+``` bash
+MIT License - você pode usar, modificar e distribuir livremente,
+mantendo a referência ao repositório original.
+```
+
+ <br>
+
+ ## Contato
+
+ Se você tiver dúvidas, sugestões ou quiser saber mais sobre o projeto, entre em contato:
+
+ - **Principais Desenvolvedores:** [Stella Karolina](https://github.com/StellaKarolinaNunes)
+ - **Repositório:** [VinculoTEA no GitHub](https://github.com/StellaKarolinaNunes/VinculoTEA)
+ - **LinkedIn:** [Stella Karolina Nunes](https://www.linkedin.com/in/stella-karolina/)
+
+ <br>
+
+ ## Créditos
+
+ O **VínculoTEA** é construído com o apoio de tecnologias e comunidades incríveis que possibilitam a educação inclusiva:
+
+ - **Framework:** [React 18](https://reactjs.org/) & [Vite](https://vitejs.dev/)
+ - **Backend (BaaS):** [Supabase](https://supabase.com/) (Auth, Database & RLS)
+ - **Estilização:** [Tailwind CSS](https://tailwindcss.com/)
+ - **Ícones:** [Lucide React](https://lucide.dev/)
+ - **Animações:** [Framer Motion](https://www.framer.com/motion/)
+ - **Relatórios:** [jsPDF](https://github.com/parallax/jsPDF) & [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable)
+ - **Testes:** [Vitest](https://vitest.dev/) & [Playwright](https://playwright.dev/)
+ - **Tipografia:** [Inter Font Family](https://fonts.google.com/specimen/Inter)
+
+ <br>
+
+### Desenvolvimento Principal
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/StellaKarolinaNunes">
+        <img src="https://github.com/StellaKarolinaNunes.png" width="100px" alt="Stella Karolina"/>
+        <br />
+        <sub><b>Stella Karolina (Desenvolvedora)</b></sub>
+        <br />
+      </a>
+    </td>
+  </tr>
+</table>
