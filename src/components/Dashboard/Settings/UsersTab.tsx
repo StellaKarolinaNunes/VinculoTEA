@@ -83,12 +83,24 @@ export const UsersTab = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // VALIDAÇÃO MANUAL
+        if (!formData.nome || !formData.email || (!editingUser && !formData.senha)) {
+            alert('Por favor, preencha todos os campos obrigatórios (Nome, E-mail e Senha).');
+            return;
+        }
+
+        if (!authUser?.plataforma_id) {
+            alert('Erro: Identificação da plataforma não encontrada. Tente recarregar a página.');
+            return;
+        }
+
         setIsLoading(true);
         try {
             const userData = {
                 ...formData,
-                escola_id: formData.escola_id ? parseInt(formData.escola_id) : undefined,
-                plataforma_id: authUser?.plataforma_id
+                escola_id: formData.escola_id ? parseInt(formData.escola_id) : (authUser?.escola_id || undefined),
+                plataforma_id: authUser.plataforma_id
             };
 
             if (editingUser) {
@@ -104,7 +116,7 @@ export const UsersTab = () => {
             alert('Usuário salvo com sucesso!');
         } catch (error: any) {
             console.error('Erro ao salvar usuário:', error);
-            alert(`Falha ao salvar: ${error.message}`);
+            alert(error.message || 'Falha ao salvar usuário');
         } finally {
             setIsLoading(false);
         }
@@ -207,18 +219,17 @@ export const UsersTab = () => {
                             {authUser?.tipo !== 'Administrador' ? 'Vinculado automaticamente à sua unidade.' : 'Selecione a unidade escolar.'}
                         </p>
                     </div>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-50 dark:border-slate-800 md:col-span-2">
+                        <button type="button" onClick={() => { setIsCreating(false); setEditingUser(null); }} className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Descartar</button>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="flex-[2] px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        >
+                            {isLoading ? <Loader2 className="animate-spin" size={18} /> : (editingUser ? 'Salvar Alterações' : 'Finalizar Cadastro')}
+                        </button>
+                    </div>
                 </form>
-
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-50 dark:border-slate-800">
-                    <button onClick={() => { setIsCreating(false); setEditingUser(null); }} className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Descartar</button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                        className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                    >
-                        {isLoading ? <Loader2 className="animate-spin" size={18} /> : (editingUser ? 'Salvar Alterações' : 'Finalizar Cadastro')}
-                    </button>
-                </div>
             </div>
         );
     }
@@ -248,8 +259,8 @@ export const UsersTab = () => {
                         setIsCreating(true);
                     }}
                     className={`w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-black/10 ${(authUser?.tipo !== 'Administrador' && users.length >= (authUser?.limite_usuarios || 5))
-                            ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                            : 'bg-slate-900 dark:bg-white dark:text-slate-900 text-white hover:scale-[1.05] active:scale-[0.95]'
+                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        : 'bg-slate-900 dark:bg-white dark:text-slate-900 text-white hover:scale-[1.05] active:scale-[0.95]'
                         }`}
                 >
                     <Plus size={18} strokeWidth={3} />

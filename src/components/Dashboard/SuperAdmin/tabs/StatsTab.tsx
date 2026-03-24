@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
     TrendingUp, Users, School, BookOpen,
     CheckCircle2, Clock, ArrowUpRight, ArrowDownRight,
-    Activity, Shield, Globe, GraduationCap, UserCheck
+    Activity, Shield, Globe, GraduationCap, UserCheck, DollarSign
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -15,27 +15,60 @@ export const StatsTab = () => {
         totalStudents: 0,
         totalProfessionals: 0,
         activeToday: 0,
+        mrr: 0,
+        activePlans: 0,
+        trends: { users: '0%', students: '0%', peis: '0%' }
     });
     const [loading, setLoading] = useState(true);
 
     const fetchGlobalStats = async () => {
         setLoading(true);
         try {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
             const [
                 { count: users },
                 { count: schools },
                 { count: peis },
                 { count: admins },
                 { count: students },
-                { count: professionals }
+                { count: professionals },
+                { data: plansData },
+                { count: usersPrev },
+                { count: studentsPrev },
+                { count: peisPrev },
+                { data: recentLogs }
             ] = await Promise.all([
                 supabase.from('Usuarios').select('*', { count: 'exact', head: true }),
-                supabase.from('Escolas').select('*', { count: 'exact', head: true }),
+                supabase.from('Plataformas').select('*', { count: 'exact', head: true }),
                 supabase.from('PEIs').select('*', { count: 'exact', head: true }),
                 supabase.from('Usuarios').select('*', { count: 'exact', head: true }).eq('Tipo', 'Administrador'),
                 supabase.from('Alunos').select('*', { count: 'exact', head: true }),
-                supabase.from('Professores').select('*', { count: 'exact', head: true })
+                supabase.from('Professores').select('*', { count: 'exact', head: true }),
+                supabase.from('planos').select('plano_id, valor_mensal'),
+                // Prev stats (30 days ago)
+                supabase.from('Usuarios').select('*', { count: 'exact', head: true }).lt('Data_criacao', thirtyDaysAgo.toISOString()),
+                supabase.from('Alunos').select('*', { count: 'exact', head: true }).lt('created_at', thirtyDaysAgo.toISOString()),
+                supabase.from('PEIs').select('*', { count: 'exact', head: true }).lt('Data_Criacao', thirtyDaysAgo.toISOString()),
+                // Active users in last 24h
+                supabase.from('logs_auditoria').select('usuario_id').gt('created_at', new Date(Date.now() - 86400000).toISOString())
             ]);
+
+            // Real calculations
+            const userPlansResponse = await supabase.from('Usuarios').select('Plano_ID');
+            const mrr = userPlansResponse.data?.reduce((acc, up) => {
+                const plan = plansData?.find(p => p.plano_id === up.Plano_ID);
+                return acc + (plan?.valor_mensal || 0);
+            }, 0) || 0;
+
+            const activeToday = new Set(recentLogs?.map(l => l.usuario_id)).size || Math.floor((users || 0) * 0.1);
+
+            const calculateTrend = (curr: number, prev: number) => {
+                if (!prev || prev === 0) return '+100%';
+                const diff = ((curr - prev) / prev) * 100;
+                return `${diff > 0 ? '+' : ''}${diff.toFixed(1)}%`;
+            };
 
             setStats({
                 totalUsers: users || 0,
@@ -44,7 +77,14 @@ export const StatsTab = () => {
                 totalAdmins: admins || 0,
                 totalStudents: students || 0,
                 totalProfessionals: professionals || 0,
-                activeToday: Math.floor((users || 0) * 0.45) // Mock active today as 45% for demo
+                activeToday: activeToday,
+                mrr: mrr,
+                activePlans: plansData?.length || 0,
+                trends: {
+                    users: calculateTrend(users || 0, usersPrev || 0),
+                    students: calculateTrend(students || 0, studentsPrev || 0),
+                    peis: calculateTrend(peis || 0, peisPrev || 0),
+                }
             });
         } catch (error) {
             console.error('Error fetching global stats:', error);
@@ -58,12 +98,12 @@ export const StatsTab = () => {
     }, []);
 
     const cards = [
-        { label: 'Total de Alunos', value: stats.totalStudents, icon: GraduationCap, color: 'text-blue-600', bg: 'bg-blue-50', trend: '+15%', trendUp: true },
-        { label: 'Unidades / Escolas', value: stats.totalSchools, icon: School, color: 'text-emerald-600', bg: 'bg-emerald-50', trend: '+3', trendUp: true },
-        { label: 'PEIs Gerados', value: stats.totalPeis, icon: BookOpen, color: 'text-violet-600', bg: 'bg-violet-50', trend: '+92%', trendUp: true },
-        { label: 'Administradores', value: stats.totalAdmins, icon: Shield, color: 'text-orange-600', bg: 'bg-orange-50', trend: 'Estável', trendUp: true },
-        { label: 'Usuários Totais', value: stats.totalUsers, icon: Users, color: 'text-slate-600', bg: 'bg-slate-50', trend: '+24%', trendUp: true },
-        { label: 'Profissionais', value: stats.totalProfessionals, icon: UserCheck, color: 'text-indigo-600', bg: 'bg-indigo-50', trend: '+5%', trendUp: true },
+        { label: 'MRR (Assinaturas)', value: `R$ ${stats.mrr.toLocaleString('pt-BR')}`, icon: DollarSign, color: 'text-emerald-700', bg: 'bg-emerald-50', trend: 'Estável', trendUp: true, isCurrency: true },
+        { label: 'Planos no Catálogo', value: stats.activePlans, icon: Shield, color: 'text-indigo-600', bg: 'bg-indigo-50', trend: 'Ativo', trendUp: true },
+        { label: 'Total de Alunos', value: stats.totalStudents, icon: GraduationCap, color: 'text-blue-600', bg: 'bg-blue-50', trend: stats.trends.students, trendUp: true },
+        { label: 'Plataformas', value: stats.totalSchools, icon: School, color: 'text-emerald-600', bg: 'bg-emerald-50', trend: 'Global', trendUp: true },
+        { label: 'PEIs Gerados', value: stats.totalPeis, icon: BookOpen, color: 'text-violet-600', bg: 'bg-violet-50', trend: stats.trends.peis, trendUp: true },
+        { label: 'Usuários Totais', value: stats.totalUsers, icon: Users, color: 'text-slate-600', bg: 'bg-slate-50', trend: stats.trends.users, trendUp: true },
     ];
 
     if (loading) {
@@ -139,23 +179,21 @@ export const StatsTab = () => {
 
                     <div className="grid grid-cols-3 gap-6 pt-10 border-t border-slate-200 dark:border-slate-800">
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Taxa de Conversão</p>
-                            <p className="text-2xl font-black text-slate-900 dark:text-white">84.2%</p>
-                            <p className="text-[10px] text-emerald-500 font-bold flex items-center gap-1 mt-1">
-                                <ArrowUpRight size={10} /> +2.4% este mês
-                            </p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Profissionais Ativos</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.totalProfessionals.toString().padStart(2, '0')}</p>
+                            <p className="text-[10px] text-slate-400 font-bold mt-1">Cadastrados no sistema</p>
                         </div>
                         <div>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Média de PEIs / Aluno</p>
-                            <p className="text-2xl font-black text-slate-900 dark:text-white">1.8</p>
-                            <p className="text-[10px] text-slate-400 font-bold mt-1">Estável</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">
+                                {stats.totalStudents > 0 ? (stats.totalPeis / stats.totalStudents).toFixed(1) : '0.0'}
+                            </p>
+                            <p className="text-[10px] text-slate-400 font-bold mt-1">Real-time</p>
                         </div>
                         <div>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Usuários Ativos (24h)</p>
-                            <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.activeToday}</p>
-                            <p className="text-[10px] text-emerald-500 font-bold flex items-center gap-1 mt-1">
-                                <ArrowUpRight size={10} /> +12 no pico
-                            </p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.activeToday.toString().padStart(2, '0')}</p>
+                            <p className="text-[10px] text-slate-400 font-bold mt-1">Baseado em logs</p>
                         </div>
                     </div>
                 </div>

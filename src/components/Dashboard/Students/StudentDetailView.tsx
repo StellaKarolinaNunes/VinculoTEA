@@ -72,7 +72,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
 
     return (
         <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8 pb-20">
-            {}
+            { }
             <div className="flex items-center justify-between">
                 <button
                     onClick={() => onBack()}
@@ -98,13 +98,30 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 </div>
             </div>
 
-            {}
+            { }
             <div className="bg-white dark:bg-slate-800 rounded-[3rem] border-[1.5px] border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none p-10">
                 <div className="flex flex-col xl:flex-row items-start gap-10">
-                    {}
+                    { }
                     <div className="relative">
-                        <div className="size-40 rounded-[3rem] bg-slate-900 flex items-center justify-center text-white text-5xl font-black shadow-2xl rotate-3">
-                            {student.foto ? <img src={student.foto} alt={student.nome} className="size-full object-cover" /> : student.nome.charAt(0)}
+                        <div className="size-40 rounded-[3rem] bg-slate-900 flex items-center justify-center text-white text-5xl font-black shadow-2xl rotate-3 overflow-hidden">
+                            {student.foto ? (
+                                <img
+                                    src={student.foto}
+                                    alt={student.nome}
+                                    className="size-full object-cover"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                        const nextEl = (e.target as HTMLImageElement).nextElementSibling;
+                                        if (nextEl) (nextEl as HTMLElement).style.display = 'flex';
+                                    }}
+                                />
+                            ) : null}
+                            <div
+                                className="size-full flex items-center justify-center bg-primary"
+                                style={{ display: student.foto ? 'none' : 'flex' }}
+                            >
+                                {student.nome.split(' ').map(n => n[0]).slice(0, 2).join('')}
+                            </div>
                         </div>
                         <div className={`absolute -bottom-2 -right-2 px-6 py-2 rounded-2xl border-4 border-white dark:border-slate-800 text-[10px] font-black uppercase tracking-widest shadow-xl ${student.status === 'Ativo' ? 'bg-emerald-500 text-white' : 'bg-slate-400 text-white'
                             }`}>
@@ -112,7 +129,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                         </div>
                     </div>
 
-                    {}
+                    { }
                     <div className="flex-1 space-y-6 w-full">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-2 italic">
@@ -123,7 +140,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                             </p>
                         </div>
 
-                        {}
+                        { }
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <InfoBox icon={Building2} label="Escola" value={student.escola} />
                             <InfoBox icon={Activity} label="CID" value={student.cid || 'N/A'} />
@@ -138,7 +155,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 </div>
             </div>
 
-            {}
+            { }
             <div className="flex bg-slate-100/50 dark:bg-slate-900/50 p-2 rounded-[2rem] gap-2 max-w-fit border-[1.5px] border-slate-100/50 dark:border-slate-800">
                 <TabButton
                     active={activeTab === 'peis'}
@@ -178,7 +195,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 />
             </div>
 
-            {}
+            { }
             <div className="animate-in fade-in zoom-in-95 duration-500">
                 {activeTab === 'peis' && (
                     <PEIsTab
@@ -196,7 +213,7 @@ export const StudentDetailView = ({ student: initialStudent, onBack }: Props) =>
                 {activeTab === 'agenda' && <AgendaView key={`agenda-${refreshKey}`} studentId={student.id} />}
             </div>
 
-            {}
+            { }
             {isCreatingPEI && (
                 <PEIWizard
                     studentName={student.nome}

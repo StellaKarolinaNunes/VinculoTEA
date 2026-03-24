@@ -8,6 +8,8 @@ import { userService } from '@/lib/userService';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/useAuth';
 
+import { planService } from '@/lib/planService';
+
 export const UsersTab = () => {
     const { user: currentUser, permissions } = useAuth();
     const [isCreating, setIsCreating] = useState(false);
@@ -15,6 +17,8 @@ export const UsersTab = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState<any[]>([]);
     const [schools, setSchools] = useState<any[]>([]);
+    const [plans, setPlans] = useState<any[]>([]);
+    const [platforms, setPlatforms] = useState<any[]>([]);
     const [loadingData, setLoadingData] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [userToDelete, setUserToDelete] = useState<any>(null);
@@ -27,18 +31,37 @@ export const UsersTab = () => {
         senha: '',
         role: 'Profissional',
         escola_id: '',
+        plataforma_id: '',
+        plano_id: '',
         avatar: ''
     });
 
     const fetchData = async () => {
         try {
             setLoadingData(true);
-            const [usersData, schoolsData] = await Promise.all([
-                userService.getAll(),
-                supabase.from('Escolas').select('*')
+            const isSuperAdmin = currentUser?.tipo === 'Administrador';
+            const filterPlatId = isSuperAdmin ? undefined : currentUser?.plataforma_id;
+            const filterEscolaId = isSuperAdmin ? undefined : currentUser?.escola_id;
+
+            const [usersData, schoolsData, plansData, platformsData] = await Promise.all([
+                userService.getAll(filterPlatId, filterEscolaId),
+                supabase.from('Escolas').select('*').match(filterPlatId ? { Plataforma_ID: filterPlatId } : {}),
+                planService.getAll(),
+                supabase.from('Plataformas').select('*').match(filterPlatId ? { Plataforma_ID: filterPlatId } : {})
             ]);
             setUsers(usersData || []);
             setSchools(schoolsData.data || []);
+            setPlans(plansData || []);
+            setPlatforms(platformsData.data || []);
+
+            // Pre-preencher se não for admin
+            if (!isSuperAdmin && filterPlatId) {
+                setFormData(prev => ({
+                    ...prev,
+                    plataforma_id: filterPlatId.toString(),
+                    escola_id: filterEscolaId?.toString() || prev.escola_id
+                }));
+            }
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
         } finally {
@@ -47,12 +70,23 @@ export const UsersTab = () => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (currentUser) {
+            fetchData();
+        }
+    }, [currentUser?.plataforma_id, currentUser?.escola_id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            const next = { ...prev, [name]: value };
+
+            // Se mudou para Administrador, força o plano Ilimitado (15)
+            if (name === 'role' && value === 'Administrador') {
+                next.plano_id = '15';
+            }
+
+            return next;
+        });
     };
 
     const handleEdit = (user: any) => {
@@ -63,6 +97,8 @@ export const UsersTab = () => {
             senha: '',
             role: user.Tipo || user.Tipo_Acesso || 'Profissional',
             escola_id: user.Escola_ID?.toString() || '',
+            plataforma_id: user.Plataforma_ID?.toString() || '',
+            plano_id: (user.Tipo === 'Administrador' ? '15' : (user.Plano_ID?.toString() || '')),
             avatar: user.Foto || ''
         });
         setIsCreating(true);
@@ -84,12 +120,28 @@ export const UsersTab = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // VALIDAÇÃO MANUAL
+        if (!formData.nome || !formData.email || (!editingUser && !formData.senha) || !formData.plano_id) {
+            alert('Por favor, preencha todos os campos obrigatórios (Nome, E-mail, Senha e Plano).');
+            return;
+        }
+
         setIsLoading(true);
         try {
+            // Ensure numeric IDs
+            const platId = parseInt(String(formData.plataforma_id));
+            const planId = parseInt(String(formData.plano_id));
+
+            if (isNaN(platId) || isNaN(planId)) {
+                throw new Error('Você deve selecionar uma Plataforma e um Plano válidos.');
+            }
+
             const userData = {
                 ...formData,
-                escola_id: formData.escola_id ? parseInt(formData.escola_id) : undefined,
-                plataforma_id: editingUser?.Plataforma_ID || undefined
+                escola_id: formData.escola_id ? parseInt(formData.escola_id) : null,
+                plataforma_id: platId,
+                plano_id: planId
             };
 
             if (editingUser) {
@@ -101,10 +153,11 @@ export const UsersTab = () => {
             await fetchData();
             setIsCreating(false);
             setEditingUser(null);
-            setFormData({ nome: '', email: '', senha: '', role: 'Profissional', escola_id: '', avatar: '' });
+            setFormData({ nome: '', email: '', senha: '', role: 'Profissional', escola_id: '', plataforma_id: '', plano_id: '', avatar: '' });
+            alert('Usuário salvo com sucesso!');
         } catch (error: any) {
             console.error('Erro ao salvar usuário:', error);
-            alert(`Falha ao salvar: ${error.message}`);
+            alert(error.message || 'Falha ao salvar usuário');
         } finally {
             setIsLoading(false);
         }
@@ -172,7 +225,7 @@ export const UsersTab = () => {
                         >
                             <option value="Profissional">Profissional</option>
                             <option value="GESTOR">Diretor / Gestor Escolar</option>
-                            <option value="Administrador">Super Administrador (SaaS)</option>
+                            {currentUser?.tipo === 'Administrador' && <option value="Administrador">Super Administrador (SaaS)</option>}
                             <option value="Tutor">Tutor / Família</option>
                         </select>
                     </div>
@@ -193,29 +246,70 @@ export const UsersTab = () => {
                     )}
 
                     <div className="space-y-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Plano Vinculado *</label>
+                        <select
+                            name="plano_id"
+                            value={formData.plano_id}
+                            onChange={handleChange}
+                            required
+                            disabled={formData.role === 'Administrador'}
+                            className={`w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none ${formData.role === 'Administrador' ? 'opacity-70 cursor-not-allowed text-primary' : ''}`}
+                        >
+                            <option value="">Selecione um plano...</option>
+                            {plans.map(p => <option key={p.plano_id} value={p.plano_id}>{p.nome}</option>)}
+                        </select>
+                        {formData.role === 'Administrador' && (
+                            <p className="text-[10px] font-black text-primary uppercase ml-1 mt-1 flex items-center gap-1">
+                                <Shield size={10} /> Administradores possuem Plano Ilimitado por padrão
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Plataforma / Inquilino *</label>
+                        <select
+                            name="plataforma_id"
+                            value={formData.plataforma_id}
+                            onChange={handleChange}
+                            required
+                            disabled={currentUser?.tipo !== 'Administrador'}
+                            className={`w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none ${currentUser?.tipo !== 'Administrador' ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                            <option value="">Selecione uma plataforma...</option>
+                            {platforms.map(p => <option key={p.Plataforma_ID} value={p.Plataforma_ID}>{p.Nome}</option>)}
+                        </select>
+                        {currentUser?.tipo !== 'Administrador' && (
+                            <p className="text-[10px] text-slate-400 mt-1 ml-1 font-medium">Você só pode gerenciar usuários da sua plataforma.</p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Unidade Escolar</label>
                         <select
                             name="escola_id"
                             value={formData.escola_id}
                             onChange={handleChange}
-                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
+                            disabled={!!(currentUser?.escola_id && currentUser?.tipo !== 'Administrador')}
+                            className={`w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none ${(currentUser?.escola_id && currentUser?.tipo !== 'Administrador') ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
-                            <option value="">Selecione uma escola...</option>
+                            <option value="">Selecione uma escola (Opcional)...</option>
                             {schools.map(s => <option key={s.Escola_ID} value={s.Escola_ID}>{s.Nome}</option>)}
                         </select>
+                        {currentUser?.escola_id && currentUser?.tipo !== 'Administrador' && (
+                            <p className="text-[10px] text-slate-400 mt-1 ml-1 font-medium">Vinculado automaticamente à sua unidade.</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-50 dark:border-slate-800 md:col-span-2">
+                        <button type="button" onClick={() => { setIsCreating(false); setEditingUser(null); }} className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Descartar</button>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="flex-[2] px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        >
+                            {isLoading ? <Loader2 className="animate-spin" size={18} /> : (editingUser ? 'Salvar Alterações' : 'Finalizar Cadastro')}
+                        </button>
                     </div>
                 </form>
-
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-50 dark:border-slate-800">
-                    <button onClick={() => { setIsCreating(false); setEditingUser(null); }} className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Descartar</button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                        className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                    >
-                        {isLoading ? <Loader2 className="animate-spin" size={18} /> : (editingUser ? 'Salvar Alterações' : 'Finalizar Cadastro')}
-                    </button>
-                </div>
             </div>
         );
     }
@@ -255,6 +349,7 @@ export const UsersTab = () => {
                         <thead className="bg-slate-50/50 dark:bg-slate-900/50">
                             <tr>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest rounded-tl-[2rem]">Usuário</th>
+                                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Plano / Plataforma</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Permissão</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status / Unidade</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right rounded-tr-[2rem]">Ações</th>
@@ -272,6 +367,17 @@ export const UsersTab = () => {
                                                 <p className="font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors truncate">{user.Nome || 'Sem Nome'}</p>
                                                 <p className="text-xs text-slate-400 font-medium truncate">{user.Email}</p>
                                             </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[10px] font-black text-primary uppercase tracking-tighter">
+                                                {plans.find(p => p.plano_id === user.Plano_ID)?.nome || 'Sem Plano'}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                                <Building2 size={10} />
+                                                {platforms.find(p => p.Plataforma_ID === user.Plataforma_ID)?.Nome || 'Independente'}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">

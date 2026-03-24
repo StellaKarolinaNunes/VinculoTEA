@@ -87,6 +87,28 @@ export const studentService = {
     },
 
     async create(student: StudentData) {
+        // 1. Verificar Limite do Plano
+        if (student.plataforma_id) {
+            const { data: platData, error: platError } = await supabase
+                .from('Plataformas')
+                .select('Plano_ID, planos(quantidade_alunos)')
+                .eq('Plataforma_ID', student.plataforma_id)
+                .single();
+
+            if (!platError && platData?.planos) {
+                const limit = (platData.planos as any).quantidade_alunos;
+
+                const { count, error: countError } = await supabase
+                    .from('Alunos')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('Plataforma_ID', student.plataforma_id);
+
+                if (!countError && count !== null && count >= limit) {
+                    throw new Error(`Limite de alunos atingido (${limit}). Faça upgrade do seu plano para cadastrar mais.`);
+                }
+            }
+        }
+
         const { data, error } = await supabase
             .from('Alunos')
             .insert([{
@@ -142,6 +164,7 @@ export const studentService = {
     },
 
     async uploadPhoto(file: File) {
+        // SECURITY FIX (V03): Ensure 'student-photos' bucket is PRIVATE in Supabase.
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
         const filePath = `photos/${fileName}`;
@@ -152,11 +175,24 @@ export const studentService = {
 
         if (uploadError) throw uploadError;
 
-        const { data } = supabase.storage
-            .from('student-photos')
-            .getPublicUrl(filePath);
+        // Instead of a public URL, we now use the path to generate a signed URL when needed.
+        return filePath;
+    },
 
-        return data.publicUrl;
+    async getSignedPhotoUrl(filePath: string, expiresInSeconds = 3600) {
+        // SECURITY FIX (V03): Generate a short-lived URL (default 1 hour)
+        if (!filePath) return null;
+
+        const { data, error } = await supabase.storage
+            .from('student-photos')
+            .createSignedUrl(filePath, expiresInSeconds);
+
+        if (error) {
+            console.error('Erro ao gerar URL assinada:', error);
+            return null;
+        }
+
+        return data.signedUrl;
     },
 
     async getOrCreateFamily(nomeResponsavel: string, telefone: string, email: string, plataforma_id?: number) {

@@ -26,7 +26,11 @@ interface Student {
     familia_id: number;
 }
 
-export const StudentsView = () => {
+interface StudentsViewProps {
+    initialModuloFilter?: string;
+}
+
+export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
     const { user: authUser, loading: authLoading } = useAuth();
     const [isRegistering, setIsRegistering] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -39,7 +43,7 @@ export const StudentsView = () => {
     const [filterSchool, setFilterSchool] = useState('');
     const [filterSerie, setFilterSerie] = useState('');
     const [filterGender, setFilterGender] = useState('');
-    const [filterModulo, setFilterModulo] = useState('');
+    const [filterModulo, setFilterModulo] = useState(initialModuloFilter || '');
     const [filterPeriodo, setFilterPeriodo] = useState('');
     const [filterTurma, setFilterTurma] = useState('');
     const [allClasses, setAllClasses] = useState<any[]>([]);
@@ -58,6 +62,12 @@ export const StudentsView = () => {
             ]);
             setSchools(schoolsData || []);
             setAllClasses(classesData || []);
+
+            // Auto-filtro por escola para não administradores
+            if (filterEscolaId && schoolsData?.length > 0) {
+                const targetSchool = schoolsData.find((s: any) => s.id === filterEscolaId || s.Escola_ID === filterEscolaId);
+                if (targetSchool) setFilterSchool(targetSchool.nome || targetSchool.Nome);
+            }
         } catch (error) {
             console.error('Erro ao buscar dados iniciais:', error);
         }
@@ -79,22 +89,31 @@ export const StudentsView = () => {
                 isSuperAdmin ? undefined : authUser?.escola_id,
                 (authUser?.tipo === 'Família' || authUser?.tipo === 'FAMILIA') ? authUser?.familia_id : undefined
             );
-            const mappedStudents: Student[] = data?.map((s: any) => ({
-                id: s.Aluno_ID,
-                nome: s.Nome,
-                escola: s.Escolas?.Nome || 'Não atribuída',
-                status: s.Status as 'Ativo' | 'Inativo',
-                responsavel: s.Familias?.Nome_responsavel || 'Não informado',
-                foto: s.Foto,
-                cid: s.CID,
-                serie: s.Serie,
-                dataNascimento: s.Data_nascimento,
-                genero: s.Genero === 'M' ? 'Masculino' : s.Genero === 'F' ? 'Feminino' : 'Outro',
-                dataCadastro: new Date(s.Data_criacao || s.Created_at).toLocaleDateString('pt-BR'),
-                detalhes: s.Detalhes,
-                escola_id: s.Escola_ID,
-                familia_id: s.Familia_ID
-            })) || [];
+            const studentList = data || [];
+            const mappedStudents: Student[] = await Promise.all(studentList.map(async (s: any) => {
+                let fotoUrl = s.Foto;
+                if (fotoUrl && !fotoUrl.startsWith('http')) {
+                    const signedUrl = await studentService.getSignedPhotoUrl(fotoUrl);
+                    if (signedUrl) fotoUrl = signedUrl;
+                }
+
+                return {
+                    id: s.Aluno_ID,
+                    nome: s.Nome,
+                    escola: s.Escolas?.Nome || 'Não atribuída',
+                    status: s.Status as 'Ativo' | 'Inativo',
+                    responsavel: s.Familias?.Nome_responsavel || 'Não informado',
+                    foto: fotoUrl,
+                    cid: s.CID,
+                    serie: s.Serie,
+                    dataNascimento: s.Data_nascimento,
+                    genero: s.Genero === 'M' ? 'Masculino' : s.Genero === 'F' ? 'Feminino' : 'Outro',
+                    dataCadastro: s.created_at ? new Date(s.created_at).toLocaleDateString('pt-BR') : 'Hoje',
+                    detalhes: s.Detalhes,
+                    escola_id: s.Escola_ID,
+                    familia_id: s.Familia_ID
+                };
+            }));
             setStudents(mappedStudents);
         } catch (error) {
             console.error('Erro ao buscar alunos:', error);
@@ -108,7 +127,14 @@ export const StudentsView = () => {
             fetchStudents();
             fetchInitialData();
         }
-    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
+    }, [authLoading, authUser?.plataforma_id, authUser?.escola_id, initialModuloFilter]);
+
+    useEffect(() => {
+        if (initialModuloFilter) {
+            setFilterModulo(initialModuloFilter);
+            setIsAdvancedFiltersOpen(true);
+        }
+    }, [initialModuloFilter]);
 
     const filteredStudents = students.filter(s => {
         const matchesSearch = s.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -299,6 +325,7 @@ export const StudentsView = () => {
     if (isRegistering) {
         return (
             <StudentRegistrationWizard
+                initialData={{ detalhes: { modulo: initialModuloFilter || '' } }}
                 onCancel={() => setIsRegistering(false)}
                 onComplete={() => {
                     setIsRegistering(false);
@@ -323,12 +350,16 @@ export const StudentsView = () => {
             <header className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                        Gestão de <span className="text-primary italic">Alunos</span>
+                        {initialModuloFilter === 'Pré-escola' ? 'Educação Infantil / ' : 'Gestão de '}
+                        <span className="text-primary italic">{initialModuloFilter === 'Pré-escola' ? 'Pré-escola' : 'Alunos'}</span>
                     </h1>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="flex items-center gap-1.5 px-2.5 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/10">
+                        <span className={`flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg border transition-all ${(authUser?.tipo !== 'Administrador' && (authUser?.num_alunos || 0) >= (authUser?.limite_alunos || 1))
+                                ? 'bg-red-50 text-red-500 border-red-500/20'
+                                : 'bg-primary/5 text-primary border-primary/10'
+                            }`}>
                             <Users size={12} strokeWidth={3} />
-                            {students.length} / {authUser?.tipo === 'Administrador' ? '∞' : (authUser?.limite_alunos || 100)} Registros
+                            {authUser?.num_alunos || 0} / {authUser?.tipo === 'Administrador' ? '∞' : (authUser?.limite_alunos || 100)} Matrículas
                         </span>
                         <p className="text-slate-400 text-xs font-medium italic">Base de dados sincronizada em tempo real</p>
                     </div>
@@ -344,10 +375,21 @@ export const StudentsView = () => {
                         Exportar Alunos
                     </button>
                     <button
-                        onClick={handleOpenWizard}
-                        className="flex-1 xl:flex-none flex items-center justify-center gap-3 px-8 py-3.5 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                        onClick={() => {
+                            const reached = (authUser?.num_alunos || 0) >= (authUser?.limite_alunos || 1);
+                            if (reached && authUser?.tipo !== 'Administrador') {
+                                alert(`Limite de alunos atingido (${authUser?.limite_alunos}). Entre em contato com o suporte para upgrade de plano.`);
+                                return;
+                            }
+                            handleOpenWizard();
+                        }}
+                        disabled={authUser?.tipo !== 'Administrador' && (authUser?.num_alunos || 0) >= (authUser?.limite_alunos || 1)}
+                        className={`flex-1 xl:flex-none flex items-center justify-center gap-3 px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl transition-all group ${(authUser?.tipo !== 'Administrador' && (authUser?.num_alunos || 0) >= (authUser?.limite_alunos || 1))
+                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed shadow-none border-2 border-slate-100 dark:border-slate-700'
+                            : 'bg-primary text-white shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]'
+                            }`}
                     >
-                        <Plus size={20} strokeWidth={3} className="group-hover:rotate-90 transition-transform" />
+                        <Plus size={20} strokeWidth={3} className={((authUser?.tipo !== 'Administrador' && (authUser?.num_alunos || 0) >= (authUser?.limite_alunos || 1))) ? "" : "group-hover:rotate-90 transition-transform"} />
                         Matricular Novo
                     </button>
                 </div>
@@ -416,11 +458,15 @@ export const StudentsView = () => {
                                     <select
                                         value={filterSchool}
                                         onChange={(e) => setFilterSchool(e.target.value)}
-                                        className="w-full bg-slate-50 dark:bg-slate-900/50 border-2 border-transparent focus:border-primary/20 rounded-xl py-3 px-4 text-sm font-bold dark:text-white outline-none"
+                                        disabled={!!(authUser?.escola_id && authUser?.tipo !== 'Administrador')}
+                                        className={`w-full bg-slate-50 dark:bg-slate-900/50 border-2 border-transparent focus:border-primary/20 rounded-xl py-3 px-4 text-sm font-bold dark:text-white outline-none ${authUser?.escola_id && authUser?.tipo !== 'Administrador' ? 'opacity-70 cursor-not-allowed' : ''}`}
                                     >
-                                        <option value="">Todas as Escolas</option>
-                                        {schools.map(s => <option key={s.id} value={s.nome || s.Nome}>{s.nome || s.Nome}</option>)}
+                                        {!authUser?.escola_id || authUser?.tipo === 'Administrador' ? <option value="">Todas as Escolas</option> : null}
+                                        {schools.map(s => <option key={s.id || s.Escola_ID} value={s.nome || s.Nome}>{s.nome || s.Nome}</option>)}
                                     </select>
+                                    {authUser?.escola_id && authUser?.tipo !== 'Administrador' && (
+                                        <p className="text-[8px] text-slate-400 mt-1 ml-1 font-medium">Vinculado à Unidade: {authUser.escola_nome}</p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -457,6 +503,7 @@ export const StudentsView = () => {
                                         className="w-full bg-slate-50 dark:bg-slate-900/50 border-2 border-transparent focus:border-primary/20 rounded-xl py-3 px-4 text-sm font-bold dark:text-white outline-none"
                                     >
                                         <option value="">Todos os Módulos</option>
+                                        <option value="Pré-escola">Pré-escola / Infantil</option>
                                         <option value="Fundamental I">Fundamental I</option>
                                         <option value="Fundamental II">Fundamental II</option>
                                         <option value="Ensino Médio">Ensino Médio</option>
@@ -550,8 +597,25 @@ export const StudentsView = () => {
                                     <td className="px-8 py-7">
                                         <div className="flex items-center gap-5">
                                             <div className="size-14 rounded-2xl bg-primary text-white font-black text-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform relative overflow-hidden">
-                                                {student.foto ? <img src={student.foto} alt={student.nome} className="size-full object-cover" /> : student.nome.charAt(0)}
-                                                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                {student.foto ? (
+                                                    <img
+                                                        src={student.foto}
+                                                        alt={student.nome}
+                                                        className="size-full object-cover"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).style.display = 'none';
+                                                            const nextEl = (e.target as HTMLImageElement).nextElementSibling;
+                                                            if (nextEl) (nextEl as HTMLElement).style.display = 'flex';
+                                                        }}
+                                                    />
+                                                ) : null}
+                                                <div
+                                                    className="size-full flex items-center justify-center bg-primary"
+                                                    style={{ display: student.foto ? 'none' : 'flex' }}
+                                                >
+                                                    {student.nome.split(' ').map(n => n[0]).slice(0, 2).join('')}
+                                                </div>
+                                                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                             </div>
                                             <div>
                                                 <p className="font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors text-base leading-tight mb-1">{student.nome}</p>

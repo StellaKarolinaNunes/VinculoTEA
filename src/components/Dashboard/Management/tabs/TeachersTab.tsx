@@ -57,6 +57,10 @@ export const TeachersTab = ({ onUpdate, category }: { onUpdate?: () => void; cat
     useEffect(() => {
         if (!authLoading) {
             fetchData();
+            // Pre-preencher escola_id se não for admin
+            if (authUser?.tipo !== 'Administrador' && authUser?.escola_id) {
+                setFormData(prev => ({ ...prev, escola_id: authUser.escola_id!.toString() }));
+            }
         }
     }, [authLoading, authUser?.plataforma_id, authUser?.escola_id]);
 

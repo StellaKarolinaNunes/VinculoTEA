@@ -41,7 +41,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
         estado: initialData?.detalhes?.endereco?.estado || '',
 
         escolaId: initialData?.escola_id?.toString() || '',
-        turmaId: '', 
+        turmaId: '',
 
         gravidez: initialData?.detalhes?.historia?.gravidez || '',
         tipoParto: initialData?.detalhes?.historia?.tipoParto || '',
@@ -68,12 +68,24 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
     useEffect(() => {
         const loadInitialData = async () => {
             try {
+                const isSuperAdmin = authUser?.tipo === 'Administrador';
+                const filterEscolaId = isSuperAdmin ? undefined : authUser?.escola_id;
+                const queryPlataforma = authUser?.plataforma_id;
+
+                if (!queryPlataforma) return;
+
                 const [schoolsData, classesData] = await Promise.all([
-                    schoolsService.getAll(authUser?.plataforma_id),
-                    classesService.getAll(authUser?.plataforma_id)
+                    schoolsService.getAll(queryPlataforma, filterEscolaId),
+                    classesService.getAll(queryPlataforma, filterEscolaId)
                 ]);
+
                 setSchools(schoolsData);
                 setClasses(classesData);
+
+                // Auto-preencher escolaId se o usuário estiver vinculado a uma escola
+                if (filterEscolaId && !formData.escolaId) {
+                    setFormData(prev => ({ ...prev, escolaId: filterEscolaId.toString() }));
+                }
 
                 if (initialData?.serie && classesData.length > 0) {
                     const matchedClass = classesData.find((c: any) => c.nome === initialData.serie || c.Nome === initialData.serie);
@@ -86,7 +98,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
             }
         };
         loadInitialData();
-    }, [initialData]);
+    }, [initialData, authUser?.escola_id, authUser?.plataforma_id]);
 
     const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -97,10 +109,20 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+        let { name, value } = e.target;
+
+        // Restrição para campos que devem aceitar apenas números
+        if (['cpf', 'cep', 'responsavelTelefone', 'numero'].includes(name)) {
+            value = value.replace(/\D/g, '');
+            // Limitar dígitos específicos
+            if (name === 'cpf') value = value.slice(0, 11);
+            if (name === 'cep') value = value.slice(0, 8);
+            if (name === 'responsavelTelefone') value = value.slice(0, 11);
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
 
-        if (name === 'cep' && value.replace(/\D/g, '').length === 8) {
+        if (name === 'cep' && value.length === 8) {
             handleCEP(value);
         }
     };
@@ -141,30 +163,82 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
         { id: 6, label: 'Saúde', icon: Activity },
     ];
 
-    const validateStep = (step: number) => {
+    const isEditing = !!initialData?.id;
+
+    const validateStep = (step: number): { valid: boolean; missing: string[] } => {
+        const missing: string[] = [];
+
         switch (step) {
             case 1:
-                return !!(formData.nomeCompleto && formData.dataNascimento && formData.cpf && formData.genero);
+                if (!formData.nomeCompleto) missing.push('Nome Completo');
+                if (!formData.dataNascimento) missing.push('Data de Nascimento');
+                if (!formData.genero) missing.push('Gênero');
+                // CPF obrigatório apenas em criação, na edição é opcional
+                if (!isEditing && formData.cpf.length !== 11) missing.push('CPF (11 dígitos)');
+                break;
             case 2:
-                return !!(formData.responsavelNome && formData.responsavelEmail && formData.responsavelTelefone && formData.cep && formData.logradouro && formData.numero && formData.bairro && formData.cidade && formData.estado);
+                if (!formData.responsavelNome) missing.push('Nome do Responsável');
+                if (formData.responsavelEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.responsavelEmail)) {
+                    missing.push('E-mail (formato inválido)');
+                }
+                if (!isEditing && !formData.responsavelEmail) missing.push('E-mail do Responsável');
+                // Telefone, CEP e endereço opcionais na edição se já preenchidos antes
+                if (!isEditing) {
+                    if (formData.responsavelTelefone && formData.responsavelTelefone.length < 10) missing.push('Telefone (mínimo 10 dígitos)');
+                    if (formData.cep && formData.cep.length !== 8) missing.push('CEP (8 dígitos)');
+                }
+                break;
             case 3:
-                return !!(formData.escolaId && formData.turmaId && formData.modulo && formData.periodo);
+                if (!formData.escolaId) missing.push('Escola');
+                // Turma, Módulo e Período opcionais na edição
+                if (!isEditing) {
+                    if (!formData.turmaId) missing.push('Turma');
+                    if (!formData.modulo) missing.push('Módulo');
+                    if (!formData.periodo) missing.push('Período');
+                }
+                break;
             case 4:
-                return !!(formData.gravidez && formData.tipoParto && formData.pesoNascer && formData.apgar && formData.internacaoNeonatal);
+                // História pré-natal: totalmente opcional na edição
+                if (!isEditing) {
+                    if (!formData.gravidez) missing.push('Gravidez');
+                    if (!formData.tipoParto) missing.push('Tipo de Parto');
+                    if (!formData.pesoNascer) missing.push('Peso ao Nascer');
+                    if (!formData.apgar) missing.push('APGAR');
+                    if (!formData.internacaoNeonatal) missing.push('Internação Neonatal');
+                }
+                break;
             case 5:
-                return !!(formData.marcosDesenvolvimento && formData.producaoVerbal && formData.entendeInstrucoes && formData.contatoOcular && formData.brincadeiraPreferida);
+                // Desenvolvimento: totalmente opcional na edição
+                if (!isEditing) {
+                    if (!formData.marcosDesenvolvimento) missing.push('Marcos do Desenvolvimento');
+                    if (!formData.producaoVerbal) missing.push('Produção Verbal');
+                    if (!formData.entendeInstrucoes) missing.push('Entende Instruções');
+                    if (!formData.contatoOcular) missing.push('Contato Ocular');
+                    if (!formData.brincadeiraPreferida) missing.push('Brincadeira Preferida');
+                }
+                break;
             case 6:
-                return !!(formData.doencas && formData.medicacao && formData.alergias && formData.sono && formData.alimentacao && formData.observacoes);
-            default:
-                return true;
+                // Saúde: totalmente opcional na edição
+                if (!isEditing) {
+                    if (!formData.doencas) missing.push('Doenças');
+                    if (!formData.medicacao) missing.push('Medicação');
+                    if (!formData.alergias) missing.push('Alergias');
+                    if (!formData.sono) missing.push('Sono');
+                    if (!formData.alimentacao) missing.push('Alimentação');
+                    if (!formData.observacoes) missing.push('Observações');
+                }
+                break;
         }
+
+        return { valid: missing.length === 0, missing };
     };
 
     const handleNext = () => {
-        if (validateStep(currentStep)) {
+        const { valid, missing } = validateStep(currentStep);
+        if (valid) {
             setCurrentStep(prev => prev + 1);
         } else {
-            alert('Por favor, preencha todos os campos obrigatórios desta etapa.');
+            alert(`Campos obrigatórios não preenchidos:\n\n• ${missing.join('\n• ')}`);
         }
     };
 
@@ -175,8 +249,9 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!validateStep(6)) {
-            alert('Por favor, preencha todos os campos obrigatórios da última etapa.');
+        const { valid, missing } = validateStep(6);
+        if (!valid) {
+            alert(`Campos obrigatórios não preenchidos:\n\n• ${missing.join('\n• ')}`);
             return;
         }
         setIsLoading(true);
@@ -263,13 +338,13 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
 
     return (
         <div className={styles.container}>
-            {}
+            { }
             <div className={styles.header}>
                 <h2 className={styles.title}>{initialData ? 'Editar Aluno' : 'Novo Aluno/PEI'}</h2>
                 <p className={styles.subtitle}>{initialData ? 'Atualize as informações do aluno' : 'Preencha as informações por etapas'}</p>
             </div>
 
-            {}
+            { }
             <div className={styles.stepper}>
                 {steps.map((step) => {
                     const isActive = step.id === currentStep;
@@ -289,14 +364,14 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                 })}
             </div>
 
-            {}
+            { }
             <form className={styles.form} onSubmit={handleSubmit}>
 
-                {}
+                { }
                 {currentStep === 1 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <div className="flex flex-col md:flex-row gap-10">
-                            {}
+                            { }
                             <div className="flex flex-col items-center gap-4">
                                 <div className="size-32 rounded-[2rem] bg-slate-100 dark:bg-slate-800/50 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group transition-all hover:border-primary/50">
                                     {photoUrl ? (
@@ -348,7 +423,8 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                                         name="cpf"
                                         value={formData.cpf}
                                         onChange={handleChange}
-                                        placeholder="000.000.000-00"
+                                        placeholder="Somente números (11 dígitos)"
+                                        inputMode="numeric"
                                         className={styles.input}
                                         required
                                     />
@@ -386,7 +462,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {}
+                { }
                 {currentStep === 2 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><MapPin size={20} /> Dados do Responsável e Endereço</h3>
@@ -404,12 +480,30 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
 
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Telefone <span className={styles.required}>*</span></label>
-                                <input type="tel" name="responsavelTelefone" value={formData.responsavelTelefone} onChange={handleChange} placeholder="(00) 00000-0000" className={styles.input} required />
+                                <input
+                                    type="tel"
+                                    name="responsavelTelefone"
+                                    value={formData.responsavelTelefone}
+                                    onChange={handleChange}
+                                    placeholder="Somente números (com DDD)"
+                                    inputMode="tel"
+                                    className={styles.input}
+                                    required
+                                />
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>CEP <span className={styles.required}>*</span></label>
-                                <input type="text" name="cep" value={formData.cep} onChange={handleChange} placeholder="00000-000" className={styles.input} required />
+                                <input
+                                    type="text"
+                                    name="cep"
+                                    value={formData.cep}
+                                    onChange={handleChange}
+                                    placeholder="Somente números (8 dígitos)"
+                                    inputMode="numeric"
+                                    className={styles.input}
+                                    required
+                                />
                             </div>
 
                             <div className={`${styles.formGroup} ${styles.fullWidth}`}>
@@ -419,7 +513,16 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
 
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Número <span className={styles.required}>*</span></label>
-                                <input type="text" name="numero" value={formData.numero} onChange={handleChange} className={styles.input} required />
+                                <input
+                                    type="text"
+                                    name="numero"
+                                    value={formData.numero}
+                                    onChange={handleChange}
+                                    placeholder="Núm"
+                                    inputMode="numeric"
+                                    className={styles.input}
+                                    required
+                                />
                             </div>
 
                             <div className={styles.formGroup}>
@@ -474,14 +577,21 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {}
+                { }
                 {currentStep === 3 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><School size={20} /> Vínculo Escolar</h3>
                         <div className={styles.grid}>
                             <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                                 <label className={styles.label}>Escola <span className={styles.required}>*</span></label>
-                                <select name="escolaId" value={formData.escolaId} onChange={handleChange} className={styles.input} required>
+                                <select
+                                    name="escolaId"
+                                    value={formData.escolaId}
+                                    onChange={handleChange}
+                                    className={`${styles.input} ${authUser?.escola_id && authUser?.tipo !== 'Administrador' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    required
+                                    disabled={!!(authUser?.escola_id && authUser?.tipo !== 'Administrador')}
+                                >
                                     <option value="">Selecione uma escola...</option>
                                     {schools.map(s => <option key={s.id} value={s.id}>{s.nome || s.Nome}</option>)}
                                 </select>
@@ -499,6 +609,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                                 <label className={styles.label}>Módulo <span className={styles.required}>*</span></label>
                                 <select name="modulo" value={formData.modulo} onChange={handleChange} className={styles.input} required>
                                     <option value="">Selecione...</option>
+                                    <option value="Pré-escola">Infantil - Pré-escola</option>
                                     <option value="Fundamental I">Fundamental I</option>
                                     <option value="Fundamental II">Fundamental II</option>
                                     <option value="Ensino Médio">Ensino Médio</option>
@@ -518,7 +629,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {}
+                { }
                 {currentStep === 4 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><BookOpen size={20} /> História Pré/Peri/Neonatal</h3>
@@ -558,7 +669,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {}
+                { }
                 {currentStep === 5 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><Brain size={20} /> Desenvolvimento e Comunicação</h3>
@@ -598,7 +709,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {}
+                { }
                 {currentStep === 6 && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <h3 className={styles.sectionTitle}><Activity size={20} /> Saúde e Rotinas</h3>
@@ -638,7 +749,7 @@ export const StudentRegistrationWizard: React.FC<WizardProps> = ({ onCancel, onC
                     </div>
                 )}
 
-                {}
+                { }
                 <div className={styles.actions}>
                     <button type="button" onClick={handleBack} className={`${styles.button} ${styles.btnSecondary}`}>
                         <ArrowLeft size={18} />

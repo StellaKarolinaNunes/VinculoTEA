@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Monitor, Target, Settings, User, Globe, LayoutDashboard, TrendingUp, Activity, ClipboardList, AlertCircle, CheckCircle2, ArrowRight, ShieldCheck, Star } from 'lucide-react';
+import { Users, Monitor, Target, Settings, User, Globe, LayoutDashboard, TrendingUp, Activity, ClipboardList, AlertCircle, CheckCircle2, ArrowRight, ShieldCheck, Star, School } from 'lucide-react';
 
 
 const slides = [
@@ -182,56 +182,81 @@ const MarketingSection: React.FC = () => {
 
 // --- VISUAL COMPONENTS ---
 
-const EcosystemRadar = () => {
-  // Reusing the sophisticated radar but optimized
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <div className="absolute w-[500px] h-[500px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]" />
-      <div className="absolute w-[350px] h-[350px] border border-white/10 rounded-full border-dashed animate-[spin_40s_linear_infinite_reverse]" />
+import favicon from '@/assets/images/Favicon.svg';
 
-      {/* Central Hub */}
-      <div className="relative z-10 w-32 h-32 bg-primary/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-primary/50 shadow-[0_0_50px_rgba(20,57,109,0.3)]">
-        <div className="w-20 h-20 bg-primary/80 rounded-full flex items-center justify-center text-white shadow-inner">
-          <User size={32} />
-        </div>
-        {/* Connecting lines */}
-        <div className="absolute top-1/2 left-1/2 w-[180px] h-[1px] bg-gradient-to-r from-primary to-transparent -translate-y-1/2 rotate-0 origin-left" />
-        <div className="absolute top-1/2 left-1/2 w-[180px] h-[1px] bg-gradient-to-r from-primary to-transparent -translate-y-1/2 rotate-90 origin-left" />
-        <div className="absolute top-1/2 left-1/2 w-[180px] h-[1px] bg-gradient-to-r from-primary to-transparent -translate-y-1/2 rotate-180 origin-left" />
-        <div className="absolute top-1/2 left-1/2 w-[180px] h-[1px] bg-gradient-to-r from-primary to-transparent -translate-y-1/2 rotate-270 origin-left" />
+const EcosystemRadar = () => {
+  return (
+    <div className="relative w-full h-[450px] flex items-center justify-center scale-90 sm:scale-100">
+      {/* Triple Orbital Paths */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <div className="absolute w-[220px] h-[220px] border border-primary/40 rounded-full" />
+        <div className="absolute w-[340px] h-[340px] border border-primary/20 rounded-full" />
+        <div className="absolute w-[460px] h-[460px] border border-primary/10 rounded-full" />
       </div>
 
-      {/* Orbiting Elements */}
-      <Node icon={<Monitor size={20} />} label="ESCOLA" color="#10b981" angle={0} delay={0} />
-      <Node icon={<Users size={20} />} label="FAMÍLIA" color="#0ea5e9" angle={90} delay={0.5} />
-      <Node icon={<Settings size={20} />} label="CLÍNICA" color="#8b5cf6" angle={180} delay={1} />
-      <Node icon={<ClipboardList size={20} />} label="PEI" color="#f59e0b" angle={270} delay={1.5} />
+      {/* Floating Connection Points (Dots) */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        {/* Top Dot */}
+        <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} className="absolute top-[20%] left-1/2 -translate-x-1/2 w-2 h-2 bg-[#10b981] rounded-full shadow-[0_0_10px_#10b981]" />
+        {/* Left Dot */}
+        <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} className="absolute top-[60%] left-[26%] -translate-y-1/2 w-2 h-2 bg-[#2379BC] rounded-full shadow-[0_0_10px_#2379BC]" />
+        {/* Right Dot */}
+        <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} className="absolute top-[60%] right-[26%] -translate-y-1/2 w-2 h-2 bg-[#ef4444] rounded-full shadow-[0_0_10px_#ef4444]" />
+      </div>
+
+      {/* Connectivity Beams */}
+      <div className="absolute inset-0 z-10 pointer-events-none opacity-40">
+        <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[1px] h-20 bg-gradient-to-t from-transparent via-[#10b981] to-transparent" />
+        <div className="absolute top-[55%] left-[30%] -rotate-[30deg] w-28 h-[1px] bg-gradient-to-l from-transparent via-[#2379BC] to-transparent" />
+        <div className="absolute top-[55%] right-[30%] rotate-[30deg] w-28 h-[1px] bg-gradient-to-r from-transparent via-[#ef4444] to-transparent" />
+      </div>
+
+      <div className="relative z-20 flex items-center justify-center">
+
+        {/* Central Hub: Pure Icon */}
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="relative z-30 w-32 h-32 flex items-center justify-center group"
+        >
+          <img src={favicon} alt="VínculoTEA" className="w-[85%] h-auto drop-shadow-[0_0_40px_rgba(35,121,188,0.8)] brightness-110" />
+          <div className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full opacity-30 group-hover:opacity-60 transition-opacity" />
+        </motion.div>
+
+        {/* Node 1: Gestão (TOP) - Green Neon */}
+        <div className="absolute -top-44 left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <motion.div className="flex flex-col items-center">
+            <span className="text-xl font-bold text-[#10b981] mb-4 tracking-tight drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">Gestão</span>
+            <div className="w-16 h-16 sm:w-24 sm:h-24 bg-[#10b981] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.6)] border border-white/20 transition-all hover:scale-105 active:scale-95">
+              <Users size={32} className="text-white drop-shadow-md pb-1" />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Node 2: Professores (LEFT) - Blue Neon */}
+        <div className="absolute -left-32 sm:-left-48 top-[60%] -translate-y-1/2 flex flex-col items-center">
+          <motion.div className="flex flex-col items-center">
+            <span className="text-xl font-bold text-[#2379BC] mb-4 tracking-tight drop-shadow-[0_0_10px_rgba(35,121,188,0.5)]">Professores</span>
+            <div className="w-16 h-16 sm:w-24 sm:h-24 bg-[#2379BC] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_40px_rgba(35,121,188,0.6)] border border-white/20 transition-all hover:scale-105 active:scale-95">
+              <School size={32} className="text-white drop-shadow-md pb-1" />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Node 3: Família (RIGHT) - Red Neon */}
+        <div className="absolute -right-32 sm:-right-48 top-[60%] -translate-y-1/2 flex flex-col items-center">
+          <motion.div className="flex flex-col items-center">
+            <span className="text-xl font-bold text-[#ef4444] mb-4 tracking-tight drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">Família</span>
+            <div className="w-16 h-16 sm:w-24 sm:h-24 bg-[#ef4444] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_40px_rgba(239,68,68,0.6)] border border-white/20 transition-all hover:scale-105 active:scale-95">
+              <Users size={32} className="text-white drop-shadow-md pb-1" />
+            </div>
+          </motion.div>
+        </div>
+
+      </div>
     </div>
   );
 };
-
-const Node = ({ icon, label, color, angle, delay }: any) => (
-  <motion.div
-    className="absolute"
-    initial={{ rotate: angle }}
-    animate={{ rotate: angle + 360 }}
-    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-    style={{ width: '350px', height: '350px' }} // Orbit diameter
-  >
-    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <motion.div
-        className="relative group"
-        style={{ transform: `rotate(-${angle}deg)` }} // Counter-rotate to keep icon upright? complex in this simple rig
-      >
-        <div className="w-16 h-16 bg-[#0f172a] border border-white/10 rounded-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group-hover:scale-110 transition-transform cursor-default">
-          <div className="absolute inset-0 opacity-20" style={{ backgroundColor: color }} />
-          <div style={{ color: color }} className="mb-1">{icon}</div>
-          <span className="text-[9px] font-bold text-white/80">{label}</span>
-        </div>
-      </motion.div>
-    </div>
-  </motion.div>
-);
 
 const ProblemVisual = () => {
   return (

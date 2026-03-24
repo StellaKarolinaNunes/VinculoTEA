@@ -8,10 +8,14 @@
 *.class
 
 # =====================
-# Ambiente
+# Ambiente e Segredos
 # =====================
 .env
-.env.local
+.env.*
+!.env.example
+scripts/check-user.cjs
+*.pem
+*.key
 
 # =====================
 # Node / Frontend
@@ -61,6 +65,8 @@ pnpm-debug.log*
 .swiftpm/
 .vercel
 .env*.local
+.supabase/
+supabase/.temp/
 
 # Playwright
 test-results/
@@ -69,3 +75,11 @@ blob-report/
 playwright-report/
 playwright/.cache/
 
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local

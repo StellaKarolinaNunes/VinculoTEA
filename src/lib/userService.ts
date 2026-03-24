@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { createClient } from '@supabase/supabase-js';
+import { FunctionsHttpError, FunctionsRelayError, FunctionsFetchError } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
@@ -33,7 +34,7 @@ export const userService = {
         }
 
         if (escola_id) {
-            query = query.eq('escola_id', escola_id);
+            query = query.eq('Escola_ID', escola_id);
         }
 
         const { data, error } = await query.order('Nome', { ascending: true });
@@ -47,135 +48,70 @@ export const userService = {
     },
 
     async create(userData: any) {
-        if (!userData.email || typeof userData.email !== 'string') {
-            throw new Error('E-mail é obrigatório.');
+        if (!userData.email || !userData.senha || !userData.nome || !userData.plataforma_id) {
+            throw new Error('E-mail, senha, nome e plataforma são obrigatórios.');
         }
 
         const cleanEmail = userData.email.trim().toLowerCase();
 
-
+        // VALIDATION: E-mail regex
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(cleanEmail)) {
-            throw new Error(`O e-mail "${cleanEmail}" não segue o padrão aceito pelo sistema (ex: usuario@dominio.com).`);
+            throw new Error(`O e-mail "${cleanEmail}" não segue o padrão aceito.`);
         }
 
-
-        if (!userData.senha || userData.senha.length < 6) {
-            throw new Error('A senha deve ter no mínimo 6 caracteres.');
-        }
-
-
-        const { data: existingUser } = await supabase
-            .from('Usuarios')
-            .select('Usuario_ID, Nome, Email')
-            .eq('Email', cleanEmail)
-            .maybeSingle();
-
-        if (existingUser) {
-            throw new Error(`Este e-mail já está cadastrado para o usuário: ${existingUser.Nome}`);
-        }
 
         try {
-
-            let mappedRole = 'Profissional';
-            const roleInput = userData.role || userData.tipo;
-
-            if (roleInput === 'Administrador' || roleInput === 'admin') mappedRole = 'Administrador';
-            else if (roleInput === 'GESTOR' || roleInput === 'escola') mappedRole = 'GESTOR';
-            else if (roleInput === 'Tutor') mappedRole = 'Tutor';
-            else if (roleInput === 'FAMILIA' || roleInput === 'familia' || roleInput === 'Família') mappedRole = 'Família';
-            else mappedRole = 'Profissional';
-
-
-
-            console.log(`📝 Criando perfil prévio na tabela Usuarios (Role: ${mappedRole})...`);
-            const { data: newUserProfile, error: insertError } = await supabase
-                .from('Usuarios')
-                .insert([{
-                    Nome: userData.nome,
-                    Email: cleanEmail,
-                    Tipo: mappedRole,
-                    Foto: userData.avatar,
-                    Status: 'Ativo',
-                    Plataforma_ID: userData.plataforma_id,
-                    auth_uid: null
-                }])
-                .select()
-                .single();
-
-            if (insertError) {
-                console.error('❌ Erro ao criar perfil prévio:', insertError);
-                throw new Error(`Erro ao preparar perfil: ${insertError.message}`);
-            }
-
-            console.log('✅ Perfil prévio criado. Iniciando Auth...');
-
-
-            const { data: authData, error: authError } = await authClient.auth.signUp({
-                email: cleanEmail,
-                password: userData.senha,
-                options: {
-                    data: {
-                        nome: userData.nome,
-                        full_name: userData.nome,
-                        role: mappedRole
-
-                    }
+            const { data, error } = await supabase.functions.invoke('create-admin', {
+                body: {
+                    email: cleanEmail,
+                    senha: userData.senha,
+                    nome: userData.nome,
+                    role: userData.role || 'Profissional',
+                    plataforma_id: userData.plataforma_id,
+                    escola_id: userData.escola_id,
+                    plano_id: userData.role === 'Administrador' ? 15 : userData.plano_id
                 }
             });
 
-            if (authError) {
-                console.error('❌ Erro no Supabase Auth:', authError.message);
+            if (error) {
+                let errorMessage = 'Erro desconhecido na criação do usuário';
 
-
-                console.log('🔄 Executando rollback do perfil...');
-                await supabase.from('Usuarios').delete().eq('Usuario_ID', newUserProfile.Usuario_ID);
-
-                if (authError.message.includes('already registered')) {
-                    throw new Error('Este e-mail já está sendo utilizado por outro usuário no sistema.');
+                if (error instanceof FunctionsHttpError) {
+                    // Extrair o corpo JSON da resposta da Edge Function
+                    try {
+                        const errorBody = await error.context.json();
+                        errorMessage = errorBody?.error || errorMessage;
+                    } catch {
+                        errorMessage = 'Erro na Edge Function. Verifique os logs do servidor.';
+                    }
+                } else if (error instanceof FunctionsRelayError) {
+                    errorMessage = 'Erro de conexão com a Edge Function. Tente novamente.';
+                } else if (error instanceof FunctionsFetchError) {
+                    errorMessage = 'Erro de rede ao chamar a Edge Function. Verifique sua conexão.';
+                } else {
+                    errorMessage = error.message || errorMessage;
                 }
-                throw new Error(`O sistema de segurança recusou o cadastro (Auth): ${authError.message}`);
+
+                throw new Error(errorMessage);
             }
 
-            console.log('✅ Conta Auth criada. UID:', authData.user?.id);
-
-
-            if (authData.user) {
-                console.log('🔗 Vinculando auth_uid ao perfil...');
-                await supabase
-                    .from('Usuarios')
-                    .update({ auth_uid: authData.user.id })
-                    .eq('Usuario_ID', newUserProfile.Usuario_ID);
-
-
-                if ((mappedRole === 'Profissional' || mappedRole === 'GESTOR') && userData.escola_id) {
-                    console.log(`🏫 Criando vínculo com escola para role ${mappedRole}...`);
-                    await supabase
-                        .from('Professores')
-                        .insert([{
-                            Usuario_ID: newUserProfile.Usuario_ID,
-                            Nome: userData.nome,
-                            Email: cleanEmail,
-                            Escola_ID: userData.escola_id ? parseInt(userData.escola_id) : null,
-                            Especialidade: mappedRole === 'GESTOR' ? 'Administração Escolar' : 'Educação Regular',
-                            Plataforma_ID: userData.plataforma_id,
-                            Categoria: mappedRole === 'GESTOR' ? 'Profissional de Saúde' : 'Professor'
-                        }]);
-                }
+            // Verificar se data contém erro
+            if (data?.error) {
+                throw new Error(data.error);
             }
 
-
-            const { data: finalUser } = await supabase
+            // Sync local profile state
+            const { data: newUser } = await supabase
                 .from('Usuarios')
                 .select('*')
-                .eq('Usuario_ID', newUserProfile.Usuario_ID)
+                .eq('Email', cleanEmail)
                 .single();
 
-            return finalUser;
-
+            return newUser;
         } catch (error: any) {
-            console.error('❌ Erro geral na criação:', error);
-            throw error;
+            console.error("User Creation Error:", error);
+            throw new Error(error.message || 'Erro ao criar usuário');
         }
     },
 
@@ -185,7 +121,9 @@ export const userService = {
             .update({
                 Nome: updates.nome,
                 Tipo: updates.role,
-                Foto: updates.avatar
+                Foto: updates.avatar,
+                Plano_ID: updates.role === 'Administrador' ? 15 : updates.plano_id,
+                Escola_ID: updates.escola_id || null
             })
             .eq('Usuario_ID', id);
 

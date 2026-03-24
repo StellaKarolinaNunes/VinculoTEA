@@ -6,67 +6,60 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
     // Handle CORS
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
 
     try {
-        const supabaseClient = createClient(
+        const supabaseAdmin = createClient(
             Deno.env.get('SUPABASE_URL') ?? '',
             Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
             {
-                auth: {
-                    persistSession: false,
-                },
+                auth: { persistSession: false },
             }
         )
-
-        // Get the caller's JWT to verify administration rights if necessary
-        // However, since we want this to be simple for the user to deploy,
-        // we assume the frontend sends a valid auth token which the edge function can verify.
-        // By default, Supabase functions have the 'auth' context if the client passes the JWT.
 
         const authHeader = req.headers.get('Authorization')!
-        const userClient = createClient(
-            Deno.env.get('SUPABASE_URL') ?? '',
-            Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-            {
-                global: { headers: { Authorization: authHeader } },
-            }
-        )
+        const { data: { user: caller }, error: userError } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''))
 
-        const { data: { user }, error: userError } = await userClient.auth.getUser()
-        if (userError || !user) {
-            throw new Error('Não autorizado')
+        if (userError || !caller) {
+            throw new Error('Não autorizado: Sessão inválida.')
         }
 
-        // Optional: Check if the user is an Admin in your Usuarios table
-        const { data: profile } = await supabaseClient
-            .from('Usuarios')
-            .select('Tipo')
-            .eq('auth_uid', user.id)
-            .single()
+        // VALIDATION: Check if caller is an Admin in app_metadata (Imutável no cliente)
+        const callerRole = caller.app_metadata?.role;
+        const callerPlatId = caller.app_metadata?.plataforma_id;
 
-        if (profile?.Tipo !== 'Administrador') {
-            throw new Error('Apenas administradores podem excluir contas.')
+        if (callerRole !== 'Administrador') {
+            throw new Error('Acesso inadequado: Apenas administradores podem excluir contas.')
         }
 
         const { user_id } = await req.json()
+        if (!user_id) throw new Error('ID do usuário é obrigatório.')
 
-        if (!user_id) {
-            throw new Error('ID do usuário é obrigatório.')
+        // SECURITY CHECK (MTI): Get target user to verify platform match
+        const { data: targetUser, error: getTargetError } = await supabaseAdmin.auth.admin.getUserById(user_id)
+
+        if (getTargetError || !targetUser.user) {
+            throw new Error('Usuário alvo não encontrado.')
         }
 
-        console.log(`🗑️ Excluindo usuário do Auth: ${user_id}`)
-        const { error: deleteError } = await supabaseClient.auth.admin.deleteUser(user_id)
+        const targetPlatId = targetUser.user.app_metadata?.plataforma_id;
 
-        if (deleteError) {
-            throw deleteError
+        // Cross-Tenant IDOR Protection
+        if (callerPlatId !== targetPlatId) {
+            console.error(`🚨 ALERT: User ${caller.id} from platform ${callerPlatId} tried to delete user from ${targetPlatId}`)
+            throw new Error('Violação de Segurança: Você não tem permissão para remover usuários de outras plataformas.')
         }
 
-        return new Response(JSON.stringify({ success: true, message: 'Usuário removido do Supabase Auth com sucesso.' }), {
+        console.log(`🗑️ Excluindo usuário ${user_id} da plataforma ${targetPlatId}`)
+        const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user_id)
+
+        if (deleteError) throw deleteError
+
+        return new Response(JSON.stringify({ success: true, message: 'Usuário removido com sucesso.' }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         })

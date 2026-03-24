@@ -1,5 +1,4 @@
-import { defineConfig } from 'vitest/config';
-import { ConfigEnv, UserConfig } from 'vite';
+import { defineConfig, ConfigEnv, UserConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { compression } from 'vite-plugin-compression2';
 import path from 'path';
@@ -7,7 +6,10 @@ import path from 'path';
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   return {
     plugins: [
-      react(),
+      react({
+        // Se estiver usando Vite 6+, o plugin pode configurar o babel automaticamente
+        // ou você pode tentar remover opções se houver conflitos.
+      }),
       compression({
         algorithms: ['brotliCompress'],
         exclude: [/\.(br)$/, /\.(gz)$/],
@@ -21,7 +23,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks(id) {
+          manualChunks(id: string) {
             if (id.includes('node_modules')) {
               if (id.includes('lucide-react')) return 'icons';
               if (id.includes('html2canvas')) return 'html2canvas';

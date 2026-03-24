@@ -31,28 +31,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
 
       if (authError) {
         if (authError.message === 'Invalid login credentials') {
-
-          const cleanEmail = email.toLowerCase().trim();
-          console.log(' Verificando e-mail na tabela:', cleanEmail);
-
-          const { data: emailExists, error: checkError } = await supabase
-            .from('Usuarios')
-            .select('Email, Nome, Status')
-            .ilike('Email', cleanEmail)
-            .maybeSingle();
-
-          console.log(' Resultado da verificação:', emailExists);
-          console.log(' Erro (se houver):', checkError);
-
-          if (emailExists) {
-
-            console.log(' E-mail encontrado na tabela. Senha incorreta.');
-            setError('E-mail ou senha incorretos.');
-          } else {
-
-            console.log(' E-mail NÃO encontrado na tabela Usuarios');
-            setError('Esta conta não existe em nosso sistema. Entre em contato para solicitar uma demonstração: instagram.com/vinculotea');
-          }
+          // Nota: Não podemos verificar se o email existe na tabela Usuarios
+          // porque o RLS bloqueia consultas sem autenticação.
+          // Exibir mensagem genérica para ambos os casos (email errado ou senha errada).
+          setError('E-mail ou senha incorretos. Verifique suas credenciais e tente novamente.');
         } else {
           setError(authError.message);
         }

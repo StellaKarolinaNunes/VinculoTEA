@@ -1,11 +1,13 @@
 import { useState, lazy, Suspense } from 'react';
-import { Users, TrendingUp, Settings as SettingsIcon, Shield } from 'lucide-react';
+import { Users, TrendingUp, Settings as SettingsIcon, Shield, Wallet } from 'lucide-react';
 
 const UsersTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/UsersTab').then(m => ({ default: m.UsersTab })));
 const StatsTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/StatsTab').then(m => ({ default: m.StatsTab })));
 const GlobalSettingsTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/GlobalSettingsTab').then(m => ({ default: m.GlobalSettingsTab })));
+const PlansTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/PlansTab').then(m => ({ default: m.PlansTab })));
+const FinanceTab = lazy(() => import('@/components/Dashboard/SuperAdmin/tabs/FinanceTab').then(m => ({ default: m.FinanceTab })));
 
-type Tab = 'users' | 'stats' | 'settings';
+type Tab = 'users' | 'plans' | 'stats' | 'finance' | 'settings';
 
 export const SuperAdminView = () => {
     const [activeTab, setActiveTab] = useState<Tab>('users');
@@ -27,9 +29,11 @@ export const SuperAdminView = () => {
             {/* Tabs Navigation */}
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
-                    { id: 'users' as const, label: 'Contas de Usuários', icon: Users },
-                    { id: 'stats' as const, label: 'Estatísticas SaaS', icon: TrendingUp },
-                    { id: 'settings' as const, label: 'Configurações Globais', icon: SettingsIcon },
+                    { id: 'users' as const, label: 'Usuários', icon: Users },
+                    { id: 'plans' as const, label: 'Planos & Assinaturas', icon: Shield },
+                    { id: 'stats' as const, label: 'Métricas', icon: TrendingUp },
+                    { id: 'finance' as const, label: 'Financeiro', icon: Wallet },
+                    { id: 'settings' as const, label: 'Global', icon: SettingsIcon },
                 ].map((tab) => {
                     const isActive = activeTab === tab.id;
                     return (
@@ -57,7 +61,9 @@ export const SuperAdminView = () => {
                         </div>
                     }>
                         {activeTab === 'users' && <UsersTab />}
+                        {activeTab === 'plans' && <PlansTab />}
                         {activeTab === 'stats' && <StatsTab />}
+                        {activeTab === 'finance' && <FinanceTab />}
                         {activeTab === 'settings' && <GlobalSettingsTab />}
                     </Suspense>
                 </div>

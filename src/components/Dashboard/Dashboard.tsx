@@ -17,7 +17,7 @@ import styles from './Dashboard.module.css';
 import logotipoHorizontal from '@/assets/images/logotipo_Horizontal.svg';
 import darkLogo from '@/assets/images/dark.svg';
 
-const StudentsView = lazy(() => import('./Students/StudentsView').then(m => ({ default: m.StudentsView })));
+const StudentsView = lazy(() => import('./Students/StudentsView').then(m => ({ default: m.StudentsView as any })));
 const ManagementView = lazy(() => import('./Management/ManagementView').then(m => ({ default: m.ManagementView })));
 const DisciplineView = lazy(() => import('./Discipline/DisciplineView').then(m => ({ default: m.DisciplineView })));
 const SettingsView = lazy(() => import('./Settings/SettingsView').then(m => ({ default: m.SettingsView })));
@@ -48,7 +48,7 @@ interface RealStats {
   pendencia: number;
 }
 
-type ViewState = 'dashboard' | 'students' | 'management' | 'discipline' | 'reports' | 'settings' | 'help' | 'system_admin';
+type ViewState = 'dashboard' | 'students' | 'preschool' | 'management' | 'discipline' | 'reports' | 'settings' | 'help' | 'system_admin';
 
 export const Dashboard: FC<DashboardProps> = ({ user, onLogout }) => {
   const { user: authUser, permissions } = useAuth();
@@ -311,6 +311,7 @@ export const Dashboard: FC<DashboardProps> = ({ user, onLogout }) => {
   const renderContent = () => {
     switch (activeView) {
       case 'students': return <StudentsView />;
+
       case 'management': return <ManagementView />;
       case 'discipline': return <DisciplineView />;
       case 'settings': return <SettingsView />;
@@ -488,6 +489,7 @@ export const Dashboard: FC<DashboardProps> = ({ user, onLogout }) => {
               { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', requiresPermission: null },
               { id: 'system_admin', icon: Briefcase, label: 'Painel SaaS', requiresPermission: 'canViewAllSchools' },
               { id: 'students', icon: Users, label: 'Alunos', requiresPermission: 'canViewStudents' },
+
               { id: 'management', icon: Briefcase, label: 'Gerenciamento', requiresPermission: 'canViewManagement' },
               { id: 'discipline', icon: BookOpen, label: 'Disciplinas', requiresPermission: 'canViewDisciplines' },
               { id: 'reports', icon: TrendingUp, label: 'Relatórios', requiresPermission: 'canViewReports' },
