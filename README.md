@@ -393,6 +393,7 @@ mantendo a referência ao repositório original.
       </a>
     </td>
   </tr>
+   <br />
      <tr>
     <td align="center">
       <a href="https://github.com/AlineCely">
