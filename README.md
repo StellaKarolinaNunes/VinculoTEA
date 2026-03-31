@@ -252,7 +252,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 ### 6. Execute o aplicativo
 
 ```bash
-npm run dev 
+c
 ```
 
 ### 7. Scripts Disponíveis
@@ -395,5 +395,3 @@ mantendo a referência ao repositório original.
   </tr>
 </table>
 
-
-stellakarolina.peixoto@gmail.com

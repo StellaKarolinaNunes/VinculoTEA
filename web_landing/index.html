@@ -1,451 +1,83 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VinculoTEA - Gestão Multidisciplinar para Educação Inclusiva</title>
-    <meta name="description"
-        content="A plataforma completa que conecta escolas, famílias e especialistas para uma gestão de inclusão eficiente e humanizada.">
-
-    <!-- Fonts -->
+    <title>VinculoTEA - Take control of your finances</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Fredoka:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="./assets/img/dark.svg">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="container top-bar-content">
-            <div class="top-contact">
-                <span><i data-lucide="mail" class="icon-sm"></i> contato@vinculotea.com.br</span>
-            </div>
-            <div class="top-actions">
-                <button id="theme-toggle" aria-label="Alternar Tema">
-                    <i data-lucide="moon" class="icon-sm"></i>
-                </button>
-                <div class="lang-switcher">
-                    <button class="lang-btn active" data-lang="pt">PT</button>
-                    <button class="lang-btn" data-lang="en">EN</button>
-                    <button class="lang-btn" data-lang="es">ES</button>
-                </div>
-            </div>
+
+    <nav>
+        <div class="logo">
+            <img src="assets/img/logotipo_Horizontal.svg" alt="Logo">
         </div>
-    </div>
 
-    <!-- Header -->
-    <header class="navbar">
-        <div class="container">
-            <a href="#" class="logo">
-                <img src="./assets/img/dark.svg" alt="VinculoTEA Logo" class="logo-img">
+        <ul class="nav-links">
+            <li><a href="#">Demo <i data-lucide="chevron-down" class="nav-icon"></i></a></li>
+            <li><a href="#">Pages <i data-lucide="chevron-down" class="nav-icon"></i></a></li>
+            <li><a href="#">Portfolio <i data-lucide="chevron-down" class="nav-icon"></i></a></li>
+            <li><a href="#">Blog <i data-lucide="chevron-down" class="nav-icon"></i></a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
 
-            </a>
-
-            <nav class="nav-menu">
-                <a href="#solucoes" class="nav-link" data-i18n="nav.solutions">Soluções</a>
-                <a href="#como-funciona" class="nav-link" data-i18n="nav.howItWorks">Como Funciona</a>
-                <a href="#beneficios" class="nav-link" data-i18n="nav.benefits">Benefícios</a>
-                <a href="#planos" class="nav-link" data-i18n="nav.plans">Planos</a>
-                <a href="#contato" class="nav-link" data-i18n="nav.contact">Contato</a>
-            </nav>
-
-            <div class="nav-cta">
-                <a href="#contato" class="btn btn-primary" data-i18n="hero.ctaPrimary">Solicitar Demo</a>
-            </div>
-
-            <button class="mobile-menu-btn">
-                <i data-lucide="menu"></i>
-            </button>
+        <div class="nav-actions">
+            <a href="#" class="login-link">Log in</a>
+            <a href="#" class="btn-demo">Book a demo</a>
         </div>
-    </header>
+    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-bg">
-            <img src="./assets/img/hero-bg.png" alt="Background">
-        </div>
-        <div class="container hero-container">
-            <div class="hero-content reveal">
-                <h1 data-i18n="hero.headline">Transforme a Educação Inclusiva com Gestão Inteligente</h1>
-                <p data-i18n="hero.subheadline">A plataforma SaaS multidisciplinar completa que conecta escolas,
-                    famílias e especialistas em um único ambiente seguro.</p>
-                <div class="hero-buttons">
-                    <a href="#contato" class="btn btn-primary btn-lg" data-i18n="hero.ctaPrimary">Solicitar Demo</a>
-                    <a href="#planos" class="btn btn-outline btn-lg" data-i18n="hero.ctaSecondary">Ver Planos</a>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Why Choose Section -->
-    <section id="solucoes" class="section bg-light">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="why.title">Por que escolher o VinculoTEA?</h2>
-                <p class="section-subtitle" data-i18n="why.subtitle">Inovação e cuidado em cada detalhe.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card reveal delay-100">
-                    <div class="icon-box"><i data-lucide="file-text"></i></div>
-                    <h3 data-i18n="why.card1.title">Gestão Centralizada de PEI</h3>
-                    <p data-i18n="why.card1.desc">Elabore, monitore e atualize o Plano de Ensino Individualizado com
-                        facilidade e precisão.</p>
-                </div>
-                <div class="feature-card reveal delay-200">
-                    <div class="icon-box"><i data-lucide="shield-check"></i></div>
-                    <h3 data-i18n="why.card2.title">Ambiente Seguro e Compliance</h3>
-                    <p data-i18n="why.card2.desc">Segurança de dados nível bancário e conformidade total com a LGPD.</p>
-                </div>
-                <div class="feature-card reveal delay-300">
-                    <div class="icon-box"><i data-lucide="users"></i></div>
-                    <h3 data-i18n="why.card3.title">Colaboração em Tempo Real</h3>
-                    <p data-i18n="why.card3.desc">Conecte família, escola e terapeutas instantaneamente.</p>
-                </div>
-                <div class="feature-card reveal delay-400">
-                    <div class="icon-box"><i data-lucide="bar-chart-2"></i></div>
-                    <h3 data-i18n="why.card4.title">Insights Baseados em Dados</h3>
-                    <p data-i18n="why.card4.desc">Relatórios detalhados para acompanhar o progresso real do aluno.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section id="como-funciona" class="section">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="how.title">Veja como é simples usar o VinculoTEA</h2>
-            </div>
-            <div class="process-steps">
-                <div class="step reveal">
-                    <div class="step-number">1</div>
-                    <h3 data-i18n="how.step1.title">Cadastre sua Escola</h3>
-                    <p data-i18n="how.step1.desc">Configure sua instituição e personalize o ambiente.</p>
-                </div>
-                <div class="step reveal delay-100">
-                    <div class="step-number">2</div>
-                    <h3 data-i18n="how.step2.title">Adicione Alunos e Especialistas</h3>
-                    <p data-i18n="how.step2.desc">Crie perfis completos e convide a equipe multidisciplinar.</p>
-                </div>
-                <div class="step reveal delay-200">
-                    <div class="step-number">3</div>
-                    <h3 data-i18n="how.step3.title">Gerencie o PEI</h3>
-                    <p data-i18n="how.step3.desc">Defina metas, estratégias e acompanhe a evolução.</p>
-                </div>
-                <div class="step reveal delay-300">
-                    <div class="step-number">4</div>
-                    <h3 data-i18n="how.step4.title">Monitore o Progresso</h3>
-                    <p data-i18n="how.step4.desc">Acompanhe métricas e evolução em tempo real.</p>
-                </div>
-                <div class="step reveal delay-400">
-                    <div class="step-number">5</div>
-                    <h3 data-i18n="how.step5.title">Gere Relatórios</h3>
-                    <p data-i18n="how.step5.desc">Exporte insights valiosos para todas as partes interessadas.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Benefits Section -->
-    <section id="beneficios" class="section bg-light-alt">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="benefits.title">Benefícios que Transformam</h2>
-            </div>
-            <div class="benefits-grid">
-                <div class="benefit-item reveal">
-                    <div class="check-icon"><i data-lucide="check-circle"></i></div>
-                    <div>
-                        <h4 data-i18n="benefits.item1.title">Comunicação Integrada</h4>
-                        <p data-i18n="benefits.item1.desc">Elimine ruídos e centralize todas as informações importantes.
-                        </p>
+    <main>
+        <section class="hero">
+            <div class="hero-container">
+                <!-- Left: Headline and Rating -->
+                <div class="hero-left">
+                    <div class="rating">
+                        <div class="stars">
+                            <i data-lucide="star" fill="#58B164" size="18"></i>
+                            <i data-lucide="star" fill="#58B164" size="18"></i>
+                            <i data-lucide="star" fill="#58B164" size="18"></i>
+                            <i data-lucide="star" fill="#58B164" size="18"></i>
+                            <i data-lucide="star" fill="#58B164" size="18"></i>
+                        </div>
+                        <span class="rating-text">4.8 / 5 rating by users</span>
                     </div>
+                    <h1>Take control of <br> your finances</h1>
                 </div>
-                <div class="benefit-item reveal">
-                    <div class="check-icon"><i data-lucide="check-circle"></i></div>
-                    <div>
-                        <h4 data-i18n="benefits.item2.title">Segurança de Dados</h4>
-                        <p data-i18n="benefits.item2.desc">Seus dados protegidos com a mais alta tecnologia de
-                            criptografia.</p>
-                    </div>
-                </div>
-                <div class="benefit-item reveal">
-                    <div class="check-icon"><i data-lucide="check-circle"></i></div>
-                    <div>
-                        <h4 data-i18n="benefits.item3.title">Análise de Performance</h4>
-                        <p data-i18n="benefits.item3.desc">Entenda o impacto das intervenções com dados claros.</p>
-                    </div>
-                </div>
-                <div class="benefit-item reveal">
-                    <div class="check-icon"><i data-lucide="check-circle"></i></div>
-                    <div>
-                        <h4 data-i18n="benefits.item4.title">Automação Inteligente</h4>
-                        <p data-i18n="benefits.item4.desc">Economize tempo em processos burocráticos e foque no aluno.
-                        </p>
+
+                <!-- Right: Description and Download -->
+                <div class="hero-right">
+                    <p class="description">
+                        Track your daily automatically. Manage your money in a friendly and way, making it easy to
+                        guilt-free and save effortlessly.
+                    </p>
+                    <div class="download-btns">
+                        <a href="#"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                                alt="App Store"></a>
+                        <a href="#"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                                alt="Google Play"></a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Who Is It For -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="target.title">Para quem é o VinculoTEA?</h2>
+            <!-- The Planet/Orb Visual -->
+            <div class="orb-container">
+                <div class="orb"></div>
+                <div class="orb-glow"></div>
             </div>
-            <div class="target-grid">
-                <div class="target-card reveal">
-                    <i data-lucide="school"></i>
-                    <h3 data-i18n="target.schools">Escolas Inclusivas</h3>
-                </div>
-                <div class="target-card reveal delay-100">
-                    <i data-lucide="stethoscope"></i>
-                    <h3 data-i18n="target.clinics">Clínicas Especializadas</h3>
-                </div>
-                <div class="target-card reveal delay-200">
-                    <i data-lucide="user-check"></i>
-                    <h3 data-i18n="target.therapists">Terapeutas</h3>
-                </div>
-                <div class="target-card reveal delay-300">
-                    <i data-lucide="network"></i>
-                    <h3 data-i18n="target.networks">Redes de Ensino</h3>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Our Story -->
-    <section class="section bg-dark text-white">
-        <div class="container split-container">
-            <div class="text-block reveal">
-                <h2 data-i18n="story.title">Nossa História</h2>
-                <h3 class="subtitle-highlight" data-i18n="story.subtitle">Como o projeto surgiu?</h3>
-                <p data-i18n="story.desc">O VinculoTEA nasceu da necessidade real de fechar as lacunas de comunicação na
-                    educação inclusiva. Observando a dificuldade de alinhar escola, família e terapeutas, criamos uma
-                    solução que não apenas gerencia, mas conecta e humaniza todo o processo de inclusão escolar.</p>
-            </div>
-            <div class="image-block reveal delay-200">
-                <!-- Placeholder for Story Image if needed, or stick to CSS styling -->
-                <div class="story-highlight-box">
-                    <i data-lucide="heart-handshake" size="64"></i>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Team Section -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="team.title">Nossa Equipe</h2>
-                <p data-i18n="team.subtitle">Expertise multidisciplinar a serviço da inclusão.</p>
-            </div>
-            <!-- Simple Team Representation -->
-            <div class="team-grid">
-                <div class="team-member reveal">
-                    <div class="member-avatar"></div>
-                    <h4>Dra. Ana Silva</h4>
-                    <span>Psicóloga</span>
-                </div>
-                <div class="team-member reveal delay-100">
-                    <div class="member-avatar"></div>
-                    <h4>Carlos Mendes</h4>
-                    <span>Pedagogo</span>
-                </div>
-                <div class="team-member reveal delay-200">
-                    <div class="member-avatar"></div>
-                    <h4>Mariana Costa</h4>
-                    <span>Tech Lead</span>
-                </div>
-            </div>
-            <div class="team-cta reveal">
-                <p data-i18n="team.join">Quer fazer parte da equipe?</p>
-                <a href="#contato" class="btn btn-outline" data-i18n="team.cta">Trabalhe Conosco</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="section bg-light">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="testimonials.title">Depoimentos</h2>
-            </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card reveal">
-                    <p data-i18n="testimonials.t1.text">"O VinculoTEA transformou a maneira como acompanhamos nossos
-                        alunos. A comunicação com as famílias melhorou 100%."</p>
-                    <div class="author">
-                        <strong>Fernanda Oliveira</strong>
-                        <span>Coordenadora Pedagógica</span>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal delay-100">
-                    <p data-i18n="testimonials.t2.text">"Finalmente uma ferramenta que entende as necessidades reais do
-                        PEI. Intuitiva e completa."</p>
-                    <div class="author">
-                        <strong>Dr. Ricardo Souza</strong>
-                        <span>Psicólogo Infantil</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Plans Section -->
-    <section id="planos" class="section">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="plans.title">Planos</h2>
-                <p data-i18n="plans.subtitle">Escolha a melhor opção para sua instituição.</p>
-            </div>
-            <div class="pricing-grid">
-                <!-- Bronze -->
-                <div class="pricing-card reveal">
-                    <h3 data-i18n="plans.bronze.name">Bronze (Essencial)</h3>
-                    <div class="price">R$ 149,90<span class="period">/mês</span></div>
-                    <div class="profit-estimate" data-i18n="plans.bronze.profit">Lucro Est. ~85%</div>
-                    <ul class="features-list">
-                        <li><i data-lucide="check"></i> 1 Unidade Escolar</li>
-                        <li><i data-lucide="check"></i> Até 50 Alunos</li>
-                        <li><i data-lucide="check"></i> Suporte Básico</li>
-                    </ul>
-                    <a href="#contato" class="btn btn-outline full-width" data-i18n="plans.cta">Começar Agora</a>
-                </div>
-                <!-- Prata -->
-                <div class="pricing-card popular reveal delay-100">
-                    <div class="badge" data-i18n="plans.popular">Popular</div>
-                    <h3 data-i18n="plans.silver.name">Prata (Crescimento)</h3>
-                    <div class="price">R$ 299,90<span class="period">/mês</span></div>
-                    <div class="profit-estimate" data-i18n="plans.silver.profit">Lucro Est. ~90%</div>
-                    <ul class="features-list">
-                        <li><i data-lucide="check"></i> 1 Unidade Escolar</li>
-                        <li><i data-lucide="check"></i> Até 150 Alunos</li>
-                        <li><i data-lucide="check"></i> Relatórios Avançados</li>
-                    </ul>
-                    <a href="#contato" class="btn btn-primary full-width" data-i18n="plans.cta">Começar Agora</a>
-                </div>
-                <!-- Ouro -->
-                <div class="pricing-card reveal delay-200">
-                    <h3 data-i18n="plans.gold.name">Ouro (Profissional)</h3>
-                    <div class="price">R$ 499,90<span class="period">/mês</span></div>
-                    <div class="profit-estimate" data-i18n="plans.gold.profit">Lucro Est. ~92%</div>
-                    <ul class="features-list">
-                        <li><i data-lucide="check"></i> 1 Unidade Escolar</li>
-                        <li><i data-lucide="check"></i> Até 300 Alunos</li>
-                        <li><i data-lucide="check"></i> Suporte Prioritário</li>
-                    </ul>
-                    <a href="#contato" class="btn btn-outline full-width" data-i18n="plans.cta">Começar Agora</a>
-                </div>
-                <!-- Elite -->
-                <div class="pricing-card reveal delay-300">
-                    <h3 data-i18n="plans.elite.name">Elite (Personalizado)</h3>
-                    <div class="price">R$ 899,00+<span class="period">/mês</span></div>
-                    <div class="profit-estimate" data-i18n="plans.elite.profit">Lucro Est. Altíssimo</div>
-                    <ul class="features-list">
-                        <li><i data-lucide="check"></i> Múltiplas Unidades</li>
-                        <li><i data-lucide="check"></i> Alunos Ilimitados</li>
-                        <li><i data-lucide="check"></i> Atendimento Dedicado</li>
-                    </ul>
-                    <a href="#contato" class="btn btn-outline full-width" data-i18n="plans.ctaProposal">Solicitar
-                        Proposta</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="section bg-light">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 data-i18n="faq.title">Perguntas Frequentes</h2>
-            </div>
-            <div class="faq-container">
-                <div class="faq-item reveal">
-                    <button class="faq-question">
-                        <span data-i18n="faq.q1">Como funciona a implementação?</span>
-                        <i data-lucide="chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a1">Nossa equipe auxilia em todo o processo de setup inicial e treinamento.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-item reveal">
-                    <button class="faq-question">
-                        <span data-i18n="faq.q2">Os dados são seguros?</span>
-                        <i data-lucide="chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a2">Sim, seguimos rigorosamente a LGPD com criptografia de ponta a ponta.</p>
-                    </div>
-                </div>
-                <div class="faq-item reveal">
-                    <button class="faq-question">
-                        <span data-i18n="faq.q3">Posso cancelar quando quiser?</span>
-                        <i data-lucide="chevron-down"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p data-i18n="faq.a3">Sim, nossos planos não possuem fidelidade, exceto contratos enterprise
-                            específicos.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About & Contact -->
-    <section class="section">
-        <div class="container">
-            <div class="contact-grid">
-                <div class="about-us reveal">
-                    <h2 data-i18n="about.title">Sobre Nós</h2>
-                    <p data-i18n="about.desc">Somos uma empresa dedicada a transformar a educação inclusiva através da
-                        tecnologia. Acreditamos que cada aluno merece um acompanhamento personalizado e eficiente.</p>
-                </div>
-                <div class="contact-area reveal delay-100" id="contato">
-                    <h2 data-i18n="contact.title">Contato</h2>
-                    <p data-i18n="contact.desc">Estamos prontos para atender você.</p>
-                    <a href="https://instagram.com/vinculotea" target="_blank" class="btn btn-instagram">
-                        <i data-lucide="instagram"></i> @vinculotea
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container footer-content">
-            <div class="footer-brand">
-                <img src="dark.svg" alt="VinculoTEA" style="height: 30px;">
-                <p>&copy; 2026 VinculoTEA.</p>
-            </div>
-            <div class="footer-links">
-                <a href="#" data-i18n="footer.privacy">Privacidade</a>
-                <a href="#" data-i18n="footer.terms">Termos</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="script.js"></script>
     <script>
-        lucide.createIcons();
+        lucide.initIcons();
     </script>
 </body>
 
