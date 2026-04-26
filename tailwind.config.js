@@ -13,7 +13,7 @@ export default {
         primary: 'var(--primary)',
         secondary: 'var(--secondary)',
         accent: 'var(--accent)',
-        success: '#10B981',
+        success: 'var(--success-color)',
       },
       fontFamily: {
         sans: ['"Outfit"', '"Inter"', 'sans-serif'],

@@ -28,7 +28,7 @@
 .title {
     font-size: 1.5rem;
     font-weight: 900;
-    color: #0f172a;
+    color: #0f0c26;
     letter-spacing: -0.025em;
     margin-bottom: 0.5rem;
 }
@@ -42,7 +42,7 @@
 .subtitle {
     font-size: 0.825rem;
     font-weight: 500;
-    color: #64748b;
+    color: #455a85;
 }
 
 
@@ -131,15 +131,15 @@
 }
 
 .stepActive .stepCircle {
-    border-color: #14396D;
-    background-color: #14396D;
+    border-color: #0f0c26;
+    background-color: #0f0c26;
     color: white;
     box-shadow: 0 0 0 4px rgba(20, 57, 109, 0.1);
 }
 
 .stepCompleted .stepCircle {
-    border-color: #14396D;
-    color: #14396D;
+    border-color: #0f0c26;
+    color: #0f0c26;
     background-color: #f0f9ff;
 }
 
@@ -166,7 +166,7 @@
 }
 
 .stepActive .stepLabel {
-    color: #14396D;
+    color: #0f0c26;
 }
 
 
@@ -245,7 +245,7 @@
 }
 
 .input:focus {
-    border-color: #14396D;
+    border-color: #0f0c26;
     outline: none;
     box-shadow: 0 0 0 3px rgba(20, 57, 109, 0.1);
 }
@@ -297,16 +297,16 @@
 .btnSecondary {
     background-color: white;
     border: 1px solid #e2e8f0;
-    color: #64748b;
+    color: #455a85;
 }
 
 .btnSecondary:hover {
     background-color: #f8fafc;
-    color: #0f172a;
+    color: #0f0c26;
 }
 
 .btnPrimary {
-    background-color: #14396D;
+    background-color: #0f0c26;
     color: white;
     box-shadow: 0 4px 6px -1px rgba(20, 57, 109, 0.2);
 }

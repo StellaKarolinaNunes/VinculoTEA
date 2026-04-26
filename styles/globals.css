@@ -3,13 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --primary: #14396D;
-  --secondary: #2379BC;
-  --accent: #1B9195;
+  --primary: #0f0c26;
+  --secondary: #455a85;
+  --accent: #fcce40;
+  --success-color: #96d268;
+  --deep-brown: #2c1201;
+  --neutral-light: #c4b0ae;
+  --neutral-muted: #917c74;
+  
+  /* Gradient Colors (DO NOT CHANGE) */
+  --grad-start: #004183;
+  --grad-end: #cce5ff;
+
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
+  --text-primary: #0f0c26;
+  --text-secondary: #455a85;
   --border-color: #f1f5f9;
   --radius-xl: 1.5rem;
   --radius-lg: 1rem;
@@ -30,12 +39,13 @@ body {
 }
 
 .dark {
-  --primary: #2379BC;
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
+  --primary: #455a85;
+  --success-color: #96d268;
+  --bg-primary: #05040f;
+  --bg-secondary: #0f0c26;
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border-color: #334155;
+  --text-secondary: #c4b0ae;
+  --border-color: #1a1a3a;
 }
 
 .container {
@@ -85,8 +95,8 @@ body {
   gap: 0.5rem;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
-  background-color: rgba(20, 57, 109, 0.1);
-  color: #14396D;
+  background-color: rgba(18, 32, 86, 0.1); 
+  color: var(--primary);
   font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;

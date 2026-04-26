@@ -7,8 +7,8 @@ export const Logo: React.FC = () => {
     <div className={styles.container}>
       <img
         src={logoImg}
-        alt="Vinculo PEI Logo"
-        className="h-20 sm:h-24 w-auto object-contain"
+        alt="VínculoTEA Logo"
+        className={styles.image}
       />
     </div>
   );

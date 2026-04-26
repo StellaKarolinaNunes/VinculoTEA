@@ -1,22 +1,11 @@
 .container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-  
+  justify-content: flex-end;
 }
 
 .image {
-  width: 100px;
-
-  height: auto;
+  width: auto;
+  height: 100px;
   object-fit: contain;
-  transition: transform 0.3s ease;
-}
-
-@media (min-width: 1024px) {
-  .image {
-    width: 350px;
-    
-  }
 }

@@ -33,7 +33,7 @@
 .title {
     font-size: 1.375rem;
     font-weight: 800;
-    color: #0f172a;
+    color: #0f0c26;
     letter-spacing: -0.025em;
     transition: color 0.3s, font-size 0.3s;
 }
@@ -49,7 +49,7 @@
 }
 
 .subtitle {
-    color: #64748b;
+    color: #455a85;
     font-size: 0.825rem;
     margin-top: 0.25rem;
 }
@@ -81,7 +81,7 @@
 .tab {
     padding: 0.75rem 1rem;
     font-weight: 600;
-    color: #64748b;
+    color: #455a85;
     border-bottom: 2px solid transparent;
     transition: all 0.2s;
     cursor: pointer;
@@ -104,7 +104,7 @@
 }
 
 .tab:hover {
-    color: #14396D;
+    color: #0f0c26;
     background-color: #f8fafc;
     border-radius: 0.5rem 0.5rem 0 0;
 }
@@ -115,8 +115,8 @@
 }
 
 .activeTab {
-    color: #14396D;
-    border-bottom-color: #14396D;
+    color: #0f0c26;
+    border-bottom-color: #0f0c26;
 }
 
 :global(.dark) .activeTab {
@@ -162,7 +162,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background-color: #14396D;
+    background-color: #0f0c26;
     color: white;
     padding: 0.625rem 1.25rem;
     border-radius: 0.75rem;
@@ -210,7 +210,7 @@
 .sectionTitle {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #0f0c26;
     margin-bottom: 1.5rem;
     transition: color 0.3s;
 }
@@ -270,7 +270,7 @@
 
 :global(.dark) .input,
 :global(.dark) .select {
-    background-color: #0f172a;
+    background-color: #0f0c26;
     border-color: #334155;
     color: white;
 }
@@ -299,7 +299,7 @@
     padding: 0.625rem 1.25rem;
     border-radius: 0.5rem;
     font-weight: 600;
-    color: #64748b;
+    color: #455a85;
     background: white;
     border: 1px solid #e2e8f0;
     transition: all 0.3s;
@@ -313,7 +313,7 @@
 }
 
 :global(.dark) .cancelButton {
-    background-color: #0f172a;
+    background-color: #0f0c26;
     color: #cbd5e1;
     border-color: #334155;
 }
@@ -327,7 +327,7 @@
     border-radius: 0.5rem;
     font-weight: 600;
     color: white;
-    background: #14396D;
+    background: #0f0c26;
     width: 100%;
 }
 
@@ -371,7 +371,7 @@
 
 .infoLabel {
     font-weight: 500;
-    color: #64748b;
+    color: #455a85;
 }
 
 :global(.dark) .infoLabel {
@@ -380,7 +380,7 @@
 
 .infoValue {
     font-weight: 600;
-    color: #0f172a;
+    color: #0f0c26;
 }
 
 :global(.dark) .infoValue {

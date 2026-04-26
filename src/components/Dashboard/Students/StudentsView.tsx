@@ -66,7 +66,7 @@ export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
             // Auto-filtro por escola para não administradores
             if (filterEscolaId && schoolsData?.length > 0) {
                 const targetSchool = schoolsData.find((s: any) => s.id === filterEscolaId || s.Escola_ID === filterEscolaId);
-                if (targetSchool) setFilterSchool(targetSchool.nome || targetSchool.Nome);
+                if (targetSchool) setFilterSchool(targetSchool.nome || targetSchool.nome);
             }
         } catch (error) {
             console.error('Erro ao buscar dados iniciais:', error);
