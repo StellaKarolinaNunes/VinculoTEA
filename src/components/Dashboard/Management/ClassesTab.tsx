@@ -58,8 +58,8 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                 plataforma_id: user?.plataforma_id
             };
 
-            if (editingClass?.id || editingClass?.Turma_ID) {
-                await classesService.update(editingClass.id || editingClass.Turma_ID, payload);
+            if (editingClass?.Turma_ID) {
+                await classesService.update(editingClass.Turma_ID, payload);
             } else {
                 await classesService.create(payload);
             }
@@ -97,19 +97,19 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
     const handleEdit = (cls: any) => {
         setEditingClass(cls);
         setFormData({
-            nome: cls.nome || cls.Nome,
-            escola_id: (cls.escola_id || cls.Escola_ID).toString(),
-            serie: cls.serie || cls.Serie || '',
-            status: cls.status || cls.Status || 'Ativo',
-            turno: cls.turno || cls.Turno || 'Matutino',
-            ano_letivo: (cls.ano_letivo || cls.Ano_Letivo || new Date().getFullYear()).toString()
+            nome: cls.Nome,
+            escola_id: cls.Escola_ID.toString(),
+            serie: cls.Serie || '',
+            status: cls.Status || 'Ativo',
+            turno: cls.Turno || 'Matutino',
+            ano_letivo: cls.Ano_Letivo || new Date().getFullYear().toString()
         });
         setIsCreating(true);
     };
 
     const filteredClasses = classes.filter(c => 
-        (c.nome || c.Nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (c.escola_nome || c.Escolas?.Nome || '').toLowerCase().includes(searchTerm.toLowerCase())
+        (c.Nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.Escolas?.Nome || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (isCreating) {
@@ -154,21 +154,6 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Turno / Período Letivo *</label>
-                        <select 
-                            required
-                            value={formData.turno}
-                            onChange={(e) => setFormData(prev => ({ ...prev, turno: e.target.value }))}
-                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
-                        >
-                            <option value="Matutino">Manhã</option>
-                            <option value="Vespertino">Tarde</option>
-                            <option value="Noturno">Noite</option>
-                            <option value="Integral">Integral</option>
-                        </select>
-                    </div>
-
-                    <div className="space-y-2">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Série / Nível</label>
                         <input 
                             type="text"
@@ -177,6 +162,21 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                             className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none" 
                             placeholder="Ex: 5º Ano" 
                         />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Turno *</label>
+                        <select 
+                            required
+                            value={formData.turno}
+                            onChange={(e) => setFormData(prev => ({ ...prev, turno: e.target.value }))}
+                            className="w-full bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-bold focus:border-primary/50 transition-all outline-none appearance-none"
+                        >
+                            <option value="Matutino">Matutino</option>
+                            <option value="Vespertino">Vespertino</option>
+                            <option value="Noturno">Noturno</option>
+                            <option value="Integral">Integral</option>
+                        </select>
                     </div>
 
                     <div className="space-y-2">
@@ -196,9 +196,9 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                         <button 
                             type="submit"
                             disabled={isSaving}
-                            className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-primary text-white shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                            className="flex-1 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white shadow-lg shadow-blue-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                         >
-                            {isSaving ? <Loader2 className="animate-spin" size={18} /> : editingClass ? 'Atualizar Turma' : 'Criar Turma'}
+                            {isSaving ? <Loader2 className="animate-spin" size={18} /> : 'Salvar Turma'}
                         </button>
                     </div>
                 </form>
@@ -221,7 +221,7 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                 </div>
                 <button
                     onClick={() => setIsCreating(true)}
-                    className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black text-xs uppercase tracking-widest hover:scale-[1.05] active:scale-[0.95] transition-all shadow-xl"
+                    className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white font-black text-xs uppercase tracking-widest hover:scale-[1.05] active:scale-[0.95] transition-all shadow-xl shadow-blue-500/10"
                 >
                     <Plus size={18} strokeWidth={3} />
                     Nova Turma
@@ -236,7 +236,7 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredClasses.map((cls, i) => (
-                        <div key={cls.id || cls.Turma_ID || i} className="group p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-transparent hover:border-primary/20 transition-all relative">
+                        <div key={cls.Turma_ID || i} className="group p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 border-[1.5px] border-transparent hover:border-primary/20 transition-all relative">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="size-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm text-primary group-hover:scale-110 transition-transform">
                                     <Users size={24} />
@@ -245,25 +245,22 @@ export const ClassesTab = ({ onUpdate }: { onUpdate?: () => void }) => {
                                     <button onClick={() => handleEdit(cls)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-white dark:hover:bg-slate-800 transition-all">
                                         <Edit2 size={14} />
                                     </button>
-                                    <button onClick={() => handleDelete(cls.id || cls.Turma_ID, cls.nome || cls.Nome)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-white dark:hover:bg-slate-800 transition-all">
+                                    <button onClick={() => handleDelete(cls.Turma_ID, cls.Nome)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-white dark:hover:bg-slate-800 transition-all">
                                         <Trash2 size={14} />
                                     </button>
                                 </div>
                             </div>
 
                             <div className="space-y-1">
-                                <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors">{cls.nome || cls.Nome}</h3>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors">{cls.Nome}</h3>
                                 <p className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-tight">
-                                    <Building size={12} /> {cls.escola_nome || cls.Escolas?.Nome || 'Unidade não informada'}
+                                    <Building size={12} /> {cls.Escolas?.Nome || 'Unidade não informada'}
                                 </p>
                             </div>
 
                             <div className="mt-6 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-primary/5 px-2 py-1 rounded-lg">
-                                        {cls.turno || cls.Turno || 'Geral'}
-                                    </span>
-                                    <span className="text-[10px] font-black text-slate-400">{cls.serie || cls.Serie || 'Nível não inf.'}</span>
+                                    <span className="text-[12px] font-bold text-slate-500">{cls.Serie || 'Geral'}</span>
                                 </div>
                                 <ArrowRight size={16} className="text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                             </div>

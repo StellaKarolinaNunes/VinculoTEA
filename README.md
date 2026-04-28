@@ -393,6 +393,5 @@ mantendo a referência ao repositório original.
       </a>
     </td>
   </tr>
-   <br />
 </table>
 
