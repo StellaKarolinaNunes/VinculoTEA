@@ -5,7 +5,7 @@ export interface UserProfile {
     id: string;
     nome: string;
     email: string;
-    tipo: 'Administrador' | 'Profissional' | 'Tutor' | 'Família' | 'GESTOR' | 'PROFISSIONAL' | 'FAMILIA';
+    tipo: 'Administrador' | 'Profissional' | 'Tutor' | 'Família' | 'ADMIN' | 'GESTOR' | 'PROFISSIONAL' | 'FAMILIA';
     escola_id?: number;
     escola_nome?: string;
     familia_id?: number;
@@ -36,6 +36,22 @@ export interface Permissions {
 
 const ROLE_PERMISSIONS: Record<string, Permissions> = {
     'Administrador': {
+        canViewStudents: true,
+        canEditStudents: true,
+        canDeleteStudents: true,
+        canViewGerenciamento: true,
+        canEditSchools: true,
+        canEditTeachers: true,
+        canEditClasses: true,
+        canViewReports: true,
+        canExportReports: true,
+        canViewSettings: true,
+        canManageUsers: true,
+        canViewDisciplines: true,
+        canEditDisciplines: true,
+        canViewAllSchools: true
+    },
+    'ADMIN': {
         canViewStudents: true,
         canEditStudents: true,
         canDeleteStudents: true,
@@ -115,7 +131,7 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canEditDisciplines: false,
         canViewAllSchools: false
     },
-    'FAMILIA': {
+    'Família': {
         canViewStudents: true,
         canEditStudents: false,
         canDeleteStudents: false,
@@ -131,7 +147,7 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canEditDisciplines: false,
         canViewAllSchools: false
     },
-    'Família': {
+    'FAMILIA': {
         canViewStudents: true,
         canEditStudents: false,
         canDeleteStudents: false,
@@ -148,6 +164,7 @@ const ROLE_PERMISSIONS: Record<string, Permissions> = {
         canViewAllSchools: false
     }
 };
+
 
 export const useAuth = () => {
     const [user, setUser] = useState<UserProfile | null>(null);

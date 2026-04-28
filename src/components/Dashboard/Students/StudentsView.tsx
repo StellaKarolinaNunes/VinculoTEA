@@ -31,7 +31,7 @@ interface StudentsViewProps {
 }
 
 export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
-    const { user: authUser, loading: authLoading } = useAuth();
+    const { user: authUser, permissions, loading: authLoading } = useAuth();
     const [isRegistering, setIsRegistering] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
     const [students, setStudents] = useState<Student[]>([]);
@@ -407,21 +407,23 @@ export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
                         <Download size={18} className="text-primary" />
                         Exportar Relatório
                     </button>
-                    <button
-                        onClick={() => {
-                            // Secondary fallback
-                            handleOpenWizard();
-                        }}
-                        disabled={authUser?.tipo !== 'Administrador' && students.length >= (authUser?.limite_alunos || 1)}
-                        className={`w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all group border-none ${
-                            (authUser?.tipo !== 'Administrador' && students.length >= (authUser?.limite_alunos || 1))
-                                ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none'
-                                : 'bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white shadow-xl shadow-blue-900/20 hover:scale-[1.05] active:scale-[0.98] cursor-pointer'
-                        }`}
-                    >
-                        <Plus size={20} strokeWidth={3} className={!(authUser?.tipo !== 'Administrador' && students.length >= (authUser?.limite_alunos || 1)) ? "group-hover:rotate-90 transition-transform" : ""} />
-                        Novo Cadastro
-                    </button>
+                    {permissions?.canEditStudents && (
+                        <button
+                            onClick={() => {
+                                // Secondary fallback
+                                handleOpenWizard();
+                            }}
+                            disabled={authUser?.tipo !== 'Administrador' && students.length >= (authUser?.limite_alunos || 1)}
+                            className={`w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all group border-none ${
+                                (authUser?.tipo !== 'Administrador' && students.length >= (authUser?.limite_alunos || 1))
+                                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none'
+                                    : 'bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white shadow-xl shadow-blue-900/20 hover:scale-[1.05] active:scale-[0.98] cursor-pointer'
+                            }`}
+                        >
+                            <Plus size={20} strokeWidth={3} className={!(authUser?.tipo !== 'Administrador' && students.length >= (authUser?.limite_alunos || 1)) ? "group-hover:rotate-90 transition-transform" : ""} />
+                            Novo Cadastro
+                        </button>
+                    )}
                 </div>
                 
                 {/* Background Decoration */}
@@ -684,28 +686,34 @@ export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
                                             >
                                                 Prontuário
                                             </button>
-                                            <div className="w-px h-6 bg-slate-100 dark:bg-slate-800 mx-2" />
-                                            <button
-                                                className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-primary hover:border-primary/30 rounded-xl transition-all active:scale-90"
-                                                title="Editar"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setEditingStudent(student);
-                                                    setIsEditingDirect(true);
-                                                }}
-                                            >
-                                                <Edit3 size={16} />
-                                            </button>
-                                            <button
-                                                className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-xl transition-all active:scale-90"
-                                                title="Excluir"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteDirect(student);
-                                                }}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                            {permissions?.canEditStudents && (
+                                                <>
+                                                    <div className="w-px h-6 bg-slate-100 dark:bg-slate-800 mx-2" />
+                                                    <button
+                                                        className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-primary hover:border-primary/30 rounded-xl transition-all active:scale-90"
+                                                        title="Editar"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setEditingStudent(student);
+                                                            setIsEditingDirect(true);
+                                                        }}
+                                                    >
+                                                        <Edit3 size={16} />
+                                                    </button>
+                                                </>
+                                            )}
+                                            {permissions?.canDeleteStudents && (
+                                                <button
+                                                    className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-xl transition-all active:scale-90"
+                                                    title="Excluir"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteDirect(student);
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

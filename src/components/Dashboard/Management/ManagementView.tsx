@@ -12,7 +12,7 @@ import styles from './ManagementView.module.css';
 type Tab = 'escolas' | 'professores' | 'profissionais' | 'turmas';
 
 export const ManagementView = () => {
-    const { user: authUser, loading: authLoading } = useAuth();
+    const { user: authUser, permissions, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState<Tab>('escolas');
     const [schoolCount, setSchoolCount] = useState(0);
     const [teacherCount, setTeacherCount] = useState(0);
@@ -57,11 +57,20 @@ export const ManagementView = () => {
     };
 
     const tabs = [
-        { id: 'escolas' as const, label: 'Unidades', icon: Building2, desc: 'Gerencie suas unidades parceiras' },
+        ...(permissions?.canEditSchools ? [{ id: 'escolas' as const, label: 'Unidades', icon: Building2, desc: 'Gerencie suas unidades parceiras' }] : []),
         { id: 'professores' as const, label: 'Docentes', icon: GraduationCap, desc: 'Gestão de professores e educadores' },
         { id: 'profissionais' as const, label: 'Especialistas', icon: Users, desc: 'Profissionais de saúde e apoio' },
         { id: 'turmas' as const, label: 'Turmas', icon: BookOpen, desc: 'Controle de turmas e classes' },
     ];
+
+    // Ensure activeTab is valid after filtering
+    useEffect(() => {
+        if (permissions && !tabs.find(t => t.id === activeTab)) {
+            setActiveTab(tabs[0]?.id as Tab || 'professores');
+        }
+    }, [permissions, activeTab]);
+
+
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10 pb-20 px-2 sm:px-4">

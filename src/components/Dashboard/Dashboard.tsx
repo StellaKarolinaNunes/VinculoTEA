@@ -60,7 +60,7 @@ const MetricCard = ({ icon: Icon, label, value, tag, color = '#3b82f6' }: any) =
 );
 
 export const Dashboard: React.FC<DashboardProps> = ({ user: authUser, onLogout }) => {
-  const { user: profile, loading: authLoading } = useAuth();
+  const { user: profile, permissions, loading: authLoading } = useAuth();
   const [activeView, setActiveView] = useState<ViewState>('dashboard');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -273,19 +273,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ user: authUser, onLogout }
     );
   }
 
-  const userType = profile?.tipo || authUser?.tipo || '';
-  const isAdmin = userType === 'Administrador' || userType === 'ADMIN';
-
   const sidebarItems = [
     { id: 'dashboard', label: 'Painel Geral', icon: BarChart3 },
-    { id: 'students', label: 'Gestão de Alunos', icon: GraduationCap },
-    { id: 'management', label: 'Gestão Escolar', icon: Briefcase },
-    { id: 'discipline', label: 'Disciplinas', icon: BookOpen },
-    { id: 'reports', label: 'Relatórios', icon: FileText },
+    ...(permissions?.canViewStudents ? [{ id: 'students', label: 'Gestão de Alunos', icon: GraduationCap }] : []),
+    ...(permissions?.canViewGerenciamento ? [{ id: 'management', label: 'Gestão Escolar', icon: Briefcase }] : []),
+    ...(permissions?.canViewDisciplines ? [{ id: 'discipline', label: 'Disciplinas', icon: BookOpen }] : []),
+    ...(permissions?.canViewReports ? [{ id: 'reports', label: 'Relatórios', icon: FileText }] : []),
     { id: 'help', label: 'Central de Ajuda', icon: Rocket },
-    ...(isAdmin || userType === 'GESTOR' ? [{ id: 'settings', label: 'Ajustes', icon: Settings }] : []),
-    ...(isAdmin ? [{ id: 'admin', label: 'Admin Local', icon: Settings }] : []),
+    ...(permissions?.canViewSettings ? [{ id: 'settings', label: 'Ajustes', icon: Settings }] : []),
+    ...(permissions?.canManageUsers ? [{ id: 'admin', label: 'Admin Local', icon: Settings }] : []),
   ];
+
 
   return (
     <div className={`${styles.dashboardWrapper} ${isDarkMode ? styles.dark : ''}`}>

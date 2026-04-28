@@ -11,7 +11,7 @@ import { Users as UsersIcon } from 'lucide-react';
 type Tab = 'institution' | 'system' | 'security' | 'users';
 
 export const SettingsView = () => {
-    const { user } = useAuth();
+    const { user, permissions } = useAuth();
     const [activeTab, setActiveTab] = useState<Tab>(user?.escola_id ? 'institution' : 'system');
 
     return (
@@ -32,10 +32,11 @@ export const SettingsView = () => {
             <div className="bg-white dark:bg-slate-800 p-2 rounded-3xl border-[1.5px] border-slate-100 dark:border-slate-700 shadow-sm inline-flex flex-wrap gap-2">
                 {[
                     { id: 'institution', icon: Building2, label: 'Instituição' }, // Always visible
-                    { id: 'users', icon: UsersIcon, label: 'Usuários', hidden: user?.tipo !== 'Administrador' && user?.tipo !== 'GESTOR' },
+                    { id: 'users', icon: UsersIcon, label: 'Usuários', hidden: !permissions?.canManageUsers },
                     { id: 'system', icon: SystemIcon, label: 'Sistema' },
                     { id: 'security', icon: Shield, label: 'Segurança' },
                 ].filter(t => !t.hidden).map((tab) => {
+
                     const isActive = activeTab === tab.id;
                     return (
                         <button
