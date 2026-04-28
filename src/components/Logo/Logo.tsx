@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Logo.module.css';
-import logoImg from '@/assets/images/logotipo_Horizontal.svg';
+import logoImg from '../../assets/images/logotipo_Horizontal.svg';
 
 export const Logo: React.FC = () => {
   return (
