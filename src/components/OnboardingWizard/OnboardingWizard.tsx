@@ -88,22 +88,20 @@ export const OnboardingWizard: React.FC = () => {
         }
     };
 
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    const isDarkMode = document.documentElement.classList.contains('dark');
 
     const toggleDarkMode = () => {
         const root = document.documentElement;
         if (root.classList.contains('dark')) {
             root.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            setTheme('light');
         } else {
             root.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            setTheme('dark');
         }
+        // Force re-render of this component to update switch visual
+        setCurrentStep(prev => prev); 
     };
-
-    const isDarkMode = theme === 'dark';
 
     const step = steps[currentStep];
 
@@ -112,7 +110,7 @@ export const OnboardingWizard: React.FC = () => {
             <div className={styles.container}>
                 {/* Header */}
                 <div className={styles.header}>
-                    <div className={styles.logo}>VínculoTEA</div>
+                    <div className={styles.logo}>Vínculo<span>TEA</span></div>
                     <button
                         onClick={() => setTutorialCompleted(true)}
                         className={styles.skipBtn}

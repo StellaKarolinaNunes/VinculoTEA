@@ -42,9 +42,9 @@ export const SettingsView = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as Tab)}
-                            className={`flex items-center gap-3 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-[0.1em] transition-all duration-500 ${isActive
-                                ? 'bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white shadow-xl shadow-blue-500/20 scale-105'
-                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary active:scale-95'
+                            className={`flex items-center gap-3 px-6 py-3 rounded-full font-black text-xs uppercase tracking-[0.1em] transition-all duration-500 ${isActive
+                                ? 'bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white shadow-xl shadow-blue-500/25'
+                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-[#004183]'
                                 }`}
                         >
                             <tab.icon size={18} strokeWidth={isActive ? 3 : 2} />

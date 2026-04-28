@@ -42,12 +42,14 @@
 
 .logo {
     font-weight: 950;
-    color: #4F46E5;
+    color: #004183;
     letter-spacing: -0.06em;
     font-size: 1.5rem;
-    background: linear-gradient(135deg, #4F46E5, #F97316);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+}
+
+.logo span {
+    color: #004183;
+    opacity: 0.6;
 }
 
 .skipBtn {
@@ -87,9 +89,9 @@
 
 .progressBar {
     height: 100%;
-    background: linear-gradient(90deg, #4F46E5, #F97316);
+    background: linear-gradient(90deg, #004183, #cce5ff);
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 0 15px rgba(0, 65, 131, 0.2);
 }
 
 .content {
@@ -105,14 +107,14 @@
 .iconCircle {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #e0e7ff, #fff7ed);
-    color: #4F46E5;
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    color: #004183;
     border-radius: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 2rem;
-    box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.15);
+    box-shadow: 0 15px 30px -5px rgba(0, 65, 131, 0.1);
     animation: float 4s ease-in-out infinite;
 }
 
@@ -172,7 +174,7 @@
 }
 
 .optionCard:hover {
-    border-color: #4F46E5;
+    border-color: #004183;
     transform: translateY(-4px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
 }
@@ -188,9 +190,9 @@
 }
 
 .activeOption {
-    border-color: #4F46E5;
-    background: #f5f3ff;
-    box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.15);
+    border-color: #004183;
+    background: #f0f7ff;
+    box-shadow: 0 15px 30px -5px rgba(0, 65, 131, 0.1);
 }
 
 :global(.dark) .activeOption {
@@ -211,8 +213,8 @@
 }
 
 .activeOption .checkRing {
-    background: #4F46E5;
-    border-color: #4F46E5;
+    background: #004183;
+    border-color: #004183;
 }
 
 .togglesList {
@@ -242,8 +244,8 @@
 
 .activeToggle {
     background: white;
-    border-color: #4F46E5;
-    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.05);
+    border-color: #004183;
+    box-shadow: 0 10px 20px rgba(0, 65, 131, 0.05);
 }
 
 .toggleItem span {
@@ -271,7 +273,7 @@
 }
 
 .activeToggle .switch {
-    background: #4F46E5;
+    background: #004183;
 }
 
 .switchKnob {
@@ -323,7 +325,7 @@
 }
 
 .primaryBtn {
-    background: #002447;
+    background: linear-gradient(135deg, #004183 0%, #cce5ff 100%);
     color: white;
     padding: 1.25rem 2.5rem;
     border-radius: 1.75rem;
@@ -333,15 +335,14 @@
     align-items: center;
     gap: 1rem;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 15px 30px -5px rgba(0, 36, 71, 0.3);
+    box-shadow: 0 15px 30px -5px rgba(0, 65, 131, 0.2);
     border: none;
     cursor: pointer;
 }
 
 .primaryBtn:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 25px 40px -10px rgba(0, 36, 71, 0.4);
-    background: #4F46E5;
+    box-shadow: 0 25px 40px -10px rgba(0, 65, 131, 0.4);
 }
 
 @keyframes fadeIn {

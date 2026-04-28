@@ -678,7 +678,7 @@ export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
                                     <td className="px-10 py-8 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <button
-                                                className="px-6 py-3.5 bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 rounded-[14px] font-black text-[10px] uppercase tracking-[0.1em] border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary hover:bg-white transition-all shadow-sm group-hover:shadow-md active:scale-95"
+                                                className="px-6 py-3.5 bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 rounded-[14px] font-black text-[10px] uppercase tracking-[0.1em] border border-slate-200 dark:border-slate-700 hover:border-[#004183] hover:text-[#004183] hover:bg-white transition-all shadow-sm group-hover:shadow-md active:scale-95"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setSelectedStudent(student);
@@ -690,7 +690,7 @@ export const StudentsView = ({ initialModuloFilter }: StudentsViewProps) => {
                                                 <>
                                                     <div className="w-px h-6 bg-slate-100 dark:bg-slate-800 mx-2" />
                                                     <button
-                                                        className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-primary hover:border-primary/30 rounded-xl transition-all active:scale-90"
+                                                        className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-[#004183] hover:border-[#004183]/30 rounded-xl transition-all active:scale-90"
                                                         title="Editar"
                                                         onClick={(e) => {
                                                             e.stopPropagation();

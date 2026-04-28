@@ -41,8 +41,8 @@ export const SuperAdminView = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as Tab)}
                             className={`flex items-center gap-3 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${isActive
-                                ? 'bg-primary text-white shadow-lg shadow-primary/25'
-                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary'
+                                ? 'bg-gradient-to-r from-[#004183] to-[#cce5ff] text-white shadow-lg shadow-blue-500/25'
+                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 hover:text-[#004183]'
                                 }`}
                         >
                             <tab.icon size={18} strokeWidth={isActive ? 3 : 2} />
